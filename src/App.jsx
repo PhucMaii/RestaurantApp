@@ -1,13 +1,19 @@
 import { useState } from 'react'
 import Button from './components/Button'
+import { auth, googleProvider } from '../firebase.config'
+import { signInWithPopup } from "firebase/auth"
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
 
+  function handleSigninWithGoogle() {
+    signInWithPopup(auth, googleProvider)
+      .then(res => console.log(res))
+      .catch(err => console.log(err));
+  }
   return (
     <>
-      <Button title="Hello World!" />
+      <Button handleClick={handleSigninWithGoogle} title="Hello World!" />
     </>
   )
 }
