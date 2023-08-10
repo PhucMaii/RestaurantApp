@@ -75,18 +75,17 @@ export default function SigninPage() {
         <GridStyled container>
             <Grid item xs={6}>
                 <DivStyled>
-                    <Typography variant='h3' className="title" >
+                    <TitleStyled variant='h3'>
                         Welcome Back
-                    </Typography>
+                    </TitleStyled>
                     <TextFieldInputStyled
                         type="input"
                         placeholder='Enter your email...'
                         label="Email"
                     />
-                    <OutlinedInputStyled className='input'>
+                    <OutlinedInputStyled>
                         <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
                         <OutlinedInput
-                            
                             id="outlined-adornemnt-password"
                             type={showPassword ? 'text' : 'password'}
                             placeholder='Enter your password...'
@@ -111,7 +110,7 @@ export default function SigninPage() {
                     <ButtonStyled variant='contained'>Sign In</ButtonStyled>
                     <DividerStyled />
                     <ButtonStyled variant='contained' color='inherit'>
-                        <LogoStyled src="https://static-00.iconduck.com/assets.00/google-icon-2048x2048-czn3g8x8.png" /> 
+                        <LogoStyled src="https://static-00.iconduck.com/assets.00/google-icon-2048x2048-czn3g8x8.png" />
                         Continue With Google
                     </ButtonStyled>
                     <Typography variant='subtitle1'>Not a partner with us yet? <Link>Click here to sign up</Link></Typography>
@@ -119,7 +118,7 @@ export default function SigninPage() {
 
             </Grid>
             <Grid item xs={6}>
-                <TopicImageStyled src="https://i.pinimg.com/564x/e8/03/16/e80316d006e91ff02f3b49e61a0051c0.jpg"/>
+                <TopicImageStyled src="https://i.pinimg.com/564x/e8/03/16/e80316d006e91ff02f3b49e61a0051c0.jpg" />
             </Grid>
         </GridStyled>
     )
