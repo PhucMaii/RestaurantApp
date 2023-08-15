@@ -12,16 +12,19 @@ import {
   Alert,
   TextField,
   Button,
+  useMediaQuery
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../../../firebase.config";
 import {
+  TopicImageGrid,
   GridStyled,
   LogoStyled,
   OutlinedInputStyled,
   TitleStyled,
   TopicImageStyled,
+  InputGrid,
 } from "./styles";
 
 export default function SigninPage() {
@@ -30,6 +33,9 @@ export default function SigninPage() {
   const [isAuth, setIsAuth] = useState(true);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const isXLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('xl'));
+  const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.up('sm'));
+
   const navigate = useNavigate();
 
   const handleClickShowPassword = () => {
@@ -66,15 +72,15 @@ export default function SigninPage() {
   };
 
   return (
-    <GridStyled container columnSpacing={5} alignItems="center">
-      <Grid item xs={6}>
-        <Grid container rowGap={3} justifyContent="center">
+    <GridStyled container columnSpacing={5}>
+      <Grid item xs={12} sm={6}>
+        <InputGrid container rowGap={isXLargeScreen ? 8 : 3}>
           <Grid item xs={12}>
-            <TitleStyled variant="h3">Welcome Back</TitleStyled>
+            <TitleStyled variant={isSmallScreen ? "h4" : "h3"} color='secondary'>Welcome Back</TitleStyled>
           </Grid>
           {!isAuth && (
             <Grid item xs={12}>
-              <Alert severity="error">
+              <Alert fullWidth severity="error">
                 Your email or password is not found
               </Alert>
             </Grid>
@@ -149,11 +155,11 @@ export default function SigninPage() {
               </Link>
             </Typography>
           </Grid>
-        </Grid>
+        </InputGrid>
       </Grid>
-      <Grid item xs={6}>
+      <TopicImageGrid item xs={12} sm={6}>
         <TopicImageStyled src="https://i.pinimg.com/564x/e8/03/16/e80316d006e91ff02f3b49e61a0051c0.jpg" />
-      </Grid>
+      </TopicImageGrid>
     </GridStyled>
   );
 }

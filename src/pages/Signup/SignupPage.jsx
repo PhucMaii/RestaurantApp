@@ -21,6 +21,7 @@ import {
   OutlinedInputStyled,
   TitleStyled,
   TopicImageStyled,
+  TopicImageGrid,
 } from "./styles";
 
 export default function SignupPage() {
@@ -49,11 +50,13 @@ export default function SignupPage() {
 
   return (
     <GridStyled container columnSpacing={2}>
-      <Grid item xs={6}>
-        <TitleStyled variant="h3">Welcome To Our Team</TitleStyled>
+      <Grid item xs={12} md={6}>
+        <TitleStyled variant="h4" color="secondary">
+          Welcome To Our Team
+        </TitleStyled>
         <GridContainerStyled container rowGap={4}>
-          <Grid container columnSpacing={3}>
-            <Grid item xs={6}>
+          <Grid container columnSpacing={3} rowGap={4}>
+            <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
                 type="input"
@@ -61,7 +64,7 @@ export default function SignupPage() {
                 label="Restaurant Name"
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
                 type="input"
@@ -70,8 +73,8 @@ export default function SignupPage() {
               />
             </Grid>
           </Grid>
-          <Grid container columnSpacing={3}>
-            <Grid item xs={6}>
+          <Grid container columnSpacing={3} rowGap={4}>
+            <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
                 type="input"
@@ -81,22 +84,12 @@ export default function SignupPage() {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
                 type="input"
                 placeholder="eg: +1 (111) 111 - 1111"
                 label="Phone Number"
-              />
-            </Grid>
-          </Grid>
-          <Grid container columnSpacing={3}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                type="input"
-                placeholder="eg: 1234 main Street"
-                label="Address"
               />
             </Grid>
           </Grid>
@@ -182,9 +175,9 @@ export default function SignupPage() {
           </Grid>
         </GridContainerStyled>
       </Grid>
-      <Grid item xs={6}>
+      <TopicImageGrid item xs={6}>
         <TopicImageStyled src="https://i.pinimg.com/564x/e8/03/16/e80316d006e91ff02f3b49e61a0051c0.jpg" />
-      </Grid>
+      </TopicImageGrid>
     </GridStyled>
   );
 }

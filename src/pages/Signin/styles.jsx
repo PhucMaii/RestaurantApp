@@ -4,9 +4,14 @@ import styled from "styled-components";
 const GridStyled = styled(Grid)`
   width: 100%;
   height: 100%;
+
+  @media only screen and (min-width: 701px) {
+    padding: 10%;
+    align-items: center;
+    justify-content: center
+  }
 `;
 const TitleStyled = styled(Typography)`
-  color: #854d27;
   font-weight: bold;
   margin-bottom: 50px;
   text-align: center;
@@ -20,7 +25,18 @@ const LogoStyled = styled.img`
   margin-right: 20px;
 `;
 const TopicImageStyled = styled.img`
-  width: "100%";
+  width: 100%;
+
+`;
+const TopicImageGrid = styled(Grid)`
+  @media only screen and (max-width: 700px) {
+    display: none;
+  }
+`;
+const InputGrid = styled(Grid)`
+  @media only screen and (max-width: 700px) {
+    margin-top: 25%;
+  }
 `;
 
 export {
@@ -29,4 +45,6 @@ export {
   OutlinedInputStyled,
   LogoStyled,
   TopicImageStyled,
+  TopicImageGrid,
+  InputGrid,
 };
