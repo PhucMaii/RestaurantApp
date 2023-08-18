@@ -1,10 +1,13 @@
-import SigninPage from "./pages/Signin/SigninPage"
+// import SigninPage from "./pages/Signin/SigninPage"
+
+import CreateMenuPage from "./pages/CreateMenu/CreateMenuPage"
 
 function App() {
 
   return (
     <>
-      <SigninPage />
+      {/* <SigninPage /> */}
+      <CreateMenuPage />
     </>
   )
 }
