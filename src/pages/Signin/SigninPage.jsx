@@ -12,19 +12,23 @@ import {
   Alert,
   TextField,
   Button,
-  useMediaQuery
+  useMediaQuery,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import {
+  getAdditionalUserInfo,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
 import { auth, googleProvider } from "../../../firebase.config";
 import {
-  TopicImageGrid,
   GridStyled,
   LogoStyled,
   OutlinedInputStyled,
   TitleStyled,
   TopicImageStyled,
   InputGrid,
+  TopicImageGrid,
 } from "./styles";
 
 export default function SigninPage() {
@@ -33,50 +37,55 @@ export default function SigninPage() {
   const [isAuth, setIsAuth] = useState(true);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const isXLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('xl'));
-  const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.up('sm'));
-
+  const isXLargeScreen = useMediaQuery((theme) => theme.breakpoints.up("xl"));
+  const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.up("sm"));
   const navigate = useNavigate();
+
+  const handleEmailAndPasswordLogin = async () => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      console.log("Sign in successfully");
+    } catch (error) {
+      if (error.code === "auth/user-not-found") {
+        navigate("/create-restaurant");
+      } else {
+        console.log(error);
+      }
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      if (getAdditionalUserInfo(result).isNewUser) {
+        navigate("/create-restaurant");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleClickShowPassword = () => {
     setShowPassword((show) => !show);
   };
-
-  const handleEmailAndPasswordLogin = (e) => {
-    e.preventDefault();
-    signInWithEmailAndPassword(auth, email, password)
-      .then((user) => {
-        if (user) {
-          console.log(user);
-          setIsAuth(true);
-        }
-      })
-      .catch((error) => {
-        setIsAuth(false);
-        console.log(error);
-      });
-  };
-
-  const handleGoogleLogin = () => {
-    signInWithPopup(auth, googleProvider)
-      .then((user) => {
-        if (user) {
-          console.log(user);
-          setIsAuth(true);
-        }
-      })
-      .catch((error) => {
-        setIsAuth(false);
-        console.log(error);
-      });
-  };
-
+  
   return (
     <GridStyled container columnSpacing={5}>
       <Grid item xs={12} sm={6}>
         <InputGrid container rowGap={isXLargeScreen ? 8 : 3}>
           <Grid item xs={12}>
-            <TitleStyled variant={isSmallScreen ? "h4" : "h3"} color='secondary'>Welcome Back</TitleStyled>
+            <TitleStyled
+              variant={isSmallScreen ? "h4" : "h3"}
+              color="secondary"
+            >
+              Welcome Back
+            </TitleStyled>
           </Grid>
           {!isAuth && (
             <Grid item xs={12}>
@@ -127,7 +136,7 @@ export default function SigninPage() {
               variant="contained"
               onClick={handleEmailAndPasswordLogin}
             >
-              Sign In
+              REGISTER
             </Button>
             <Typography variant="subtitle2">
               <Link>Forgot Password ?</Link>
@@ -146,14 +155,6 @@ export default function SigninPage() {
               <LogoStyled src="https://static-00.iconduck.com/assets.00/google-icon-2048x2048-czn3g8x8.png" />
               Continue With Google
             </Button>
-          </Grid>
-          <Grid container justifyContent="left">
-            <Typography variant="subtitle1">
-              Not a partner with us yet?{" "}
-              <Link onClick={() => navigate("/signup")}>
-                Click here to sign up
-              </Link>
-            </Typography>
           </Grid>
         </InputGrid>
       </Grid>

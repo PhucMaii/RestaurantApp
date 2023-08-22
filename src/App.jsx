@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
 import SigninPage from "./pages/Signin/SigninPage";
-import SignupPage from "./pages/Signup/SignupPage";
+import CreateRestaurantPage from "./pages/CreateRestaurant/CreateRestaurantPage";
 import { theme } from "./Provider/ThemeProvider";
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <BrowserRouter>
           <Routes>
-            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/create-restaurant" element={<CreateRestaurantPage />} />
             <Route path="/" element={<SigninPage />} />
           </Routes>
         </BrowserRouter>
