@@ -10,8 +10,7 @@ import { debounce } from '@mui/material/utils';
 
 // This key was created specifically for the demo in mui.com.
 // You need to create a new one for your application.
-const MAPS_API_KEY = import.meta.env.VITE_MAPS_KEY
-console.log(MAPS_API_KEY)
+const MAPS_API_KEY = import.meta.env.VITE_MAPS_KEY;
 
 function loadScript(src, position, id) {
   if (!position) {
@@ -111,7 +110,7 @@ export default function GoogleMaps() {
         setInputValue(newInputValue);
       }}
       renderInput={(params) => (
-        <TextField {...params} label="Add a location" fullWidth />
+        <TextField {...params} label="Address" fullWidth />
       )}
       renderOption={(props, option) => {
         const matches =
@@ -133,7 +132,6 @@ export default function GoogleMaps() {
                   <Box
                     key={index}
                     component="span"
-                    sx={{ fontWeight: part.highlight ? 'bold' : 'regular' }}
                   >
                     {part.text}
                   </Box>
