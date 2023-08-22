@@ -24,7 +24,7 @@ import {
   TopicImageGrid,
 } from "./styles";
 
-export default function SignupPage() {
+export default function CreateRestaurantPage() {
   // Logic Part
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

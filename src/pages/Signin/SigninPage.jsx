@@ -15,7 +15,7 @@ import {
   useMediaQuery
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../../../firebase.config";
 import {
   TopicImageGrid,
@@ -42,20 +42,20 @@ export default function SigninPage() {
     setShowPassword((show) => !show);
   };
 
-  const handleEmailAndPasswordLogin = (e) => {
-    e.preventDefault();
-    signInWithEmailAndPassword(auth, email, password)
-      .then((user) => {
-        if (user) {
-          console.log(user);
-          setIsAuth(true);
-        }
-      })
-      .catch((error) => {
-        setIsAuth(false);
-        console.log(error);
-      });
-  };
+  const handleEmailAndPasswordLogin = () => {
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((user) => {
+      if (user) {
+        setIsAuth(true);
+        navigate("/create-restaurant");
+      }
+    })
+    .catch((error) => {
+      setIsAuth(false);
+      console.log(error);
+    });
+  }
+
 
   const handleGoogleLogin = () => {
     signInWithPopup(auth, googleProvider)
@@ -63,6 +63,7 @@ export default function SigninPage() {
         if (user) {
           console.log(user);
           setIsAuth(true);
+          navigate("/create-restaurant");
         }
       })
       .catch((error) => {
@@ -127,8 +128,10 @@ export default function SigninPage() {
               variant="contained"
               onClick={handleEmailAndPasswordLogin}
             >
-              Sign In
+              Register
             </Button>
+
+            {/* Todo: Link up is still left */}
             <Typography variant="subtitle2">
               <Link>Forgot Password ?</Link>
             </Typography>
@@ -146,14 +149,6 @@ export default function SigninPage() {
               <LogoStyled src="https://static-00.iconduck.com/assets.00/google-icon-2048x2048-czn3g8x8.png" />
               Continue With Google
             </Button>
-          </Grid>
-          <Grid container justifyContent="left">
-            <Typography variant="subtitle1">
-              Not a partner with us yet?{" "}
-              <Link onClick={() => navigate("/signup")}>
-                Click here to sign up
-              </Link>
-            </Typography>
           </Grid>
         </InputGrid>
       </Grid>
