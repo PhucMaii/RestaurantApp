@@ -34,14 +34,15 @@ import {
 export default function SigninPage() {
   // Hooks
   const [email, setEmail] = useState("");
-  const [isAuth, setIsAuth] = useState(true);
   const [password, setPassword] = useState("");
+  const [notification, setNotification] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const isXLargeScreen = useMediaQuery((theme) => theme.breakpoints.up("xl"));
   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.up("sm"));
   const navigate = useNavigate();
 
   const handleEmailAndPasswordLogin = async () => {
+    const userData = { email, password, provider: "Email/Password Provider" };
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -49,32 +50,42 @@ export default function SigninPage() {
         password
       );
       const user = userCredential.user;
-      console.log("Sign in successfully");
     } catch (error) {
       if (error.code === "auth/user-not-found") {
+        localStorage.setItem("current-user", JSON.stringify(userData));
         navigate("/create-restaurant");
       } else {
-        console.log(error);
+        setNotification({
+          on: true,
+          type: error,
+          message: error.code,
+        });
       }
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      if (getAdditionalUserInfo(result).isNewUser) {
+      const userCredential = await signInWithPopup(auth, googleProvider);
+      const user = userCredential.user;
+      const userData = { email: user.email, provider: "Google Provider" };
+      if (getAdditionalUserInfo(userCredential).isNewUser) {
+        localStorage.setItem("current-user", JSON.stringify(userData));
         navigate("/create-restaurant");
       }
     } catch (error) {
-      console.log(error);
+      setNotification({
+        on: true,
+        type: error,
+        message: error.code,
+      });
     }
   };
 
   const handleClickShowPassword = () => {
     setShowPassword((show) => !show);
   };
-  
+
   return (
     <GridStyled container columnSpacing={5}>
       <Grid item xs={12} sm={6}>
@@ -87,10 +98,10 @@ export default function SigninPage() {
               Welcome Back
             </TitleStyled>
           </Grid>
-          {!isAuth && (
+          {notification.on && (
             <Grid item xs={12}>
-              <Alert fullWidth severity="error">
-                Your email or password is not found
+              <Alert fullWidth severity={notification.type}>
+                {notification.message}
               </Alert>
             </Grid>
           )}
@@ -139,7 +150,9 @@ export default function SigninPage() {
               REGISTER
             </Button>
             <Typography variant="subtitle2">
-              <Link>Forgot Password ?</Link>
+              <Link onClick={() => navigate("/forgot-password")}>
+                Forgot Password ?
+              </Link>
             </Typography>
           </Grid>
           <Grid item xs={12}>
