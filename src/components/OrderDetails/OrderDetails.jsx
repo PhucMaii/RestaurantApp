@@ -1,130 +1,176 @@
-import * as React from 'react';
+import * as React from "react";
 import {
-  Accordion,
   AccordionSummary,
-  AccordionDetails,
   Typography,
   Box,
-  Button,
   Fab,
   Grid,
   Divider,
-  ButtonGroup,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { GreenText } from "./style";
-import { grey } from "@mui/material/colors";
-import OrderStatusModal from '../Modals/OrderStatusModal';
-import UserInfoModal from '../Modals/UserInfoModal';
+import {
+  GreenText,
+  RedText,
+  AccordionStyled,
+  AccordionSummaryFlexBox,
+  AccordionDetailsStyled,
+  TimerFlexBox,
+  TypographyStyled,
+  ButtonStyled,
+  DividerContainerStyled,
+} from "./style";
+import OrderStatusModal from "../Modals/OrderStatusModal";
+import UserInfoModal from "../Modals/UserInfoModal";
 
 function BasicAccordion({
   orderId,
   orderTime,
-  userInfo, 
+  customerName,
+  customerEmail,
+  customerPhoneNumber,
   hasUtensils,
-  itemName,
-  itemOptions,
-  itemPrice,
+  items,
+  itemsQuantity,
   subTotal,
-  tax,
-  note
+  note,
 }) {
   const [prepMin, setPrepMin] = React.useState(11);
   const [prepSec, setPrepSec] = React.useState(0);
   const [status, setStatus] = React.useState("Preparing");
   const [openStatusModal, setOpenStatusModal] = React.useState(false);
-  const [openCustomerInfoModal, setOpenCustomerInfoModal] = React.useState(false);
+  const [openCustomerInfoModal, setOpenCustomerInfoModal] =
+    React.useState(false);
 
   const handleOpenStatusModal = (e) => {
     e.stopPropagation();
     setOpenStatusModal(true);
   };
+
   const handleCloseStatusModal = (e) => {
     e.stopPropagation();
     setOpenStatusModal(false);
   };
+
   const handleOpenCustomerInfoModal = (e) => {
     e.stopPropagation();
     setOpenCustomerInfoModal(true);
   };
+
   const handleCloseCustomerInfoModal = (e) => {
     e.stopPropagation();
     setOpenCustomerInfoModal(false);
   };
-  
+
   const handleStatusButtonClick = (e) => {
     e.stopPropagation();
     setStatus(e.currentTarget.textContent);
     setOpenStatusModal(false);
-  }
+  };
 
   const handleIncreasePrepTime = (e) => {
     e.stopPropagation();
-    setPrepMin(prevMin => prevMin + 1);
-  }
+    setPrepMin((prevMin) => prevMin + 1);
+  };
 
   const handleDecreasePrepTime = (e) => {
     e.stopPropagation();
-    if(prepMin > 0){
-      setPrepMin(prevMin => prevMin - 1);
+    if (prepMin > 0) {
+      setPrepMin((prevMin) => prevMin - 1);
     }
-  }
+  };
+
+  const reduceNameLength = (fullName) => {
+    const names = fullName.split(" ");
+    // Check if there are at least first name and last name
+    if (names.length < 2) {
+      return fullName;
+    }
+
+    const firstInitial = names[0][0].toUpperCase() + ".";
+    const lastName = names[names.length - 1];
+    const reducedName = firstInitial + lastName;
+
+    return reducedName;
+  };
+
+  const formatToTwoDecimalPlace = (num) => {
+    return num.toFixed(2);
+  };
 
   React.useEffect(() => {
+    // timer countdown
     const timeoutId = setTimeout(() => {
-      if(prepSec > 0) {
-        setPrepSec(prevSec => prevSec - 1);
-      } else if(prepMin > 0) {
+      if (prepSec > 0) {
+        setPrepSec((prevSec) => prevSec - 1);
+      } else if (prepMin > 0) {
         setPrepSec(59);
-      } else {
-        setStatus("Ready")
       }
-    }, 1000)
+    }, 1000);
 
     return () => {
-      clearTimeout(timeoutId)
-    }
-  }, [prepMin, prepSec])
+      clearTimeout(timeoutId);
+    };
+  }, [prepMin, prepSec]);
 
   React.useEffect(() => {
-    if(prepMin > 0 && prepSec === 0) {
+    if (prepMin > 0 && prepSec === 0) {
       setPrepSec(59);
-      setPrepMin(prevMin => prevMin - 1);
+      setPrepMin((prevMin) => prevMin - 1);
     }
-  }, [prepSec])
+  }, [prepSec]);
+
+  /* 
+    When status is Ready, the timer reset to 0, 
+    and when the timer is at 0, the status is set to Ready
+  */
+  React.useEffect(() => {
+    if (status === "Ready") {
+      setPrepSec(0);
+      setPrepMin(0);
+    }
+    if (prepMin === 0 && prepSec === 0 && status !== "Picked Up") {
+      setStatus("Ready");
+    }
+  }, [prepSec, status]);
 
   return (
-    <div>
+    <>
       <OrderStatusModal
         open={openStatusModal}
         handleClose={handleCloseStatusModal}
         handleStatusButtonClick={handleStatusButtonClick}
+        status={status}
       />
       <UserInfoModal
         open={openCustomerInfoModal}
         handleClose={handleCloseCustomerInfoModal}
-        name="BIN MAI"
-        phoneNumber="12934854"
-        email="binmai@gmail.com"
+        name={customerName}
+        phoneNumber={customerPhoneNumber}
+        email={customerEmail}
       />
-      <Accordion sx={{ maxWidth: "1000px", border: "2px solid black" }}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-        >
-          <Box sx={{ display: "flex", gap: "40px", alignItems: "center" }}>
+      <AccordionStyled>
+        <AccordionSummary aria-controls="panel1a-content" id="panel1a-header">
+          <AccordionSummaryFlexBox>
             <Box direction="column">
-              <Typography fontWeight="bold" variant="subtitle1">
-                #01234
-              </Typography>
-              <Typography fontWeight="light" variant="subtitle2">
-                May 19, 4023 3:40pm
-              </Typography>
+              <TypographyStyled fontWeight="bold" variant="subtitle1">
+                {orderId}
+              </TypographyStyled>
+              <TypographyStyled fontWeight="light" variant="subtitle2">
+                {orderTime}
+              </TypographyStyled>
             </Box>
-            <Button onClick={handleOpenCustomerInfoModal} variant="contained">B.MAI</Button>
-            <GreenText variant="subtitle1">Need utensils</GreenText>
-            <Button
+            <ButtonStyled
+              onClick={handleOpenCustomerInfoModal}
+              variant="contained"
+            >
+              {reduceNameLength(customerName)}
+            </ButtonStyled>
+            {hasUtensils ? (
+              <GreenText variant="subtitle1">Need Utensils</GreenText>
+            ) : (
+              <RedText variant="subtitle1">No Utensils</RedText>
+            )}
+            <ButtonStyled
               variant="contained"
               color={
                 status === "Preparing"
@@ -136,220 +182,118 @@ function BasicAccordion({
               onClick={handleOpenStatusModal}
             >
               {status}
-            </Button>
-
-            <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
-              <Fab
-                variant="contained"
-                size="small"
-                color="primary"
-                onClick={handleDecreasePrepTime}
-              >
-                -
-              </Fab>
-              <Typography variant="subtitle1">
-                {prepMin < 10 ? `0${prepMin}` : prepMin}:
-                {prepSec < 10 ? `0${prepSec}` : prepSec}
-              </Typography>
-              <Fab
-                variant="contained"
-                size="small"
-                color="primary"
-                onClick={handleIncreasePrepTime}
-              >
-                +
-              </Fab>
-            </Box>
+            </ButtonStyled>
+            {status !== "Picked Up" && (
+              <TimerFlexBox>
+                <Fab
+                  variant="contained"
+                  size="small"
+                  color="primary"
+                  onClick={handleDecreasePrepTime}
+                >
+                  -
+                </Fab>
+                <Typography variant="subtitle1">
+                  {prepMin < 10 ? `0${prepMin}` : prepMin}:
+                  {prepSec < 10 ? `0${prepSec}` : prepSec}
+                </Typography>
+                <Fab
+                  variant="contained"
+                  size="small"
+                  color="primary"
+                  onClick={handleIncreasePrepTime}
+                >
+                  +
+                </Fab>
+              </TimerFlexBox>
+            )}
             <Box direction="column">
+              <TypographyStyled fontWeight="bold" variant="subtitle1">
+                Pick up {itemsQuantity} items
+              </TypographyStyled>
               <Typography fontWeight="bold" variant="subtitle1">
-                Pick up 4 items
-              </Typography>
-              <Typography fontWeight="bold" variant="subtitle1">
-                Total: $88.00
+                Total: ${formatToTwoDecimalPlace(subTotal + subTotal * 1.12)}
               </Typography>
             </Box>
-          </Box>
+          </AccordionSummaryFlexBox>
         </AccordionSummary>
-        <AccordionDetails sx={{ backgroundColor: grey[300] }}>
+        <AccordionDetailsStyled>
           <Grid container>
-            <Grid item xs={6} textAlign="center">
+            <Grid item xs={12} sm={6} textAlign="center">
               <Typography fontWeight="bolder" variant="h4">
                 Order
               </Typography>
-              {/* Item Start - testing */}
-              <Grid container rowGap={3} mt={3}>
-                <Grid container rowGap={2}>
-                  <Grid textAlign="center" item xs={2}>
-                    <Typography fontWeight="bold">x2</Typography>
+              {items.map((item, index) => {
+                return (
+                  <Grid key={index} container rowGap={3} mt={3}>
+                    <Grid container rowGap={2}>
+                      <Grid textAlign="center" item xs={2}>
+                        <Typography fontWeight="bold">
+                          {item.quantity}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={7} textAlign="left">
+                        <Typography fontWeight="bold">{item.name}</Typography>
+                      </Grid>
+                      <Grid item xs={3} textAlign="right">
+                        <Typography fontWeight="bold">
+                          ${formatToTwoDecimalPlace(item.price)}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Divider />
+                      </Grid>
+                    </Grid>
+                    {item.options.map((option, index) => {
+                      return (
+                        <Grid key={index} container rowGap={2}>
+                          <Grid textAlign="center" item xs={2}>
+                            <Typography>{index + 1}</Typography>
+                          </Grid>
+                          <Grid item xs={7} textAlign="left">
+                            <Typography>{option.name}</Typography>
+                          </Grid>
+                          <Grid item xs={3} textAlign="right">
+                            <Typography>
+                              ${formatToTwoDecimalPlace(option.price)}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Divider />
+                          </Grid>
+                        </Grid>
+                      );
+                    })}
+                    <Grid container rowGap={2}>
+                      <Grid textAlign="center" item xs={2}></Grid>
+                      <Grid item xs={7} textAlign="left">
+                        <Typography fontWeight="bold">Total</Typography>
+                      </Grid>
+                      <Grid item xs={3} textAlign="right">
+                        <Typography fontWeight="bold">
+                          ${formatToTwoDecimalPlace(item.totalPrice)}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Divider />
+                      </Grid>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={7} textAlign="left">
-                    <Typography fontWeight="bold">
-                      Make your own (3 options)
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={3} textAlign="right">
-                    <Typography fontWeight="bold">$40.00</Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Divider />
-                  </Grid>
-                </Grid>
-
-                <Grid container rowGap={2}>
-                  <Grid textAlign="center" item xs={2}>
-                    <Typography>1</Typography>
-                  </Grid>
-                  <Grid item xs={7} textAlign="left">
-                    <Typography>Grilled Chicken</Typography>
-                  </Grid>
-                  <Grid item xs={3} textAlign="right">
-                    <Typography>$0.00</Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Divider />
-                  </Grid>
-                </Grid>
-
-                <Grid container rowGap={2}>
-                  <Grid textAlign="center" item xs={2}>
-                    <Typography>2</Typography>
-                  </Grid>
-                  <Grid item xs={7} textAlign="left">
-                    <Typography>Grilled Pork</Typography>
-                  </Grid>
-                  <Grid item xs={3} textAlign="right">
-                    <Typography>$0.00</Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Divider />
-                  </Grid>
-                </Grid>
-
-                <Grid container rowGap={2}>
-                  <Grid textAlign="center" item xs={2}>
-                    <Typography>3</Typography>
-                  </Grid>
-                  <Grid item xs={7} textAlign="left">
-                    <Typography>Fried Egg</Typography>
-                  </Grid>
-                  <Grid item xs={3} textAlign="right">
-                    <Typography>$0.00</Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Divider />
-                  </Grid>
-                </Grid>
-
-                <Grid container rowGap={2}>
-                  <Grid textAlign="center" item xs={2}></Grid>
-                  <Grid item xs={7} textAlign="left">
-                    <Typography fontWeight="bold">Total</Typography>
-                  </Grid>
-                  <Grid item xs={3} textAlign="right">
-                    <Typography fontWeight="bold">$40.00</Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Divider />
-                  </Grid>
-                </Grid>
-              </Grid>
-              {/* End */}
-
-              {/* Item Start */}
-              <Grid container rowGap={3} mt={4}>
-                <Grid container rowGap={2}>
-                  <Grid textAlign="center" item xs={2}>
-                    <Typography fontWeight="bold">x2</Typography>
-                  </Grid>
-                  <Grid item xs={7} textAlign="left">
-                    <Typography fontWeight="bold">
-                      Make your own (3 options)
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={3} textAlign="right">
-                    <Typography fontWeight="bold">$40.00</Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Divider />
-                  </Grid>
-                </Grid>
-
-                <Grid container rowGap={2}>
-                  <Grid textAlign="center" item xs={2}>
-                    <Typography>1</Typography>
-                  </Grid>
-                  <Grid item xs={7} textAlign="left">
-                    <Typography>Spring roll</Typography>
-                  </Grid>
-                  <Grid item xs={3} textAlign="right">
-                    <Typography>$0.00</Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Divider />
-                  </Grid>
-                </Grid>
-
-                <Grid container rowGap={2}>
-                  <Grid textAlign="center" item xs={2}>
-                    <Typography>2</Typography>
-                  </Grid>
-                  <Grid item xs={7} textAlign="left">
-                    <Typography>Grilled Pork</Typography>
-                  </Grid>
-                  <Grid item xs={3} textAlign="right">
-                    <Typography>$0.00</Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Divider />
-                  </Grid>
-                </Grid>
-
-                <Grid container rowGap={2}>
-                  <Grid textAlign="center" item xs={2}>
-                    <Typography>3</Typography>
-                  </Grid>
-                  <Grid item xs={7} textAlign="left">
-                    <Typography>Fried Egg</Typography>
-                  </Grid>
-                  <Grid item xs={3} textAlign="right">
-                    <Typography>$0.00</Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Divider />
-                  </Grid>
-                </Grid>
-
-                <Grid container rowGap={2}>
-                  <Grid textAlign="center" item xs={2}></Grid>
-                  <Grid item xs={7} textAlign="left">
-                    <Typography fontWeight="bold">Total</Typography>
-                  </Grid>
-                  <Grid item xs={3} textAlign="right">
-                    <Typography fontWeight="bold">$40.00</Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Divider />
-                  </Grid>
-                </Grid>
-              </Grid>
+                );
+              })}
             </Grid>
-            <Grid item xs={1} textAlign="center">
+            <DividerContainerStyled item xs={1} textAlign="center">
               <Divider orientation="vertical" />
-            </Grid>
-            <Grid item xs={5} textAlign="center">
+            </DividerContainerStyled>
+            <Grid item xs={12} sm={5} textAlign="center">
               <Grid container justifyContent="center">
-                <Grid item>
+                <Grid item mt={2}>
                   <Typography fontWeight="bolder" variant="h4">
                     Note
                   </Typography>
                 </Grid>
-                <Grid item textAlign="left" sx={{ padding: "10px" }}>
-                  <Typography>
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Ipsam doloribus dolorem consectetur error reprehenderit
-                    laborum autem ducimus nisi, porro obcaecati dicta fuga?
-                    Quam, nulla alias expedita ipsam molestias mollitia commodi!
-                  </Typography>
+                <Grid item textAlign="center" p={3}>
+                  <Typography>{note}</Typography>
                 </Grid>
               </Grid>
               <Grid container justifyContent="center" rowGap={3} mt={3}>
@@ -358,7 +302,7 @@ function BasicAccordion({
                     Total Price
                   </Typography>
                 </Grid>
-                <Grid container sx={{ padding: "10px" }} rowGap={3}>
+                <Grid container p={2} rowGap={3}>
                   <Grid textAlign="left" item xs={6}>
                     <Typography fontWeight="bolder" variant="subtitle1">
                       Subtotal
@@ -366,7 +310,7 @@ function BasicAccordion({
                   </Grid>
                   <Grid textAlign="right" item xs={6}>
                     <Typography fontWeight="bolder" variant="subtitle1">
-                      $80.00
+                      ${formatToTwoDecimalPlace(subTotal)}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -379,7 +323,7 @@ function BasicAccordion({
                   </Grid>
                   <Grid textAlign="right" item xs={6}>
                     <Typography fontWeight="bolder" variant="subtitle1">
-                      $8.00
+                      ${formatToTwoDecimalPlace(subTotal * 1.12)}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -392,7 +336,7 @@ function BasicAccordion({
                   </Grid>
                   <Grid textAlign="right" item xs={6}>
                     <Typography fontWeight="bolder" variant="subtitle1">
-                      $88.00
+                      ${formatToTwoDecimalPlace(subTotal + subTotal * 1.12)}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -402,10 +346,10 @@ function BasicAccordion({
               </Grid>
             </Grid>
           </Grid>
-        </AccordionDetails>
-      </Accordion>
-    </div>
+        </AccordionDetailsStyled>
+      </AccordionStyled>
+    </>
   );
 }
 
-export default React.memo(BasicAccordion)
+export default React.memo(BasicAccordion);

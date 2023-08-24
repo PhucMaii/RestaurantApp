@@ -14,32 +14,63 @@ export default function OrderStatusModal(props) {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          maxWidth: "500px"
+          maxWidth: "500px",
         }}
         orientation="vertical"
         variant="contained"
       >
-        <Button 
-            color="inherit" 
-            key="Preparing"
-            onClick={props.handleStatusButtonClick}
-        >
-          Preparing
-        </Button>
-        <Button 
-            color="warning" 
-            key="Ready"
-            onClick={props.handleStatusButtonClick}
-        >
-          Ready
-        </Button>
-        <Button 
-            color="success" 
+        {props.status === "Preparing" && (
+          <>
+            <Button
+              color="inherit"
+              key="Preparing"
+              onClick={props.handleStatusButtonClick}
+            >
+              Preparing
+            </Button>
+            <Button
+              color="warning"
+              key="Ready"
+              onClick={props.handleStatusButtonClick}
+            >
+              Ready
+            </Button>
+            <Button
+              color="success"
+              key="PickedUp"
+              onClick={props.handleStatusButtonClick}
+            >
+              Picked Up
+            </Button>
+          </>
+        )}
+        {props.status === "Ready" && (
+          <>
+            <Button
+              color="warning"
+              key="Ready"
+              onClick={props.handleStatusButtonClick}
+            >
+              Ready
+            </Button>
+            <Button
+              color="success"
+              key="PickedUp"
+              onClick={props.handleStatusButtonClick}
+            >
+              Picked Up
+            </Button>
+          </>
+        )}
+        {props.status === "Picked Up" && (
+          <Button
+            color="success"
             key="PickedUp"
             onClick={props.handleStatusButtonClick}
-        >
-          Picked Up
-        </Button>
+          >
+            Picked Up
+          </Button>
+        )}
       </ButtonGroup>
     </Modal>
   );
