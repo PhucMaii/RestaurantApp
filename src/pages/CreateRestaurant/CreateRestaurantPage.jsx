@@ -1,13 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Grid,
-  TextField,
-  Button,
-} from "@mui/material";
+import { Grid, TextField, Button, Alert } from "@mui/material";
 import GoogleMaps from "../../components/GoogleMaps";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../../../firebase.config";
+import { db } from "../../../firebase.config";
 import {
   GridContainerStyled,
   GridStyled,
@@ -17,37 +12,41 @@ import {
 import { addDoc, collection } from "firebase/firestore";
 
 export default function SignupPage() {
-  const [restaurantName, setRestaurantName] = useState("");
-  const [restaurantType, setRestaurantType] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [address, setAddress] = useState(null);
+  const [restaurantData, setRestaurantData] = useState({});
+  const [notifications, setNotifications] = useState({});
+  const [receivedAdress, setReceivedAddress] = useState(null);
+
+  useEffect(() => {
+    if (receivedAdress) {
+      setRestaurantData({
+        ...restaurantData,
+        address: receivedAdress,
+      });
+    }
+  }, [receivedAdress]);
 
   const handleReceiveAddress = (data) => {
-    setAddress(data);
+    setReceivedAddress(data);
   };
 
-  const handleSignup = async () => {
+  const handleCreateRestaurant = async () => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
       const userCollection = collection(db, "users");
-      const data = {
-        name: restaurantName,
-        uid: user.uid,
-        email: user.email,
-        password: password,
-        restaurantType: restaurantType,
-        phoneNumber: phoneNumber,
-        address: address.description,
-      };
+      const userAuthData = localStorage.getItem("current-user");
+      const data = { ...userAuthData, ...restaurantData };
       await addDoc(userCollection, data);
-      console.log("Add restaurant successfully");
+      setNotifications({
+        on: true,
+        type: "success",
+        message:
+          "Congratulations! You Created Your Own Restaurant Successfully",
+      });
     } catch (error) {
-      console.log(error);
+      setNotifications({
+        on: true,
+        type: "error",
+        message: error.code,
+      });
     }
   };
 
@@ -57,6 +56,9 @@ export default function SignupPage() {
         <TitleStyled color="secondary" variant="h3">
           Account creation successful! Now, let's input your restaurant details.
         </TitleStyled>
+        {notifications.on && (
+          <Alert severity={notifications.type}>{notifications.message}</Alert>
+        )}
         <GridContainerStyled container rowGap={4}>
           <Grid container columnSpacing={3}>
             <Grid item xs={6}>
@@ -65,8 +67,13 @@ export default function SignupPage() {
                 type="input"
                 placeholder="eg: Bamboo Restaurant"
                 label="Restaurant Name"
-                value={restaurantName}
-                onChange={(e) => setRestaurantName(e.target.value)}
+                value={restaurantData.restaurantName}
+                onChange={(e) =>
+                  setRestaurantData({
+                    ...restaurantData,
+                    restaurantName: e.target.value,
+                  })
+                }
               />
             </Grid>
             <Grid item xs={6}>
@@ -75,8 +82,13 @@ export default function SignupPage() {
                 type="input"
                 placeholder="eg: Chinese"
                 label="Restaurant Type"
-                value={restaurantType}
-                onChange={(e) => setRestaurantType(e.target.value)}
+                value={restaurantData.restaurantType}
+                onChange={(e) =>
+                  setRestaurantData({
+                    ...restaurantData,
+                    restaurantType: e.target.value,
+                  })
+                }
               />
             </Grid>
           </Grid>
@@ -87,8 +99,13 @@ export default function SignupPage() {
                 type="input"
                 placeholder="eg: +1 (111) 111 - 1111"
                 label="Phone Number"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
+                value={restaurantData.phoneNumber}
+                onChange={(e) =>
+                  setRestaurantData({
+                    ...restaurantData,
+                    phoneNumber: e.target.value,
+                  })
+                }
               />
             </Grid>
           </Grid>
@@ -103,7 +120,7 @@ export default function SignupPage() {
                 fullWidth
                 size="large"
                 variant="contained"
-                onClick={handleSignup}
+                onClick={handleCreateRestaurant}
               >
                 CREATE YOUR RESTAURANT
               </Button>
