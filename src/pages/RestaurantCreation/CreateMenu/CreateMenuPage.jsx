@@ -1,29 +1,29 @@
-import { useState } from 'react'
+import { useState } from "react";
 import {
-    Grid,
-    Link,
-    TextField,
-    Typography,
-    Autocomplete,
-    Divider,
-    Button
-} from '@mui/material'
-import { 
-    StackStyled, 
-} from "./styles";
-import MultipleValueTextField from '../../components/MultipleValueTextField';
+  Grid,
+  Link,
+  TextField,
+  Typography,
+  Autocomplete,
+  Divider,
+  Button,
+} from "@mui/material";
+import { StackStyled } from "./styles";
+import MultipleValueTextField from "../../../components/MultipleValueTextField";
 
 export default function CreateMenuPage() {
-    const sections = ["Soup Section", "Grilled Section", "Apeteizer", "Drinks", "Dessert"];
-    const [options, setOptions] = useState([]);
-    const [currOption, setCurrOption] = useState("");
+  const sections = [
+    "Soup Section",
+    "Grilled Section",
+    "Apeteizer",
+    "Drinks",
+    "Dessert",
+  ];
+  const [options, setOptions] = useState([]);
+  const [currOption, setCurrOption] = useState("");
 
   return (
     <Grid container rowGap={3}>
-      <StackStyled direction="row" justifyContent="space-between">
-        <Link>Back</Link>
-        <Link>Skip</Link>
-      </StackStyled>
       <Grid container justifyContent="center">
         <Typography variant="h3" color="secondary">
           Create Menu
@@ -40,7 +40,9 @@ export default function CreateMenuPage() {
           disablePortal
           fullWidth
           options={sections}
-          renderInput={(params) => <TextField {...params} label="Section" />}
+          renderInput={(params) => (
+            <TextField {...params} label="Section" variant="filled" />
+          )}
         />
       </Grid>
       <Grid item xs={12}>
@@ -52,6 +54,7 @@ export default function CreateMenuPage() {
         <TextField
           required
           fullWidth
+          variant="filled"
           type="input"
           label="Item's Name"
           placeholder="Enter item's name..."
@@ -68,7 +71,7 @@ export default function CreateMenuPage() {
             values={options}
             setValues={setOptions}
             labelName="Option's Name"
-            variant="outlined"
+            variant="filled"
             width="100%"
             chipWidth={12}
           />
@@ -79,6 +82,7 @@ export default function CreateMenuPage() {
           required
           fullWidth
           multiline
+          variant="filled"
           rows={4}
           label="Item's Description (Must include ingredient of an item)"
           placeholder="Enter Item's Description..."
@@ -87,6 +91,7 @@ export default function CreateMenuPage() {
       <Grid item xs={12}>
         <TextField
           fullWidth
+          variant="filled"
           label="Item's Image URL"
           placeholder="Enter Item's Image URL..."
         />
@@ -105,11 +110,6 @@ export default function CreateMenuPage() {
       <Grid item xs={12}>
         <Button fullWidth variant="contained">
           ADD ITEM
-        </Button>
-      </Grid>
-      <Grid item xs={12} textAlign="right">
-        <Button variant="contained" color="success">
-          FINISH
         </Button>
       </Grid>
     </Grid>

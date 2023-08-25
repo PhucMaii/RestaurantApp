@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
+import HorizontalLinearStepper from "./pages/RestaurantCreation/RestaurantCreationStepper"
 import SigninPage from "./pages/Signin/SigninPage";
-import CreateRestaurantPage from "./pages/CreateRestaurant/CreateRestaurantPage";
+import CreateRestaurantPage from "./pages/RestaurantCreation/CreateRestaurant/CreateRestaurantPage";
 import { theme } from "./Provider/ThemeProvider";
 import ForgotPasswordPage from "./pages/ForgotPassword/ForgotPasswordPage";
 
@@ -16,6 +17,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           </Routes>
         </BrowserRouter>
+      <HorizontalLinearStepper />
       </ThemeProvider>
     </>
   );

@@ -1,32 +1,16 @@
 import React, { useState } from "react";
+import { Grid, Typography, Button } from "@mui/material";
 import {
-  Grid,
-  Link,
-  Typography,
-  Button
-} from "@mui/material";
-import { 
-    MenuImage, 
-    HelperTextStyled, 
-    StackStyled, 
-    HalfInputStyled, 
-    ChipStyled, 
-    ButtonContainerGrid 
+  MenuImage,
+  HelperTextStyled,
 } from "./styles";
-import MultipleValueTextField from "../../components/MultipleValueTextField";
+import MultipleValueTextField from "../../../components/MultipleValueTextField";
 
 export default function CreateSectionPage() {
   const [currSection, setCurrSection] = useState("");
   const [sections, setSections] = useState([]);
   return (
     <Grid container justifyContent="center" rowGap={5}>
-      <StackStyled
-        direction="row"
-        justifyContent="space-between"
-      >
-        <Link>Back</Link>
-        <Link>Skip</Link>
-      </StackStyled>
       <Grid container justifyContent="center">
         <MenuImage src="https://www.pngitem.com/pimgs/m/133-1331604_menu-text-menu-text-png-transparent-png.png" />
       </Grid>
@@ -42,7 +26,7 @@ export default function CreateSectionPage() {
           you need to manage it.
         </HelperTextStyled>
       </Grid>
-      <MultipleValueTextField 
+      <MultipleValueTextField
         currValue={currSection}
         setCurrValue={setCurrSection}
         values={sections}
@@ -51,11 +35,7 @@ export default function CreateSectionPage() {
         variant="filled"
         width="50%"
         chipWidth={6}
-        
       />
-      <ButtonContainerGrid item xs={12} textAlign='right'>
-          <Button variant="contained" color="success">GO TO NEXT STEP</Button>
-      </ButtonContainerGrid>
     </Grid>
   );
 }

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Grid, TextField, Button, Alert } from "@mui/material";
-import GoogleMaps from "../../components/GoogleMaps";
-import { db } from "../../../firebase.config";
+import { Grid, TextField, Button } from "@mui/material";
+import GoogleMaps from "../../../components/GoogleMaps";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "../../../../firebase.config";
 import {
   GridContainerStyled,
   GridStyled,
