@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, useEffect, memo } from "react";
 import {
   AccordionSummary,
   Typography,
@@ -7,7 +7,6 @@ import {
   Grid,
   Divider,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   GreenText,
   RedText,
@@ -21,8 +20,11 @@ import {
 } from "./style";
 import OrderStatusModal from "../Modals/OrderStatusModal";
 import UserInfoModal from "../Modals/UserInfoModal";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../../../firebase.config";
 
 function BasicAccordion({
+  docId,
   orderId,
   orderTime,
   customerName,
@@ -33,13 +35,13 @@ function BasicAccordion({
   itemsQuantity,
   subTotal,
   note,
+  orderStatus,
 }) {
-  const [prepMin, setPrepMin] = React.useState(11);
-  const [prepSec, setPrepSec] = React.useState(0);
-  const [status, setStatus] = React.useState("Preparing");
-  const [openStatusModal, setOpenStatusModal] = React.useState(false);
-  const [openCustomerInfoModal, setOpenCustomerInfoModal] =
-    React.useState(false);
+  const initialRemainingTime = 600;
+  const [remainingTime, setRemainingTime] = useState(initialRemainingTime);
+  const [status, setStatus] = useState(orderStatus);
+  const [openStatusModal, setOpenStatusModal] = useState(false);
+  const [openCustomerInfoModal, setOpenCustomerInfoModal] = useState(false);
 
   const handleOpenStatusModal = (e) => {
     e.stopPropagation();
@@ -69,14 +71,29 @@ function BasicAccordion({
 
   const handleIncreasePrepTime = (e) => {
     e.stopPropagation();
-    setPrepMin((prevMin) => prevMin + 1);
+    setRemainingTime((prevRemainingTime) => prevRemainingTime + 60);
+    localStorage.setItem(docId, remainingTime + 60);
   };
 
   const handleDecreasePrepTime = (e) => {
     e.stopPropagation();
-    if (prepMin > 0) {
-      setPrepMin((prevMin) => prevMin - 1);
+    if (remainingTime > 60) {
+      setRemainingTime((prevRemainingTime) => prevRemainingTime - 60);
+      localStorage.setItem(docId, remainingTime - 60);
     }
+  };
+
+  const convertTimestampToDate = (timestamp) => {
+    const date = timestamp.toDate();
+    const formattedDate = date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+    });
+    return formattedDate;
   };
 
   const reduceNameLength = (fullName) => {
@@ -94,44 +111,63 @@ function BasicAccordion({
   };
 
   const formatToTwoDecimalPlace = (num) => {
-    return num.toFixed(2);
+    if (typeof num === "number") {
+      return num.toFixed(2);
+    }
+    return "N/A";
   };
 
-  React.useEffect(() => {
-    // timer countdown
-    const timeoutId = setTimeout(() => {
-      if (prepSec > 0) {
-        setPrepSec((prevSec) => prevSec - 1);
-      } else if (prepMin > 0) {
-        setPrepSec(59);
+  // Save the remaining time on localStorage
+  const startTimer = () => {
+    localStorage.setItem(docId, initialRemainingTime);
+    setRemainingTime(initialRemainingTime);
+  };
+
+  // Get the remaining time if the page is refreshed
+  useEffect(() => {
+    const localRemainingTime = localStorage.getItem(docId);
+    setRemainingTime(parseInt(localRemainingTime));
+
+    // For testing only
+    startTimer();
+  }, []);
+
+  useEffect(() => {
+    const timeInterval = setTimeout(() => {
+      if (remainingTime > 0) {
+        setRemainingTime((prevRemainingTime) => prevRemainingTime - 1);
+        localStorage.setItem(docId, remainingTime - 1);
+      } else {
+        clearTimeout(timeInterval);
       }
     }, 1000);
-
     return () => {
-      clearTimeout(timeoutId);
+      clearTimeout(timeInterval);
     };
-  }, [prepMin, prepSec]);
+  }, [remainingTime]);
 
-  React.useEffect(() => {
-    if (prepMin > 0 && prepSec === 0) {
-      setPrepSec(59);
-      setPrepMin((prevMin) => prevMin - 1);
-    }
-  }, [prepSec]);
-
-  /* 
-    When status is Ready, the timer reset to 0, 
-    and when the timer is at 0, the status is set to Ready
-  */
-  React.useEffect(() => {
-    if (status === "Ready") {
-      setPrepSec(0);
-      setPrepMin(0);
-    }
-    if (prepMin === 0 && prepSec === 0 && status !== "Picked Up") {
+  useEffect(() => {
+    if (remainingTime === 0 && status !== "Picked Up") {
       setStatus("Ready");
     }
-  }, [prepSec, status]);
+    if (status === "Ready") {
+      setRemainingTime(0);
+      localStorage.setItem(docId, remainingTime);
+    }
+  }, [remainingTime, status]);
+
+  useEffect(() => {
+    const orderRef = doc(db, "orders", docId);
+    const updateStatus = async () => {
+      try {
+        await updateDoc(orderRef, { orderStatus: status });
+        console.log("Updated");
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    updateStatus();
+  }, [status]);
 
   return (
     <>
@@ -156,7 +192,7 @@ function BasicAccordion({
                 {orderId}
               </TypographyStyled>
               <TypographyStyled fontWeight="light" variant="subtitle2">
-                {orderTime}
+                {convertTimestampToDate(orderTime)}
               </TypographyStyled>
             </Box>
             <ButtonStyled
@@ -194,8 +230,13 @@ function BasicAccordion({
                   -
                 </Fab>
                 <Typography variant="subtitle1">
-                  {prepMin < 10 ? `0${prepMin}` : prepMin}:
-                  {prepSec < 10 ? `0${prepSec}` : prepSec}
+                  {Math.floor(remainingTime / 60) < 10
+                    ? `0${Math.floor(remainingTime / 60)}`
+                    : Math.floor(remainingTime / 60)}
+                  :
+                  {remainingTime % 60 < 10
+                    ? `0${remainingTime % 60}`
+                    : remainingTime % 60}
                 </Typography>
                 <Fab
                   variant="contained"
@@ -212,7 +253,7 @@ function BasicAccordion({
                 Pick up {itemsQuantity} items
               </TypographyStyled>
               <Typography fontWeight="bold" variant="subtitle1">
-                Total: ${formatToTwoDecimalPlace(subTotal + subTotal * 1.12)}
+                Total: ${formatToTwoDecimalPlace(subTotal * 1.12)}
               </Typography>
             </Box>
           </AccordionSummaryFlexBox>
@@ -220,7 +261,7 @@ function BasicAccordion({
         <AccordionDetailsStyled>
           <Grid container>
             <Grid item xs={12} sm={6} textAlign="center">
-              <Typography fontWeight="bolder" variant="h4">
+              <Typography fontWeight="bold" variant="h4">
                 Order
               </Typography>
               {items.map((item, index) => {
@@ -229,7 +270,7 @@ function BasicAccordion({
                     <Grid container rowGap={2}>
                       <Grid textAlign="center" item xs={2}>
                         <Typography fontWeight="bold">
-                          {item.quantity}
+                          x{item.quantity}
                         </Typography>
                       </Grid>
                       <Grid item xs={7} textAlign="left">
@@ -323,7 +364,7 @@ function BasicAccordion({
                   </Grid>
                   <Grid textAlign="right" item xs={6}>
                     <Typography fontWeight="bolder" variant="subtitle1">
-                      ${formatToTwoDecimalPlace(subTotal * 1.12)}
+                      ${formatToTwoDecimalPlace(subTotal * 0.12)}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -336,7 +377,7 @@ function BasicAccordion({
                   </Grid>
                   <Grid textAlign="right" item xs={6}>
                     <Typography fontWeight="bolder" variant="subtitle1">
-                      ${formatToTwoDecimalPlace(subTotal + subTotal * 1.12)}
+                      ${formatToTwoDecimalPlace(subTotal * 1.12)}
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -352,4 +393,4 @@ function BasicAccordion({
   );
 }
 
-export default React.memo(BasicAccordion);
+export default memo(BasicAccordion);

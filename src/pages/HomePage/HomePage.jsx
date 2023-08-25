@@ -1,137 +1,182 @@
-import { Button, Grid, Typography, Divider } from "@mui/material";
-import React from "react";
+import { Grid, Typography, Divider, Fab } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import BasicAccordion from "../../components/OrderDetails/OrderDetails";
+import { db } from "../../../firebase.config";
+import { collection, onSnapshot } from "firebase/firestore";
 export default function HomePage() {
+  const [readyOrders, setReadyOrders] = useState([]);
+  const [preparingOrders, setPreparingOrders] = useState([]);
+  const [preparingTime, setPreparingTime] = useState(600);
+  const orderCollection = collection(db, "orders");
+
+  const handleIncreasePreparingTime = () => {
+    setPreparingTime(prevTime => prevTime + 60);
+  }
+
+  const handleDecreasePreparingTime = () => {
+    setPreparingTime(prevTime => prevTime - 60);
+  }
+  useEffect(() => {
+    const observer = () => {
+      try {
+        const unsubscribe = onSnapshot(orderCollection, (snapshot) => {
+          const updatedData = snapshot.docs.map((doc) => {
+            const data = doc.data();
+            if (
+              data.orderStatus === "Ready" ||
+              data.orderStatus === "Preparing"
+            ) {
+              return { id: doc.id, ...data };
+            }
+            return null;
+          });
+          const preparingOrders = updatedData.filter(
+            (data) => data !== null && data.orderStatus !== "Ready"
+          );
+          const newReadyOrders = updatedData.filter(
+            (data) => data !== null && data.orderStatus !== "Preparing"
+          );
+          setPreparingOrders(preparingOrders);
+          setReadyOrders(newReadyOrders);
+        });
+        return () => unsubscribe();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    observer();
+  }, []);
   return (
-    <Grid container>
+    <Grid container rowGap={3}>
       <Grid container rowGap={2}>
         <Grid container justifyContent="center">
           <Typography variant="h4">Preparing Time</Typography>
         </Grid>
-        <Grid container justifyContent="center" columnGap={3}>
-          <Button variant="contained" color="inherit">
-            +
-          </Button>
-          <Typography variant="h6">12 mins</Typography>
-          <Button variant="contained" color="inherit">
+        <Grid
+          container
+          justifyContent="center"
+          alignItems="center"
+          columnGap={3}
+        >
+          <Fab
+            onClick={handleDecreasePreparingTime}
+            variant="contained"
+            size="small"
+            color="inherit"
+          >
             -
-          </Button>
+          </Fab>
+          <Typography variant="h6">
+            {Math.floor(preparingTime / 60)} mins
+          </Typography>
+          <Fab
+            onClick={handleIncreasePreparingTime}
+            variant="contained"
+            size="small"
+            color="inherit"
+          >
+            +
+          </Fab>
         </Grid>
       </Grid>
-      <Divider />
+      <Grid item xs={12}>
+        <Divider />
+      </Grid>
       <Grid container justifyContent="center" rowGap={3}>
-        <Grid container justifyContent="center">
-          <BasicAccordion
-            key="01234"
-            orderId="#01234"
-            orderTime="May 14, 2023 5:09pm"
-            customerName="Bin Mai"
-            customerEmail="binmai@gmail.com"
-            customerPhoneNumber="123456677"
-            hasUtensils={false}
-            items={[
-              {
-                name: "Make your own (3 options)",
-                options: [
-                  {
-                    name: "Fried Egg",
-                    price: 0,
-                  },
-                  {
-                    name: "Grilled Pork",
-                    price: 0,
-                  },
-                  {
-                    name: "ADD - Spring roll",
-                    price: 3,
-                  },
-                ],
-                quantity: 1,
-                price: 18,
-                totalPrice: 21,
-              },
-              {
-                name: "Minh's Specialty",
-                options: [
-                  {
-                    name: "Rare Beef",
-                    price: 0,
-                  },
-                  {
-                    name: "Brisket",
-                    price: 0,
-                  },
-                  {
-                    name: "Meat Ball",
-                    price: 0,
-                  },
-                ],
-                quantity: 2,
-                price: 15,
-                totalPrice: 30,
-              },
-            ]}
-            itemsQuantity={3}
-            subTotal={51}
-            note="Please add more sauce for me, last time I reaceived very less sauce. Thank you"
-          />
-        </Grid>
-        <Grid container justifyContent="center">
-          <BasicAccordion
-            key="01235"
-            orderId="#01235"
-            orderTime="May 14, 2023 5:20pm"
-            customerName="Michael Jackson"
-            customerEmail="binmai@gmail.com"
-            customerPhoneNumber="123456677"
-            hasUtensils={true}
-            items={[
-              {
-                name: "Make your own (3 options)",
-                options: [
-                  {
-                    name: "Fried Egg",
-                    price: 0,
-                  },
-                  {
-                    name: "Grilled Pork",
-                    price: 0,
-                  },
-                  {
-                    name: "ADD - Spring roll",
-                    price: 3,
-                  },
-                ],
-                quantity: 1,
-                price: 18,
-                totalPrice: 21,
-              },
-              {
-                name: "Minh's Specialty",
-                options: [
-                  {
-                    name: "Rare Beef",
-                    price: 0,
-                  },
-                  {
-                    name: "Brisket",
-                    price: 0,
-                  },
-                  {
-                    name: "Meat Ball",
-                    price: 0,
-                  },
-                ],
-                quantity: 2,
-                price: 15,
-                totalPrice: 30,
-              },
-            ]}
-            itemsQuantity={3}
-            subTotal={60}
-            note="Please add more sauce for me, last time I reaceived very less sauce. Thank you"
-          />
-        </Grid>
+        <Grid container justifyContent="center"></Grid>
+        {preparingOrders.map((order) => {
+          if (!order.items) {
+            console.log("Order has no items:", order.id);
+            return null; // Skip rendering this order
+          }
+          return (
+            <Grid key={order.id} container justifyContent="center">
+              <BasicAccordion
+                docId={order.id}
+                orderStatus={order.orderStatus}
+                orderId={order.orderId}
+                orderTime={order.orderTime}
+                customerName={order.customerName}
+                customerEmail={order.customerEmail}
+                customerPhoneNumber={order.customerPhoneNumber}
+                hasUtensils={order.hasUtensils}
+                items={order.items.map((item) => {
+                  return {
+                    name: item.name,
+                    options: item.options
+                      ? item.options.map((option) => {
+                          return {
+                            name: option.name,
+                            price: option.price,
+                          };
+                        })
+                      : [],
+                    price: item.price,
+                    quantity: item.quantity,
+                    totalPrice: item.totalPrice,
+                  };
+                })}
+                itemsQuantity={order.items.reduce((prevQuantity, item) => {
+                  return prevQuantity + item.quantity;
+                }, 0)}
+                subTotal={order.items.reduce((prevQuantity, item) => {
+                  return prevQuantity + item.totalPrice;
+                }, 0)}
+                note={order.note}
+              />
+            </Grid>
+          );
+        })}
+      </Grid>
+      <Grid item xs={12}>
+        <Divider textAlign="left">
+          <Typography variant="h4">Ready</Typography>
+        </Divider>
+      </Grid>
+      <Grid container justifyContent="center" rowGap={3}>
+        {readyOrders.map((order) => {
+          if (!order.items) {
+            console.log("Order has no items:", order.id);
+            return null; // Skip rendering this order
+          }
+          return (
+            <Grid key={order.id} container justifyContent="center">
+              <BasicAccordion
+                docId={order.id}
+                orderStatus={order.orderStatus}
+                orderId={order.orderId}
+                orderTime={order.orderTime}
+                customerName={order.customerName}
+                customerEmail={order.customerEmail}
+                customerPhoneNumber={order.customerPhoneNumber}
+                hasUtensils={order.hasUtensils}
+                items={order.items.map((item) => {
+                  return {
+                    name: item.name,
+                    options: item.options
+                      ? item.options.map((option) => {
+                          return {
+                            name: option.name,
+                            price: option.price,
+                          };
+                        })
+                      : [],
+                    price: item.price,
+                    quantity: item.quantity,
+                    totalPrice: item.totalPrice,
+                  };
+                })}
+                itemsQuantity={order.items.reduce((prevQuantity, item) => {
+                  return prevQuantity + item.quantity;
+                }, 0)}
+                subTotal={order.items.reduce((prevQuantity, item) => {
+                  return prevQuantity + item.totalPrice;
+                }, 0)}
+                note={order.note}
+              />
+            </Grid>
+          );
+        })}
       </Grid>
     </Grid>
   );
