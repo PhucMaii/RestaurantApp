@@ -7,6 +7,7 @@ import {
   Autocomplete,
   Divider,
   Button,
+  LinearProgress
 } from "@mui/material";
 import MultipleValueTextField from "../../../components/MultipleValueTextField";
 import { collection, getDoc, getDocs, query, where } from "firebase/firestore";
@@ -22,12 +23,9 @@ export default function CreateMenuPage() {
   const [currOption, setCurrOption] = useState("");
   const [imageProgress, setImageProgress] = useState(null);
 
-  const uploadImageFunc = (e) => {
-    document.getElementById("fileInput").click();
-  }
-
   const handleFileInputChange = (e) => {
-    setImageFile(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+    setImageFile(selectedFile);
     // Where the image is going to be stored
     const storageRef = ref(storage, `itemImages/${Date.now()}/menuItem`);
     // How much image is uploaded by %
@@ -45,9 +43,7 @@ export default function CreateMenuPage() {
       })
     })
   }
-  useEffect(() =>  {
-    console.log(imageFile);
-  }, [imageFile]);
+  
   const fetchSections = async () => {
     const menuCollection = collection(db, "menu");
     const restaurantRef = JSON.parse(localStorage.getItem("current-user"));
@@ -66,6 +62,7 @@ export default function CreateMenuPage() {
       console.log(error)
     }
   }
+
   useEffect(() => {
     fetchSections();
   }, [])
@@ -149,15 +146,25 @@ export default function CreateMenuPage() {
         </Divider>
       </Grid>
       <Grid item xs={12}>
-        <Button onClick={uploadImageFunc} fullWidth variant="outlined" component="label">
-          Upload File
-          <input id="fileInput" onChange={handleFileInputChange} type="file" hidden />
-        </Button>
+        <input
+          accept="image/*"
+          style={{ display: "none" }}
+          id="outlined-button-file"
+          type="file"
+          onChange={handleFileInputChange}
+        />
+        <label htmlFor="outlined-button-file">
+          <Button fullWidth variant="outlined" component="span">
+            Upload
+          </Button>
+        </label>
       </Grid>
-      <Grid item xs={12}>
-        <div>{imageProgress}</div>
-        <div>{image}</div>
-      </Grid>
+      {imageProgress !== null && (
+        <Grid item xs={12}>
+          <LinearProgress variant="determinate" value={imageProgress} />
+          <Typography fontWeight="bold" textAlign="left">URL: {image}</Typography>
+        </Grid>
+      )}
       <Grid item xs={12}>
         <Button fullWidth variant="contained">
           ADD ITEM
