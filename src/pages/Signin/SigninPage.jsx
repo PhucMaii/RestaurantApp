@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
+  createUserWithEmailAndPassword,
   getAdditionalUserInfo,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -42,6 +43,14 @@ export default function SigninPage() {
   const navigate = useNavigate();
 
   const handleEmailAndPasswordLogin = async () => {
+    if(password.length < 6) {
+      setNotification({
+        on: true,
+        type: "error",
+        message: "Password should be at least 6 characters"
+      })
+      return;
+    }
     const userData = { email, password, provider: "Email/Password Provider" };
     try {
       const userCredential = await signInWithEmailAndPassword(
@@ -52,12 +61,13 @@ export default function SigninPage() {
       const user = userCredential.user;
     } catch (error) {
       if (error.code === "auth/user-not-found") {
+        const newUser = await createUserWithEmailAndPassword(auth, email, password);
         localStorage.setItem("current-user", JSON.stringify(userData));
         navigate("/create-restaurant");
       } else {
         setNotification({
           on: true,
-          type: error,
+          type: "error",
           message: error.code,
         });
       }

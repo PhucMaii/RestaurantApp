@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Grid,
   Link,
@@ -8,20 +8,67 @@ import {
   Divider,
   Button,
 } from "@mui/material";
-import { StackStyled } from "./styles";
 import MultipleValueTextField from "../../../components/MultipleValueTextField";
+import { collection, getDoc, getDocs, query, where } from "firebase/firestore";
+import {getDownloadURL, ref, uploadBytesResumable} from 'firebase/storage'
+import { db, storage } from "../../../../firebase.config";
 
 export default function CreateMenuPage() {
-  const sections = [
-    "Soup Section",
-    "Grilled Section",
-    "Apeteizer",
-    "Drinks",
-    "Dessert",
-  ];
+  const [sections, setSections] = useState([]);
   const [options, setOptions] = useState([]);
+  const [itemData, setItemData] = useState({});
+  const [imageFile, setImageFile] = useState(null);
+  const [image, setImage] = useState("");
   const [currOption, setCurrOption] = useState("");
+  const [imageProgress, setImageProgress] = useState(null);
 
+  const uploadImageFunc = (e) => {
+    document.getElementById("fileInput").click();
+  }
+
+  const handleFileInputChange = (e) => {
+    setImageFile(e.target.files[0]);
+    // Where the image is going to be stored
+    const storageRef = ref(storage, `itemImages/${Date.now()}/menuItem`);
+    // How much image is uploaded by %
+    const uploadImage = uploadBytesResumable(storageRef, e.target.files[0]);
+    // Snapshot will provide how much image is uploaded
+    uploadImage.on("state_changed", (snapshot) => {
+      const progressOfImageUpload = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      setImageProgress(progressOfImageUpload);
+    }, (error) => {
+      console.log("There was an error uploading on image", error);
+    }, () => {
+      getDownloadURL(uploadImage.snapshot.ref).then((url) => {
+        console.log('image uploaded at url', url);
+        setImage(url);
+      })
+    })
+  }
+  useEffect(() =>  {
+    console.log(imageFile);
+  }, [imageFile]);
+  const fetchSections = async () => {
+    const menuCollection = collection(db, "menu");
+    const restaurantRef = JSON.parse(localStorage.getItem("current-user"));
+    const menu = query(menuCollection, where("restaurantRef", "==", `/users/${restaurantRef.id}`));
+    try {
+      const querySnapshot = await getDocs(menu);
+      querySnapshot.forEach((doc) => {
+        const sectionList = doc.data().sections;
+        // Convert sections back to the array of strings
+        const newSections = sectionList.map((sectionObj) => {
+          return sectionObj.name;
+        })
+        setSections(newSections);
+      })
+    } catch(error) {
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    fetchSections();
+  }, [])
   return (
     <Grid container rowGap={3}>
       <Grid container justifyContent="center">
@@ -102,10 +149,14 @@ export default function CreateMenuPage() {
         </Divider>
       </Grid>
       <Grid item xs={12}>
-        <Button fullWidth variant="outlined" component="label">
+        <Button onClick={uploadImageFunc} fullWidth variant="outlined" component="label">
           Upload File
-          <input type="file" hidden />
+          <input id="fileInput" onChange={handleFileInputChange} type="file" hidden />
         </Button>
+      </Grid>
+      <Grid item xs={12}>
+        <div>{imageProgress}</div>
+        <div>{image}</div>
       </Grid>
       <Grid item xs={12}>
         <Button fullWidth variant="contained">

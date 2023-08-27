@@ -96,7 +96,7 @@ export default function HorizontalLinearStepper() {
         <React.Fragment>
           <Typography sx={{ mt: 2, mb: 1 }}>
             {activeStep === 0 ? (
-              <CreateRestaurantPage />
+              <CreateRestaurantPage goToNextStep={handleNext} />
             ) : activeStep === 1 ? (
               <CreateSectionPage />
             ) : (

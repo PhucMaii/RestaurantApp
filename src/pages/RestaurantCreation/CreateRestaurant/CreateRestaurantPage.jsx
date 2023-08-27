@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Grid, TextField, Button } from "@mui/material";
+import { Grid, TextField, Button, Alert } from "@mui/material";
 import GoogleMaps from "../../../components/GoogleMaps";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../../../../firebase.config";
+import { db } from "../../../../firebase.config";
 import {
   GridContainerStyled,
   GridStyled,
@@ -12,36 +10,76 @@ import {
 } from "./styles";
 import { addDoc, collection } from "firebase/firestore";
 
-export default function SignupPage() {
-  const [restaurantData, setRestaurantData] = useState({});
+export default function CreateRestaurant(props) {
+  const [restaurantData, setRestaurantData] = useState({
+    restaurantName: "",
+    restaurantType: "",
+    restaurantPhoneNumber: "",
+    restaurantAddress: "",
+  });
+  const [fieldsValid, setFieldsValid] = useState(true);
   const [notifications, setNotifications] = useState({});
   const [receivedAdress, setReceivedAddress] = useState(null);
+
+  const isRestaurantDataNotEmpty = obj => {
+    for(const key in obj) {
+      if(obj[key] === "") {
+        return false;
+      }
+    }
+    return true;
+  }
 
   useEffect(() => {
     if (receivedAdress) {
       setRestaurantData({
         ...restaurantData,
-        address: receivedAdress,
+        restaurantAddress: receivedAdress.description,
       });
+    } else {
+      setFieldsValid(false);
     }
   }, [receivedAdress]);
+
+  useEffect(() => { 
+    setFieldsValid(isRestaurantDataNotEmpty(restaurantData))
+  }, [restaurantData])
 
   const handleReceiveAddress = (data) => {
     setReceivedAddress(data);
   };
 
+  const handleTextFieldChange = (field, value) => {
+    setRestaurantData({
+      ...restaurantData,
+      [field]: value
+    })
+  }
+
   const handleCreateRestaurant = async () => {
+    if(!fieldsValid) {
+      setNotifications({
+        on: true,
+        type: "error",
+        message: "Please fill out all the fields"
+      });
+      return;
+    }
     try {
       const userCollection = collection(db, "users");
       const userAuthData = localStorage.getItem("current-user");
-      const data = { ...userAuthData, ...restaurantData };
-      await addDoc(userCollection, data);
+      const data = { ...JSON.parse(userAuthData), ...restaurantData };
+      const docRef = await addDoc(userCollection, data);
+      const id = docRef.id;
+      const userAuth = JSON.parse(localStorage.getItem("current-user"));
+      localStorage.setItem("current-user", JSON.stringify({...userAuth, id}));
       setNotifications({
         on: true,
         type: "success",
         message:
           "Congratulations! You Created Your Own Restaurant Successfully",
       });
+      props.goToNextStep();
     } catch (error) {
       setNotifications({
         on: true,
@@ -54,7 +92,7 @@ export default function SignupPage() {
   return (
     <GridStyled container columnSpacing={2}>
       <Grid item xs={6}>
-        <TitleStyled color="secondary" variant="h3">
+        <TitleStyled component='div'  color="secondary" variant={"h3"}>
           Account creation successful! Now, let's input your restaurant details.
         </TitleStyled>
         {notifications.on && (
@@ -68,13 +106,10 @@ export default function SignupPage() {
                 type="input"
                 placeholder="eg: Bamboo Restaurant"
                 label="Restaurant Name"
-                value={restaurantData.restaurantName}
-                onChange={(e) =>
-                  setRestaurantData({
-                    ...restaurantData,
-                    restaurantName: e.target.value,
-                  })
-                }
+                value={restaurantData.restaurantName || ''}
+                onChange={(e) => {
+                  handleTextFieldChange("restaurantName", e.target.value);
+                }}
               />
             </Grid>
             <Grid item xs={6}>
@@ -83,13 +118,10 @@ export default function SignupPage() {
                 type="input"
                 placeholder="eg: Chinese"
                 label="Restaurant Type"
-                value={restaurantData.restaurantType}
-                onChange={(e) =>
-                  setRestaurantData({
-                    ...restaurantData,
-                    restaurantType: e.target.value,
-                  })
-                }
+                value={restaurantData.restaurantType || ''}
+                onChange={(e) =>{
+                  handleTextFieldChange("restaurantType", e.target.value);
+                }}
               />
             </Grid>
           </Grid>
@@ -98,15 +130,12 @@ export default function SignupPage() {
               <TextField
                 fullWidth
                 type="input"
-                placeholder="eg: +1 (111) 111 - 1111"
+                placeholder="Enter 10 numbers for your phone number"
                 label="Phone Number"
-                value={restaurantData.phoneNumber}
-                onChange={(e) =>
-                  setRestaurantData({
-                    ...restaurantData,
-                    phoneNumber: e.target.value,
-                  })
-                }
+                value={restaurantData.restaurantPhoneNumber || ''}
+                onChange={(e) =>{
+                  handleTextFieldChange("restaurantPhoneNumber", e.target.value.trim());
+                }}
               />
             </Grid>
           </Grid>
