@@ -72,6 +72,7 @@ export default function CreateRestaurant(props) {
       const docRef = await addDoc(userCollection, data);
       const id = docRef.id;
       const userAuth = JSON.parse(localStorage.getItem("current-user"));
+      userAuth.hasRestaurant = true;
       localStorage.setItem("current-user", JSON.stringify({...userAuth, id}));
       setNotifications({
         on: true,

@@ -12,6 +12,7 @@ import {
   Alert,
   TextField,
   Button,
+  CircularProgress,
   useMediaQuery,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
@@ -38,32 +39,48 @@ export default function SigninPage() {
   const [password, setPassword] = useState("");
   const [notification, setNotification] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const isXLargeScreen = useMediaQuery((theme) => theme.breakpoints.up("xl"));
   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.up("sm"));
   const navigate = useNavigate();
 
   const handleEmailAndPasswordLogin = async () => {
-    if(password.length < 6) {
+    if (password.length < 6) {
       setNotification({
         on: true,
         type: "error",
-        message: "Password should be at least 6 characters"
-      })
+        message: "Password should be at least 6 characters",
+      });
       return;
     }
     const userData = { email, password, provider: "Email/Password Provider" };
     try {
+      setIsLoading(true);
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
-      const user = userCredential.user;
+      localStorage.setItem(
+        "current-user",
+        JSON.stringify({ ...userData, hasRestaurant: true })
+      );
+      navigate("/home");
+      setIsLoading(false);
     } catch (error) {
       if (error.code === "auth/user-not-found") {
-        const newUser = await createUserWithEmailAndPassword(auth, email, password);
-        localStorage.setItem("current-user", JSON.stringify(userData));
+        setIsLoading(true);
+        const newUser = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        localStorage.setItem(
+          "current-user",
+          JSON.stringify({ ...userData, hasRestaurant: false })
+        );
         navigate("/create-restaurant");
+        setIsLoading(false);
       } else {
         setNotification({
           on: true,
@@ -76,13 +93,24 @@ export default function SigninPage() {
 
   const handleGoogleLogin = async () => {
     try {
+      setIsLoading(true);
       const userCredential = await signInWithPopup(auth, googleProvider);
       const user = userCredential.user;
       const userData = { email: user.email, provider: "Google Provider" };
       if (getAdditionalUserInfo(userCredential).isNewUser) {
-        localStorage.setItem("current-user", JSON.stringify(userData));
+        localStorage.setItem(
+          "current-user",
+          JSON.stringify({ ...userData, hasRestaurant: false })
+        );
         navigate("/create-restaurant");
+      } else {
+        localStorage.setItem(
+          "current-user",
+          JSON.stringify({ ...userData, hasRestaurant: true })
+        );
+        navigate("/home");
       }
+      setIsLoading(false);
     } catch (error) {
       setNotification({
         on: true,
@@ -98,92 +126,98 @@ export default function SigninPage() {
 
   return (
     <GridStyled container columnSpacing={5}>
-      <Grid item xs={12} sm={6}>
-        <InputGrid container rowGap={isXLargeScreen ? 8 : 3}>
-          <Grid item xs={12}>
-            <TitleStyled
-              variant={isSmallScreen ? "h4" : "h3"}
-              color="secondary"
-            >
-              Welcome Back
-            </TitleStyled>
+      {isLoading ? (
+        <CircularProgress />
+      ) : (
+        <>
+          <Grid item xs={12} sm={6}>
+            <InputGrid container rowGap={isXLargeScreen ? 8 : 3}>
+              <Grid item xs={12}>
+                <TitleStyled
+                  variant={isSmallScreen ? "h4" : "h3"}
+                  color="secondary"
+                >
+                  Welcome Back
+                </TitleStyled>
+              </Grid>
+              {notification.on && (
+                <Grid item xs={12}>
+                  <Alert fullWidth severity={notification.type}>
+                    {notification.message}
+                  </Alert>
+                </Grid>
+              )}
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  type="input"
+                  placeholder="Enter your email..."
+                  label="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <OutlinedInputStyled>
+                  <InputLabel htmlFor="outlined-adornment-password">
+                    Password
+                  </InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornemnt-password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password..."
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    label="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </OutlinedInputStyled>
+              </Grid>
+              <Grid container rowGap={2}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={handleEmailAndPasswordLogin}
+                >
+                  REGISTER
+                </Button>
+                <Typography variant="subtitle2">
+                  <Link onClick={() => navigate("/forgot-password")}>
+                    Forgot Password ?
+                  </Link>
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Divider />
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  onClick={handleGoogleLogin}
+                  variant="contained"
+                  color="inherit"
+                >
+                  <LogoStyled src="https://static-00.iconduck.com/assets.00/google-icon-2048x2048-czn3g8x8.png" />
+                  Continue With Google
+                </Button>
+              </Grid>
+            </InputGrid>
           </Grid>
-          {notification.on && (
-            <Grid item xs={12}>
-              <Alert fullWidth severity={notification.type}>
-                {notification.message}
-              </Alert>
-            </Grid>
-          )}
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              type="input"
-              placeholder="Enter your email..."
-              label="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <OutlinedInputStyled>
-              <InputLabel htmlFor="outlined-adornment-password">
-                Password
-              </InputLabel>
-              <OutlinedInput
-                id="outlined-adornemnt-password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter your password..."
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </OutlinedInputStyled>
-          </Grid>
-          <Grid container rowGap={2}>
-            <Button
-              fullWidth
-              variant="contained"
-              onClick={handleEmailAndPasswordLogin}
-            >
-              REGISTER
-            </Button>
-            <Typography variant="subtitle2">
-              <Link onClick={() => navigate("/forgot-password")}>
-                Forgot Password ?
-              </Link>
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Divider />
-          </Grid>
-          <Grid item xs={12}>
-            <Button
-              fullWidth
-              onClick={handleGoogleLogin}
-              variant="contained"
-              color="inherit"
-            >
-              <LogoStyled src="https://static-00.iconduck.com/assets.00/google-icon-2048x2048-czn3g8x8.png" />
-              Continue With Google
-            </Button>
-          </Grid>
-        </InputGrid>
-      </Grid>
-      <TopicImageGrid item xs={12} sm={6}>
-        <TopicImageStyled src="https://i.pinimg.com/564x/e8/03/16/e80316d006e91ff02f3b49e61a0051c0.jpg" />
-      </TopicImageGrid>
+          <TopicImageGrid item xs={12} sm={6}>
+            <TopicImageStyled src="https://i.pinimg.com/564x/e8/03/16/e80316d006e91ff02f3b49e61a0051c0.jpg" />
+          </TopicImageGrid>
+        </>
+      )}
     </GridStyled>
   );
 }
