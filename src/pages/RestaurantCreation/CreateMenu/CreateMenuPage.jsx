@@ -140,7 +140,7 @@ export default function CreateMenuPage() {
   }, [image, imageURL]);
 
   return (
-    <Grid container rowGap={3}>
+    <Grid container rowGap={3} p={4}>
       <Grid container justifyContent="center">
         <Typography variant="h3" color="secondary">
           Create Menu
