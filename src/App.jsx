@@ -1,22 +1,17 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
-import SigninPage from "./pages/Signin/SigninPage";
-import CreateRestaurantPage from "./pages/CreateRestaurant/CreateRestaurantPage";
 import { theme } from "./Provider/ThemeProvider";
-import HomePage from "./pages/HomePage/HomePage";
+import Routes from "./Routes";
 
 function App() {
+
   return (
     <>
-      {/* <ThemeProvider theme={theme}>
+      <ThemeProvider theme={theme}>
         <BrowserRouter>
-          <Routes>
-            <Route path="/create-restaurant" element={<CreateRestaurantPage />} />
-            <Route path="/" element={<SigninPage />} />
-          </Routes>
+          <Routes />
         </BrowserRouter>
-      </ThemeProvider> */}
-      <HomePage />
+      </ThemeProvider>
     </>
   );
 }
