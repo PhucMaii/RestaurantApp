@@ -2,6 +2,7 @@ import { Typography, Grid } from '@mui/material'
 import React from 'react'
 import ItemCard from '../../components/ItemCard/ItemCard'
 import ResponsiveDrawer from '../../components/Sidebar/Sidebar'
+import EditItemModal from '../../components/Modals/EditItemModal'
 
 export default function MenuPage() {
     const menu = (
