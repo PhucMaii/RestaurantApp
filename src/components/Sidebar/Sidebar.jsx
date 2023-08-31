@@ -145,7 +145,7 @@ function ResponsiveDrawer(props) {
         {iconList.map((iconObj) => (
           <React.Fragment key={iconObj.text}>
             <TabStyled
-              isSelected={iconObj.text === currentWindow}
+              $isChoose={iconObj.text === currentWindow}
               onClick={() => {
                 setCurrentWindow(iconObj.text);
                 if (iconObj.text === "Account") {
