@@ -4,6 +4,7 @@ import SigninPage from "./pages/Signin/SigninPage";
 import CreateRestaurant from "./pages/RestaurantCreation/CreateRestaurant/CreateRestaurantPage";
 import { useState } from "react";
 import { isAuthenticated } from "./utils/auth";
+import MenuPage from "./pages/Menu/MenuPage";
 
 export default function Routes() {
 
@@ -22,6 +23,10 @@ export default function Routes() {
       path: "/create-restaurant",
       element: <CreateRestaurant />,
     },
+    {
+      path: "/menu",
+      element: <MenuPage/>
+    }
   ]);
   return routes;
 }
