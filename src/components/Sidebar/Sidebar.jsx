@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Box,
@@ -29,19 +29,21 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 import TimerIcon from "@mui/icons-material/Timer";
 import { grey, green, red, yellow } from "@mui/material/colors";
-import { ExpandLess, ExpandMore} from "@mui/icons-material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { TabStyled } from "./style";
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
 function ResponsiveDrawer(props) {
   const { window } = props;
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [currentWindow, setCurrentWindow] = React.useState(null);
-  const [openDropDown, setOpenDropDown] = React.useState(false);
-  const [openSwitch, setOpenSwitch] = React.useState(true);
-  const [busySwitch, setBusySwitch] = React.useState(true);
-  const [notification, setNotification] = React.useState({});
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [currentWindow, setCurrentWindow] = useState(null);
+  const [openDropDown, setOpenDropDown] = useState(false);
+  const [openSwitch, setOpenSwitch] = useState(true);
+  const [busySwitch, setBusySwitch] = useState(true);
+  const [notification, setNotification] = useState({});
+  const navigate = useNavigate();
 
   const iconList = [
     {
@@ -82,6 +84,11 @@ function ResponsiveDrawer(props) {
     setOpenDropDown(!openDropDown);
   };
 
+  const handleSignout = () => {
+    localStorage.clear();
+    navigate("/");
+  }
+
   const toggleOpenSwitch = () => {
     setOpenSwitch((prevSwitch) => !openSwitch);
   };
@@ -94,13 +101,13 @@ function ResponsiveDrawer(props) {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!openSwitch) {
       setBusySwitch(false);
     }
   }, [openSwitch]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!openSwitch) {
       setNotification({
         color: red[800],
@@ -153,7 +160,7 @@ function ResponsiveDrawer(props) {
                 }
               }}
             >
-              <ListItemButton>
+              <ListItemButton onClick={iconObj.text === "Sign out" && handleSignout}>
                 <ListItemIcon>{iconObj.icon}</ListItemIcon>
                 <ListItemText primary={iconObj.text} />
                 {iconObj.text === "Account" ? (
