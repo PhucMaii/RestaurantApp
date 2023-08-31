@@ -31,6 +31,7 @@ import TimerIcon from "@mui/icons-material/Timer";
 import { grey, green, red, yellow } from "@mui/material/colors";
 import { ExpandLess, ExpandMore} from "@mui/icons-material";
 import { TabStyled } from "./style";
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -42,35 +43,43 @@ function ResponsiveDrawer(props) {
   const [openSwitch, setOpenSwitch] = React.useState(true);
   const [busySwitch, setBusySwitch] = React.useState(true);
   const [notification, setNotification] = React.useState({});
+  const navigate = useNavigate();
 
   const iconList = [
     {
       text: "Current Order",
       icon: <HomeIcon />,
+      path: "/home"
     },
     {
       text: "Menu",
       icon: <MenuIcon />,
+      path: "/menu"
     },
     {
       text: "History",
       icon: <HistoryIcon />,
+      path: "/history"
     },
     {
       text: "Feedback",
       icon: <StarIcon />,
+      path: "/feedback"
     },
     {
       text: "Settings",
       icon: <SettingsIcon />,
+      path: "/settings"
     },
     {
       text: "Account",
       icon: <AccountCircleIcon />,
+      path: "/account"
     },
     {
       text: "Sign out",
       icon: <LogoutIcon />,
+      path: "/signout"
     },
   ];
 
@@ -81,6 +90,10 @@ function ResponsiveDrawer(props) {
   const handleOpenDropDown = () => {
     setOpenDropDown(!openDropDown);
   };
+
+  const navigateToTab = (path) => {
+    navigate(path)
+  }
 
   const toggleOpenSwitch = () => {
     setOpenSwitch((prevSwitch) => !openSwitch);
@@ -147,6 +160,7 @@ function ResponsiveDrawer(props) {
             <TabStyled
               isSelected={iconObj.text === currentWindow}
               onClick={() => {
+                navigate(iconObj.path)
                 setCurrentWindow(iconObj.text);
                 if (iconObj.text === "Account") {
                   handleOpenDropDown();
