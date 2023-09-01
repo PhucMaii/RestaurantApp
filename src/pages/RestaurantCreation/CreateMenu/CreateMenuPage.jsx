@@ -30,11 +30,12 @@ export default function CreateMenuPage() {
   const [selectedSection, setSelectedSection] = useState("");
   const [options, setOptions] = useState([]);
   const [itemData, setItemData] = useState({
-    sectionRef: "",
+    availability: true,
     itemName: "",
-    options,
+    options: [],
     itemDescription: "",
     itemImageURL: "",
+    itemPrice: 0,
   });
   const [_imageFile, setImageFile] = useState(null);
   const [image, setImage] = useState("");
@@ -46,10 +47,10 @@ export default function CreateMenuPage() {
   const [currOption, setCurrOption] = useState("");
   const [imageProgress, setImageProgress] = useState(null);
   const menuCollection = collection(db, "menu");
-  const restaurantRef = JSON.parse(localStorage.getItem("current-user"));
+  const restaurantRef = JSON.parse(localStorage.getItem("current-user")).docId;
   const menu = query(
     menuCollection,
-    where("restaurantRef", "==", `/users/${restaurantRef.id}`)
+    where("restaurantRef", "==", `/users/${restaurantRef}`)
   );
   const handleFileInputChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -81,6 +82,23 @@ export default function CreateMenuPage() {
     );
   };
 
+  const isItemDataValid = () => {
+    return (
+      itemData.itemName.trim() !== "" &&
+      itemData.itemDescription.trim() !== "" &&
+      itemData.itemPrice > 0
+    );
+  };
+
+  const formatOption = () => {
+    const newOptions = options.map((option) => ({
+      availability: true,
+      name: option,
+      price: 0,
+    }));
+    return newOptions;
+  };
+
   const fetchSections = async () => {
     try {
       const querySnapshot = await getDocs(menu);
@@ -99,6 +117,16 @@ export default function CreateMenuPage() {
   };
 
   const addItem = async () => {
+    const isValid = isItemDataValid();
+    console.log(isValid);
+    if (!isValid) {
+      setNotification({
+        message: "Please Fill Out All Requiresd Fields",
+        on: true,
+        type: "error",
+      });
+      return;
+    }
     try {
       const querySnapshot = await getDocs(menu);
       querySnapshot.forEach(async (doc) => {
@@ -118,16 +146,16 @@ export default function CreateMenuPage() {
           type: "success",
         });
         // Reset all the fields
+        setImageURL("");
+        setImage("");
+        setOptions([]);
         setItemData({
-          sectionRef: "",
           itemName: "",
           options,
           itemDescription: "",
           itemImageURL: "",
+          itemPrice: 0,
         });
-        setImageURL("");
-        setImage("");
-        setOptions([]);
       });
     } catch (error) {
       setNotification({
@@ -144,7 +172,10 @@ export default function CreateMenuPage() {
 
   // update options field in itemData
   useEffect(() => {
-    setItemData((prevData) => ({ ...prevData, options }));
+    setItemData((prevData) => ({
+      ...prevData,
+      options: formatOption(),
+    }));
   }, [options]);
 
   // only allow user to either enter image url or upload image file
@@ -189,21 +220,38 @@ export default function CreateMenuPage() {
           <Typography>Item Info</Typography>
         </Divider>
       </Grid>
-      <Grid item xs={12}>
-        <TextField
-          required
-          fullWidth
-          type="input"
-          variant="filled"
-          value={itemData.itemName}
-          onChange={(e) => {
-            setItemData((prevData) => {
-              return { ...prevData, itemName: e.target.value };
-            });
-          }}
-          label="Item's Name"
-          placeholder="Enter item's name..."
-        />
+      <Grid container columnSpacing={2}>
+        <Grid item xs={9}>
+          <TextField
+            required
+            fullWidth
+            type="input"
+            variant="filled"
+            value={itemData.itemName}
+            onChange={(e) => {
+              setItemData((prevData) => {
+                return { ...prevData, itemName: e.target.value };
+              });
+            }}
+            label="Item's Name"
+            placeholder="Enter item's name..."
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <TextField
+            fullWidth
+            type="number"
+            variant="filled"
+            value={itemData.itemPrice}
+            onChange={(e) => {
+              setItemData((prevData) => {
+                return { ...prevData, itemPrice: e.target.value };
+              });
+            }}
+            label="Item's Price"
+            placeholder="Enter item's name..."
+          />
+        </Grid>
       </Grid>
       <Grid container justifyContent="center">
         <Grid item xs={12}>

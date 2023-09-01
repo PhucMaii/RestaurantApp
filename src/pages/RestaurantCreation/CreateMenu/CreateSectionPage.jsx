@@ -21,18 +21,18 @@ export default function CreateSectionPage() {
   const handleAddSections = async () => {
     try {
       const menuCollection = collection(db, "menu");
-      const restaurantRef = JSON.parse(localStorage.getItem("current-user"));
+      const restaurantRef = JSON.parse(localStorage.getItem("current-user")).docId;
       // Convert sections array to be an array of objects with the name is the section item
       const sectionNameList = sections.map((section) => {
         return { name: section };
       });
       const data = {
         sections: sectionNameList,
-        restaurantRef: `/users/${restaurantRef.id}`,
+        restaurantRef: `/users/${restaurantRef}`,
       };
       const menu = query(
         menuCollection,
-        where("restaurantRef", "==", `/users/${restaurantRef.id}`)
+        where("restaurantRef", "==", `/users/${restaurantRef}`)
       );
       const querySnapshot = await getDocs(menu);
 
