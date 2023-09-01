@@ -65,133 +65,107 @@ export default function HomePage() {
         <Grid container justifyContent="center">
           <Typography variant="h4">Preparing Time</Typography>
         </Grid>
-        <Grid
-          container
-          justifyContent="center"
-          alignItems="center"
-          columnGap={3}
-        >
-          <Fab
-            onClick={handleDecreasePreparingTime}
-            variant="contained"
-            size="small"
-            color="inherit"
-          >
-            -
-          </Fab>
-          <Typography variant="h6">
-            {Math.floor(preparingTime / 60)} mins
-          </Typography>
-          <Fab
-            onClick={handleIncreasePreparingTime}
-            variant="contained"
-            size="small"
-            color="inherit"
-          >
-            +
-          </Fab>
+        <Grid item xs={12}>
+          <Divider />
+        </Grid>
+        <Grid container justifyContent="center" rowGap={3}>
+          <Grid container justifyContent="center"></Grid>
+          {preparingOrders.map((order) => {
+            if (!order.items) {
+              console.log("Order has no items:", order.id);
+              return null; // Skip rendering this order
+            }
+            return (
+              <Grid key={order.id} container justifyContent="center">
+                <BasicAccordion
+                  docId={order.id}
+                  orderStatus={order.orderStatus}
+                  orderId={order.orderId}
+                  orderTime={order.orderTime}
+                  customerName={order.customerName}
+                  customerEmail={order.customerEmail}
+                  customerPhoneNumber={order.customerPhoneNumber}
+                  hasUtensils={order.hasUtensils}
+                  items={order.items.map((item) => {
+                    return {
+                      name: item.name,
+                      options: item.options
+                        ? item.options.map((option) => {
+                            return {
+                              name: option.name,
+                              price: option.price,
+                            };
+                          })
+                        : [],
+                      price: item.price,
+                      quantity: item.quantity,
+                      totalPrice: item.totalPrice,
+                    };
+                  })}
+                  itemsQuantity={order.items.reduce((prevQuantity, item) => {
+                    return prevQuantity + item.quantity;
+                  }, 0)}
+                  subTotal={order.items.reduce((prevQuantity, item) => {
+                    return prevQuantity + item.totalPrice;
+                  }, 0)}
+                  note={order.note}
+                />
+              </Grid>
+            );
+          })}
+        </Grid>
+        <Grid item xs={12}>
+          <Divider textAlign="left">
+            <Typography variant="h4">Ready</Typography>
+          </Divider>
+        </Grid>
+        <Grid container justifyContent="center" rowGap={3}>
+          {readyOrders.map((order) => {
+            if (!order.items) {
+              console.log("Order has no items:", order.id);
+              return null; // Skip rendering this order
+            }
+            return (
+              <Grid key={order.id} container justifyContent="center">
+                <BasicAccordion
+                  docId={order.id}
+                  orderStatus={order.orderStatus}
+                  orderId={order.orderId}
+                  orderTime={order.orderTime}
+                  customerName={order.customerName}
+                  customerEmail={order.customerEmail}
+                  customerPhoneNumber={order.customerPhoneNumber}
+                  hasUtensils={order.hasUtensils}
+                  items={order.items.map((item) => {
+                    return {
+                      name: item.name,
+                      options: item.options
+                        ? item.options.map((option) => {
+                            return {
+                              name: option.name,
+                              price: option.price,
+                            };
+                          })
+                        : [],
+                      price: item.price,
+                      quantity: item.quantity,
+                      totalPrice: item.totalPrice,
+                    };
+                  })}
+                  itemsQuantity={order.items.reduce((prevQuantity, item) => {
+                    return prevQuantity + item.quantity;
+                  }, 0)}
+                  subTotal={order.items.reduce((prevQuantity, item) => {
+                    return prevQuantity + item.totalPrice;
+                  }, 0)}
+                  note={order.note}
+                />
+              </Grid>
+            );
+          })}
         </Grid>
       </Grid>
-      <Grid item xs={12}>
-        <Divider />
       </Grid>
-      <Grid container justifyContent="center" rowGap={3}>
-        <Grid container justifyContent="center"></Grid>
-        {preparingOrders.map((order) => {
-          if (!order.items) {
-            console.log("Order has no items:", order.id);
-            return null; // Skip rendering this order
-          }
-          return (
-            <Grid key={order.id} container justifyContent="center">
-              <BasicAccordion
-                docId={order.id}
-                orderStatus={order.orderStatus}
-                orderId={order.orderId}
-                orderTime={order.orderTime}
-                customerName={order.customerName}
-                customerEmail={order.customerEmail}
-                customerPhoneNumber={order.customerPhoneNumber}
-                hasUtensils={order.hasUtensils}
-                items={order.items.map((item) => {
-                  return {
-                    name: item.name,
-                    options: item.options
-                      ? item.options.map((option) => {
-                          return {
-                            name: option.name,
-                            price: option.price,
-                          };
-                        })
-                      : [],
-                    price: item.price,
-                    quantity: item.quantity,
-                    totalPrice: item.totalPrice,
-                  };
-                })}
-                itemsQuantity={order.items.reduce((prevQuantity, item) => {
-                  return prevQuantity + item.quantity;
-                }, 0)}
-                subTotal={order.items.reduce((prevQuantity, item) => {
-                  return prevQuantity + item.totalPrice;
-                }, 0)}
-                note={order.note}
-              />
-            </Grid>
-          );
-        })}
-      </Grid>
-      <Grid item xs={12}>
-        <Divider textAlign="left">
-          <Typography variant="h4">Ready</Typography>
-        </Divider>
-      </Grid>
-      <Grid container justifyContent="center" rowGap={3}>
-        {readyOrders.map((order) => {
-          if (!order.items) {
-            console.log("Order has no items:", order.id);
-            return null; // Skip rendering this order
-          }
-          return (
-            <Grid key={order.id} container justifyContent="center">
-              <BasicAccordion
-                docId={order.id}
-                orderStatus={order.orderStatus}
-                orderId={order.orderId}
-                orderTime={order.orderTime}
-                customerName={order.customerName}
-                customerEmail={order.customerEmail}
-                customerPhoneNumber={order.customerPhoneNumber}
-                hasUtensils={order.hasUtensils}
-                items={order.items.map((item) => {
-                  return {
-                    name: item.name,
-                    options: item.options
-                      ? item.options.map((option) => {
-                          return {
-                            name: option.name,
-                            price: option.price,
-                          };
-                        })
-                      : [],
-                    price: item.price,
-                    quantity: item.quantity,
-                    totalPrice: item.totalPrice,
-                  };
-                })}
-                itemsQuantity={order.items.reduce((prevQuantity, item) => {
-                  return prevQuantity + item.quantity;
-                }, 0)}
-                subTotal={order.items.reduce((prevQuantity, item) => {
-                  return prevQuantity + item.totalPrice;
-                }, 0)}
-                note={order.note}
-              />
-            </Grid>
-          );
-        })}
-      </Grid>
-    </Grid>
   );
 
   return isOwner ? (
