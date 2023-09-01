@@ -154,7 +154,7 @@ function ResponsiveDrawer(props) {
         {iconList.map((iconObj) => (
           <React.Fragment key={iconObj.text}>
             <TabStyled
-              isSelected={iconObj.path === currentPath}
+              isChoose={iconObj.path === currentPath}
               onClick={() => {
                 navigate(iconObj.path)
                 if (iconObj.text === "Account") {

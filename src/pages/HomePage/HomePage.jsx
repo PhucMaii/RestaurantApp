@@ -1,21 +1,33 @@
-import { Grid, Typography, Divider, Fab } from "@mui/material";
+import { Grid, Typography, Divider, Fab, Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import BasicAccordion from "../../components/OrderDetails/OrderDetails";
 import { db } from "../../../firebase.config";
 import { collection, onSnapshot } from "firebase/firestore";
+import { hasRestaurant } from "../../utils/auth";
+import { useNavigate } from "react-router-dom";
+import ResponsiveDrawer from "../../components/Sidebar/Sidebar";
+
 export default function HomePage() {
+  const [isOwner, _setIsOwner] = useState(hasRestaurant());
   const [readyOrders, setReadyOrders] = useState([]);
   const [preparingOrders, setPreparingOrders] = useState([]);
   const [preparingTime, setPreparingTime] = useState(600);
   const orderCollection = collection(db, "orders");
+  const navigate = useNavigate();
 
   const handleIncreasePreparingTime = () => {
-    setPreparingTime(prevTime => prevTime + 60);
-  }
+    setPreparingTime((prevTime) => prevTime + 60);
+  };
 
   const handleDecreasePreparingTime = () => {
-    setPreparingTime(prevTime => prevTime - 60);
-  }
+    setPreparingTime((prevTime) => prevTime - 60);
+  };
+
+  const navigateToCreateRestaurant = () => {
+    navigate("/create-restaurant");
+  };
+
   useEffect(() => {
     const observer = () => {
       try {
@@ -46,7 +58,8 @@ export default function HomePage() {
     };
     observer();
   }, []);
-  return (
+
+  const homePage = (
     <Grid container rowGap={3}>
       <Grid container rowGap={2}>
         <Grid container justifyContent="center">
@@ -177,6 +190,33 @@ export default function HomePage() {
             </Grid>
           );
         })}
+      </Grid>
+    </Grid>
+  );
+
+  return isOwner ? (
+    <ResponsiveDrawer tab={homePage} />
+  ) : (
+    <Grid
+      padding={10}
+      container
+      justifyContent="center"
+      alignItems="center"
+      rowGap={3}
+    >
+      <Grid item xs={12} textAlign="center">
+        <Typography variant="h3">
+          You haven't created your restaurant yet
+        </Typography>
+      </Grid>
+      <Grid item xs={12} textAlign="center">
+        <Button
+          onClick={navigateToCreateRestaurant}
+          size="large"
+          variant="outlined"
+        >
+          <ArrowBackIcon /> Click here to create your restaurant
+        </Button>
       </Grid>
     </Grid>
   );
