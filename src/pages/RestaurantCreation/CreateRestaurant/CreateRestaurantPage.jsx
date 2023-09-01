@@ -8,7 +8,7 @@ import {
   TitleStyled,
   TopicImageStyled,
 } from "./styles";
-import { addDoc, collection } from "firebase/firestore";
+import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 
 export default function CreateRestaurant(props) {
   const [restaurantData, setRestaurantData] = useState({
@@ -21,14 +21,13 @@ export default function CreateRestaurant(props) {
   const [notifications, setNotifications] = useState({});
   const [receivedAdress, setReceivedAddress] = useState(null);
 
-  const isRestaurantDataNotEmpty = obj => {
-    for(const key in obj) {
-      if(obj[key] === "") {
-        return false;
-      }
-    }
-    return true;
-  }
+  const isRestaurantDataValid = () => {
+    return (
+      restaurantData.restaurantName.trim() !== "" &&
+      restaurantData.restaurantType.trim() !== "" &&
+      /^\d{10}$/.test(restaurantData.restaurantPhoneNumber)
+    );
+  };
 
   useEffect(() => {
     if (receivedAdress) {
@@ -42,7 +41,7 @@ export default function CreateRestaurant(props) {
   }, [receivedAdress]);
 
   useEffect(() => { 
-    setFieldsValid(isRestaurantDataNotEmpty(restaurantData))
+    setFieldsValid(isRestaurantDataValid())
   }, [restaurantData])
 
   const handleReceiveAddress = (data) => {
@@ -61,19 +60,17 @@ export default function CreateRestaurant(props) {
       setNotifications({
         on: true,
         type: "error",
-        message: "Please fill out all the fields"
+        message: "Input Field is not valid"
       });
       return;
     }
     try {
-      const userCollection = collection(db, "users");
-      const userAuthData = localStorage.getItem("current-user");
-      const data = { ...JSON.parse(userAuthData), ...restaurantData };
-      const docRef = await addDoc(userCollection, data);
-      const id = docRef.id;
-      const userAuth = JSON.parse(localStorage.getItem("current-user"));
-      userAuth.hasRestaurant = true;
-      localStorage.setItem("current-user", JSON.stringify({...userAuth, id}));
+      const userAuthData = JSON.parse(localStorage.getItem("current-user"));
+      userAuthData.hasRestaurant = true;
+      const documentRef = doc(db, "users", userAuthData.docId);
+      const data = { ...userAuthData, ...restaurantData };
+      await updateDoc(documentRef, data);
+      localStorage.setItem("current-user", JSON.stringify(userAuthData));
       setNotifications({
         on: true,
         type: "success",
