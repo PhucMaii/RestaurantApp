@@ -37,42 +37,49 @@ const drawerWidth = 240;
 
 function ResponsiveDrawer(props) {
   const { window } = props;
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [currentWindow, setCurrentWindow] = useState(null);
-  const [openDropDown, setOpenDropDown] = useState(false);
-  const [openSwitch, setOpenSwitch] = useState(true);
-  const [busySwitch, setBusySwitch] = useState(true);
-  const [notification, setNotification] = useState({});
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [currentWindow, setCurrentWindow] = React.useState(null);
+  const [openDropDown, setOpenDropDown] = React.useState(false);
+  const [openSwitch, setOpenSwitch] = React.useState(true);
+  const [busySwitch, setBusySwitch] = React.useState(true);
+  const [notification, setNotification] = React.useState({});
   const navigate = useNavigate();
 
   const iconList = [
     {
       text: "Current Order",
       icon: <HomeIcon />,
+      path: "/home"
     },
     {
       text: "Menu",
       icon: <MenuIcon />,
+      path: "/menu"
     },
     {
       text: "History",
       icon: <HistoryIcon />,
+      path: "/history"
     },
     {
       text: "Feedback",
       icon: <StarIcon />,
+      path: "/feedback"
     },
     {
       text: "Settings",
       icon: <SettingsIcon />,
+      path: "/settings"
     },
     {
       text: "Account",
       icon: <AccountCircleIcon />,
+      path: "/account"
     },
     {
       text: "Sign out",
       icon: <LogoutIcon />,
+      path: "/signout"
     },
   ];
 
@@ -152,8 +159,9 @@ function ResponsiveDrawer(props) {
         {iconList.map((iconObj) => (
           <React.Fragment key={iconObj.text}>
             <TabStyled
-              isSelected={iconObj.text === currentWindow}
+              $isChoose={iconObj.text === currentWindow}
               onClick={() => {
+                navigate(iconObj.path)
                 setCurrentWindow(iconObj.text);
                 if (iconObj.text === "Account") {
                   handleOpenDropDown();

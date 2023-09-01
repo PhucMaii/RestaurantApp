@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   Grid,
-  Link,
   TextField,
   Typography,
   Autocomplete,
@@ -11,7 +10,13 @@ import {
   Alert,
 } from "@mui/material";
 import MultipleValueTextField from "../../../components/MultipleValueTextField";
-import { collection, getDocs, query, updateDoc, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { db, storage } from "../../../../firebase.config";
 
@@ -20,7 +25,7 @@ export default function CreateMenuPage() {
   const [notification, setNotification] = useState({
     message: "",
     open: false,
-    type: "error"
+    type: "error",
   });
   const [selectedSection, setSelectedSection] = useState("");
   const [options, setOptions] = useState([]);
@@ -31,7 +36,7 @@ export default function CreateMenuPage() {
     itemDescription: "",
     itemImageURL: "",
   });
-  const [imageFile, setImageFile] = useState(null);
+  const [_imageFile, setImageFile] = useState(null);
   const [image, setImage] = useState("");
   const [imageURL, setImageURL] = useState("");
   // Allow user to enter image URL if true
@@ -62,11 +67,10 @@ export default function CreateMenuPage() {
         setImageProgress(progressOfImageUpload);
       },
       (error) => {
-        console.log("There was an error uploading on image", error);
+        console.log("There was error with uploading image", error);
       },
       () => {
         getDownloadURL(uploadImage.snapshot.ref).then((url) => {
-          console.log("image uploaded at url", url);
           setImage(url);
           setItemData((prevData) => ({
             ...prevData,
@@ -100,16 +104,37 @@ export default function CreateMenuPage() {
       querySnapshot.forEach(async (doc) => {
         const docRef = doc.ref;
         const menuData = doc.data();
-        const targetSection = menuData.sections.find(section => section.name === selectedSection);
-        if(!targetSection.items) {
+        const targetSection = menuData.sections.find(
+          (section) => section.name === selectedSection
+        );
+        if (!targetSection.items) {
           targetSection.items = [];
         }
         targetSection.items.push(itemData);
-        await updateDoc(docRef, {sections: menuData.sections});
-        console.log("Item is Added successfully");
-      })
-    } catch(error) {
-      console.log(error)
+        await updateDoc(docRef, { sections: menuData.sections });
+        setNotification({
+          message: `${itemData.itemName} is added successfully into your menu. Press Finish when you are done.`,
+          on: true,
+          type: "success",
+        });
+        // Reset all the fields
+        setItemData({
+          sectionRef: "",
+          itemName: "",
+          options,
+          itemDescription: "",
+          itemImageURL: "",
+        });
+        setImageURL("");
+        setImage("");
+        setOptions([]);
+      });
+    } catch (error) {
+      setNotification({
+        message: error.code,
+        on: true,
+        type: "error",
+      });
     }
   };
 
@@ -121,11 +146,6 @@ export default function CreateMenuPage() {
   useEffect(() => {
     setItemData((prevData) => ({ ...prevData, options }));
   }, [options]);
-
-  // for testing only
-  useEffect(() => {
-    console.log(itemData);
-  }, [itemData]);
 
   // only allow user to either enter image url or upload image file
   useEffect(() => {
@@ -140,7 +160,7 @@ export default function CreateMenuPage() {
   }, [image, imageURL]);
 
   return (
-    <Grid container rowGap={3}>
+    <Grid container rowGap={3} p={4}>
       <Grid container justifyContent="center">
         <Typography variant="h3" color="secondary">
           Create Menu
@@ -187,7 +207,9 @@ export default function CreateMenuPage() {
       </Grid>
       <Grid container justifyContent="center">
         <Grid item xs={12}>
-          <Typography variant="subtitle1">Item's Option (Optional)</Typography>
+          <Typography variant="subtitle1">
+            Item's Option (Optional). Press Enter To Add Each Option
+          </Typography>
         </Grid>
         <Grid item xs={12}>
           <MultipleValueTextField
@@ -274,13 +296,11 @@ export default function CreateMenuPage() {
           ADD ITEM
         </Button>
       </Grid>
-      {
-        notification.on && (
-          <Grid item xs={12}>
-            <Alert severity={notification.type}>{notification.message}</Alert>
-          </Grid>
-        )
-      }
+      {notification.on && (
+        <Grid item xs={12}>
+          <Alert severity={notification.type}>{notification.message}</Alert>
+        </Grid>
+      )}
     </Grid>
   );
 }
