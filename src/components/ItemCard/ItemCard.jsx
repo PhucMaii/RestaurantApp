@@ -1,6 +1,6 @@
 import { Divider, Grid, Typography } from '@mui/material'
 import React from 'react'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { formatToTwoDecimalPlace } from '../../method/FormatNumber';
 import EditItemModal from '../Modals/EditItem/EditItemModal';
 import {ButtonStyled, GridStyled} from './style'
@@ -8,6 +8,14 @@ import {ButtonStyled, GridStyled} from './style'
 export default function ItemCard({ deleteItem, item, setItem }) {
   const [isAvailable, setIsAvailable] = useState(item.availability);
   const [open, handleOpen] = useState(false);
+
+  const toggleItemAvailability = () => {
+    setItem(item, "availability", isAvailable)
+  }
+
+  useEffect(() => {
+    toggleItemAvailability();
+  }, [isAvailable])
   return (
     <>
       <EditItemModal
@@ -22,11 +30,11 @@ export default function ItemCard({ deleteItem, item, setItem }) {
       <GridStyled container padding={3} rowGap={3}>
         <Grid container>
           <Grid item xs={6}>
-            <Typography variant="h6">{item.name}</Typography>
+            <Typography variant="h6">{item.itemName}</Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography textAlign="right" variant="h6">
-              ${formatToTwoDecimalPlace(item.price)}
+              ${formatToTwoDecimalPlace(item.itemPrice)}
             </Typography>
           </Grid>
         </Grid>

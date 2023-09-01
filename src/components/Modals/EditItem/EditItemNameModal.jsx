@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function EditItemNameModal({ item, handleClose, open, setItem }) {
   const handleChangeName = (e) => {
-    setItem(item, "name", e.target.value);
+    setItem(item, "itemName", e.target.value);
   };
 
   return (

@@ -75,7 +75,7 @@ export default function EditItemModal({ deleteItem, item, handleClose, open, set
   const handlePriceChange = (e) => {
     // Remove non-numeric character
     const numericValue = e.target.value.replace(nonNumericCharacter, "");
-    setItem(item, "price", numericValue);
+    setItem(item, "itemPrice", numericValue);
   };
 
   return (
@@ -111,7 +111,7 @@ export default function EditItemModal({ deleteItem, item, handleClose, open, set
           <Grid item xs={6}>
             <Grid alignItems="center" container columnSpacing={2}>
               <Grid item>
-                <Typography variant="h6">{item.name}</Typography>
+                <Typography variant="h6">{item.itemName}</Typography>
               </Grid>
               <Grid item>
                 <Fab
@@ -144,7 +144,7 @@ export default function EditItemModal({ deleteItem, item, handleClose, open, set
               <TextField
                 label="Price"
                 onChange={handlePriceChange}
-                value={`$${item.price}`}
+                value={`$${item.itemPrice}`}
                 variant="standard"
               />
             </Grid>

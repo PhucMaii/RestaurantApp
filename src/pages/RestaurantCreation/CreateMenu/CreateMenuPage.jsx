@@ -46,10 +46,10 @@ export default function CreateMenuPage() {
   const [currOption, setCurrOption] = useState("");
   const [imageProgress, setImageProgress] = useState(null);
   const menuCollection = collection(db, "menu");
-  const restaurantRef = JSON.parse(localStorage.getItem("current-user"));
+  const restaurantRef = JSON.parse(localStorage.getItem("current-user")).docId;
   const menu = query(
     menuCollection,
-    where("restaurantRef", "==", `/users/${restaurantRef.id}`)
+    where("restaurantRef", "==", `/users/${restaurantRef}`)
   );
   const handleFileInputChange = (e) => {
     const selectedFile = e.target.files[0];
