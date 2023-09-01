@@ -22,7 +22,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
-import { auth, googleProvider } from "../../../firebase.config";
+import { auth, db, googleProvider } from "../../../firebase.config";
 import {
   GridStyled,
   LogoStyled,
@@ -32,6 +32,7 @@ import {
   InputGrid,
   TopicImageGrid,
 } from "./styles";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 
 export default function SigninPage() {
   // Hooks
@@ -43,6 +44,8 @@ export default function SigninPage() {
   const isXLargeScreen = useMediaQuery((theme) => theme.breakpoints.up("xl"));
   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.up("sm"));
   const navigate = useNavigate();
+  const userCollection = collection(db, "users");
+
 
   const handleEmailAndPasswordLogin = async () => {
     if (password.length < 6) {
@@ -56,6 +59,13 @@ export default function SigninPage() {
     const userData = { email, password, provider: "Email/Password Provider" };
     try {
       setIsLoading(true);
+      let userID, hasRestaurant
+      const user = query(userCollection, where("email", "==", email));
+      const querySnapshot = await getDocs(user);
+      querySnapshot.forEach((doc) => {
+        userID = doc.id;
+        hasRestaurant = doc.data().hasRestaurant;
+      })
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
@@ -63,11 +73,12 @@ export default function SigninPage() {
       );
       localStorage.setItem(
         "current-user",
-        JSON.stringify({ ...userData, hasRestaurant: true })
+        JSON.stringify({ ...userData, hasRestaurant, docId: userID })
       );
       navigate("/home");
       setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       if (error.code === "auth/user-not-found") {
         setIsLoading(true);
         const newUser = await createUserWithEmailAndPassword(
@@ -75,9 +86,11 @@ export default function SigninPage() {
           email,
           password
         );
+        const data = {...userData, hasRestaurant: false};
+        const docRef = await addDoc(userCollection, data);
         localStorage.setItem(
           "current-user",
-          JSON.stringify({ ...userData, hasRestaurant: false })
+          JSON.stringify({...data, docId: docRef})
         );
         navigate("/create-restaurant");
         setIsLoading(false);
@@ -98,23 +111,36 @@ export default function SigninPage() {
       const user = userCredential.user;
       const userData = { email: user.email, provider: "Google Provider" };
       if (getAdditionalUserInfo(userCredential).isNewUser) {
+        const data = {...userData, hasRestaurant: false};
+        const docRef = await addDoc(userCollection, data);
         localStorage.setItem(
           "current-user",
-          JSON.stringify({ ...userData, hasRestaurant: false })
+          JSON.stringify({ ...data, docId: docRef })
         );
         navigate("/create-restaurant");
       } else {
-        localStorage.setItem(
-          "current-user",
-          JSON.stringify({ ...userData, hasRestaurant: true })
-        );
+        let userID, hasRestaurant;
+        const userSnapShot = query(
+          userCollection,
+          where("email", "==", user.email)
+          );
+          const querySnapshot = await getDocs(userSnapShot);
+          querySnapshot.forEach((doc) => {
+            userID = doc.id;
+            hasRestaurant = doc.data().hasRestaurant
+          });
+          localStorage.setItem(
+            "current-user",
+            JSON.stringify({ ...userData, hasRestaurant, docId: userID })
+          );
         navigate("/home");
       }
       setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       setNotification({
         on: true,
-        type: error,
+        type: "error",
         message: error.code,
       });
     }
