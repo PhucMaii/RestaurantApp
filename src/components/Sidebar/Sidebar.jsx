@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Box,
@@ -29,7 +29,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 import TimerIcon from "@mui/icons-material/Timer";
 import { grey, green, red, yellow } from "@mui/material/colors";
-import { ExpandLess, ExpandMore} from "@mui/icons-material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { TabStyled } from "./style";
 import { useNavigate } from "react-router-dom";
 
@@ -91,8 +91,9 @@ function ResponsiveDrawer(props) {
     setOpenDropDown(!openDropDown);
   };
 
-  const navigateToTab = (path) => {
-    navigate(path)
+  const handleSignout = () => {
+    localStorage.clear();
+    navigate("/");
   }
 
   const toggleOpenSwitch = () => {
@@ -107,13 +108,13 @@ function ResponsiveDrawer(props) {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!openSwitch) {
       setBusySwitch(false);
     }
   }, [openSwitch]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!openSwitch) {
       setNotification({
         color: red[800],
@@ -167,7 +168,7 @@ function ResponsiveDrawer(props) {
                 }
               }}
             >
-              <ListItemButton>
+              <ListItemButton onClick={iconObj.text === "Sign out" && handleSignout}>
                 <ListItemIcon>{iconObj.icon}</ListItemIcon>
                 <ListItemText primary={iconObj.text} />
                 {iconObj.text === "Account" ? (
