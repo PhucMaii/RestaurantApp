@@ -1,4 +1,4 @@
-import { Fab, Grid, Typography, Button } from "@mui/material";
+import { Fab, Grid, Typography, Button, Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import ItemCard from "../../components/ItemCard/ItemCard";
 import AddSectionModal from "../../components/Modals/AddSectionModal";
@@ -14,6 +14,7 @@ export default function MenuPage() {
   const [docId, setDocId] = useState("");
   const [menuData, setMenuData] = useState([]);
   const [currentSection, setCurrentSection] = useState({});
+  const [isFetching, setIsFetching] = useState(false);
   const [newSectionName, setNewSectionName] = useState("");
   const [openAddSectionModal, setOpenAddSectionModal] = useState(false);
   const [openCreateMenuForm, setOpenCreateMenuForm] = useState(false);
@@ -57,6 +58,7 @@ export default function MenuPage() {
   useEffect(() => {
     const fetchMenu = async () => {
       try {
+        setIsFetching(true);
         const querySnapshot = await getDocs(menuRef);
         const newMenu = [];
         querySnapshot.forEach((doc) => {
@@ -64,8 +66,10 @@ export default function MenuPage() {
           newMenu.push(...doc.data().sections);
         });
         setMenuData(newMenu);
-        setCurrentSection({name: newMenu[0].name, index: 0})
+        setCurrentSection({name: newMenu[0].name, index: 0});
+        setIsFetching(false);
       } catch (error) {
+        setIsFetching(false);
         console.log(error);
       }
     };
