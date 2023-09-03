@@ -1,10 +1,10 @@
 import { Button, Grid, Modal, TextField } from '@mui/material'
-import React from 'react'
+import React, { memo } from 'react'
 import { GridModal } from '../style';
 
-export default function EditItemNameModal({ item, handleClose, open, setItem }) {
+function EditItemNameModal({ item, handleClose, open, setItem }) {
   const handleChangeName = (e) => {
-    setItem(item, "itemName", e.target.value);
+    setItem(item, "itemName", e.target.value, true);
   };
 
   return (
@@ -35,3 +35,4 @@ export default function EditItemNameModal({ item, handleClose, open, setItem }) 
     </Modal>
   );
 }
+export default memo(EditItemNameModal)

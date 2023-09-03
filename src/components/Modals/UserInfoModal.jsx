@@ -9,8 +9,9 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import EmailIcon from '@mui/icons-material/Email';
 import { ListModal } from "./style";
+import { memo } from "react";
 
-export default function UserInfoModal(props) {
+function UserInfoModal(props) {
   return (
     <Modal open={props.open} onClose={props.handleClose}>
       <ListModal
@@ -51,3 +52,4 @@ export default function UserInfoModal(props) {
     </Modal>
   );
 }
+export default memo(UserInfoModal)

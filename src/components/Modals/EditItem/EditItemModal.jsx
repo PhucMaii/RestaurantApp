@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import EditItemNameModal from "./EditItemNameModal";
 import EditOptionModal from "./EditOptionModal";
 import { formatToTwoDecimalPlace } from "../../../method/FormatNumber";
@@ -20,7 +20,14 @@ import { nonNumericCharacter } from "../../../utils/constant";
 import { GridModal } from "../style";
 import useUploadFile from "../../../hooks/useUploadFile";
 
-export default function EditItemModal({ deleteItem, item, handleClose, open, setItem }) {
+function EditItemModal({
+  deleteItem,
+  item,
+  handleClose,
+  open,
+  saveChanges,
+  setItem,
+}) {
   const [openAddOptionModal, setOpenAddOptionModal] = useState(false);
   const [openEditNameModal, setOpenEditNameModal] = useState(false);
   const [openEditOptionModal, setOpenEditOptionModal] = useState(false);
@@ -38,7 +45,7 @@ export default function EditItemModal({ deleteItem, item, handleClose, open, set
   const addOption = (option) => {
     const newOptions = [...item.options];
     newOptions.push(option);
-    setItem(item, "options", newOptions);
+    setItem(item, "options", newOptions, true);
   };
 
   const handleChangeOption = (targetOption, field, value) => {
@@ -49,7 +56,7 @@ export default function EditItemModal({ deleteItem, item, handleClose, open, set
         return option;
       }
     });
-    setItem(item, "options", newOptions);
+    setItem(item, "options", newOptions, true);
   };
 
   const handleCloseAddOptionModal = () => {
@@ -68,7 +75,7 @@ export default function EditItemModal({ deleteItem, item, handleClose, open, set
   const handleDeleteOption = (index) => {
     const newOptions = [...item.options];
     newOptions.splice(index, 1);
-    setItem(item, "options", newOptions);
+    setItem(item, "options", newOptions, true);
   };
 
   const handleOpenAddOptionModal = () => {
@@ -87,7 +94,7 @@ export default function EditItemModal({ deleteItem, item, handleClose, open, set
   const handlePriceChange = (e) => {
     // Remove non-numeric character
     const numericValue = e.target.value.replace(nonNumericCharacter, "");
-    setItem(item, "itemPrice", numericValue);
+    setItem(item, "itemPrice", numericValue, true);
   };
 
   return (
@@ -128,7 +135,7 @@ export default function EditItemModal({ deleteItem, item, handleClose, open, set
             </Grid>
           </Grid>
           <Grid item xs={6}>
-            <Grid container justifyContent="right">
+            <Grid columnSpacing={2} container justifyContent="right">
               <Grid item>
                 <Button
                   variant="contained"
@@ -138,6 +145,17 @@ export default function EditItemModal({ deleteItem, item, handleClose, open, set
                   color="error"
                 >
                   Delete This Item
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    handleClose();
+                    saveChanges();
+                  }}
+                >
+                  Save Changes
                 </Button>
               </Grid>
             </Grid>
@@ -236,7 +254,7 @@ export default function EditItemModal({ deleteItem, item, handleClose, open, set
               multiline
               value={item.itemDescription}
               onChange={(e) => {
-                setItem(item, "itemDescription", e.target.value);
+                setItem(item, "itemDescription", e.target.value, true);
               }}
               variant="outlined"
               rows={4}
@@ -254,7 +272,7 @@ export default function EditItemModal({ deleteItem, item, handleClose, open, set
               label="Item's Image URL"
               value={item.itemImageURL}
               onChange={(e) => {
-                setItem(item, "itemImageURL", e.target.value);
+                setItem(item, "itemImageURL", e.target.value, true);
                 setImageURL(e.target.value);
               }}
               variant="outlined"
@@ -296,3 +314,5 @@ export default function EditItemModal({ deleteItem, item, handleClose, open, set
     </>
   );
 }
+
+export default memo(EditItemModal)

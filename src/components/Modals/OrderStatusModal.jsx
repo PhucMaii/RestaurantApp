@@ -1,12 +1,11 @@
-import React from 'react'
+import React, { memo } from 'react'
 import {
     Modal,
-    ButtonGroup,
     Button
 } from '@mui/material'
 import { ButtonGroupModal } from './style';
 
-export default function OrderStatusModal(props) {
+function OrderStatusModal(props) {
   return (
     <Modal open={props.open} onClose={props.handleClose}>
       <ButtonGroupModal
@@ -70,3 +69,4 @@ export default function OrderStatusModal(props) {
     </Modal>
   );
 }
+export default memo(OrderStatusModal)

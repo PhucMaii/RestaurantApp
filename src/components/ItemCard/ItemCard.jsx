@@ -1,18 +1,19 @@
 import { Divider, Grid, Typography } from '@mui/material'
-import React from 'react'
+import React, { memo, useCallback } from 'react'
 import { useState, useEffect } from 'react';
 import { formatToTwoDecimalPlace } from '../../method/FormatNumber';
 import EditItemModal from '../Modals/EditItem/EditItemModal';
 import {ButtonStyled, GridStyled} from './style'
 
-export default function ItemCard({ deleteItem, item, setItem }) {
+function ItemCard({ deleteItem, item, saveChanges, setItem }) {
   const [isAvailable, setIsAvailable] = useState(item.availability);
   const [open, handleOpen] = useState(false);
-
   const toggleItemAvailability = () => {
-    setItem(item, "availability", isAvailable)
+    setItem(item, "availability", isAvailable, false)
   }
-
+  const handleCloseEditItemModal = useCallback(() => {
+    handleOpen(false);
+  }, [])
   useEffect(() => {
     toggleItemAvailability();
   }, [isAvailable])
@@ -22,9 +23,8 @@ export default function ItemCard({ deleteItem, item, setItem }) {
         deleteItem={deleteItem}
         item={item}
         open={open}
-        handleClose={(e) => {
-          handleOpen(false);
-        }}
+        handleClose={handleCloseEditItemModal}
+        saveChanges={saveChanges}
         setItem={setItem}
       />
       <GridStyled container padding={3} rowGap={3}>
@@ -61,3 +61,4 @@ export default function ItemCard({ deleteItem, item, setItem }) {
     </>
   );
 }
+export default memo(ItemCard)

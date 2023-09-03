@@ -1,5 +1,12 @@
-import { Fab, Grid, Typography, Button, Skeleton } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  Fab,
+  Grid,
+  Typography,
+  Snackbar,
+  Skeleton,
+} from "@mui/material";
+import React, { useCallback, useEffect, useState } from "react";
 import ItemCard from "../../components/ItemCard/ItemCard";
 import AddSectionModal from "../../components/Modals/AddSectionModal";
 import ResponsiveDrawer from "../../components/Sidebar/Sidebar";
@@ -20,12 +27,19 @@ import AddItemModal from "../../components/Modals/AddItemModal";
 export default function MenuPage() {
   const [docId, setDocId] = useState("");
   const [menuData, setMenuData] = useState([]);
+  // use for any changes inside EditItemModal, avoid updating action by action to firestore
+  const [tempMenuData, setTempMenuData] = useState([]);
   const [currentSection, setCurrentSection] = useState({});
   const [isFetching, setIsFetching] = useState(false);
   const [newSectionName, setNewSectionName] = useState("");
+  const [notification, setNotification] = useState({
+    message: "",
+    on: false,
+    type: "",
+  });
   const [openAddSectionModal, setOpenAddSectionModal] = useState(false);
   const [openCreateMenuForm, setOpenCreateMenuForm] = useState(false);
-
+  const [sections, setSections] = useState([]);
   // Get Menu Doc Ref
   const menuCollection = collection(db, "menu");
   const restaurantRef = JSON.parse(localStorage.getItem("current-user")).docId;
@@ -34,43 +48,84 @@ export default function MenuPage() {
     where("restaurantRef", "==", `/users/${restaurantRef}`)
   );
 
-  const addSection = (section) => {
-    const menu = [...menuData];
-    menu.push({ name: section });
-    setMenuData(menu);
-  };
-
-  const deleteItem = (index) => {
-    const menu = [...menuData];
-    menu[currentSection.index].items.splice(index, 1);
-    setMenuData(menu);
-  };
-
-  const handleChangeItems = (targetItem, field, value) => {
-    const menu = [...menuData];
-    let items = menu[currentSection.index].items;
-    const newItems = items.map((item) => {
-      if (item.itemName === targetItem.itemName) {
-        return { ...item, [field]: value };
+  const addSection = useCallback(
+    (section) => {
+      const menu = [...menuData];
+      menu.push({ name: section });
+      const isSectionInvalid = sections.find((sec) => sec === section);
+      if (!isSectionInvalid) {
+        setMenuData(menu);
+        setSections((prevSection) => [...prevSection, section]);
       } else {
-        return item;
+        setNotification({
+          message: "Section Name Is Existed",
+          on: true,
+          type: "error",
+        });
       }
-    });
-    menu[currentSection.index].items = newItems;
-    setMenuData(menu);
+    },
+    [menuData]
+  );
+
+  const deleteItem = useCallback(
+    (index) => {
+      const menu = [...menuData];
+      menu[currentSection.index].items.splice(index, 1);
+      setMenuData(menu);
+    },
+    [menuData]
+  );
+
+  const handleChangeItems = useCallback(
+    (targetItem, field, value, isTemp) => {
+      const menu = isTemp ? [...tempMenuData] : [...menuData];
+      let items = menu[currentSection.index].items;
+      const newItems = items.map((item) => {
+        if (item.itemName === targetItem.itemName) {
+          return { ...item, [field]: value };
+        } else {
+          return item;
+        }
+      });
+      menu[currentSection.index].items = newItems;
+      if (isTemp) {
+        setTempMenuData(menu);
+      } else {
+        setMenuData(menu);
+      }
+    },
+    [tempMenuData, menuData]
+  );
+
+  const closeAddSectionModal = useCallback(() => {
+    setOpenAddSectionModal(false);
+  }, []);
+
+  const handleCloseAddItemModal = useCallback(() => {
+    setOpenCreateMenuForm(false);
+    fetchMenu();
+  }, []);
+
+  const handleCloseNotification = () => {
+    setNotification((prevNotification) => ({ ...prevNotification, on: false }));
   };
-  
+
   const fetchMenu = async () => {
     try {
       setIsFetching(true);
       const querySnapshot = await getDocs(menuRef);
       const newMenu = [];
+      const newSections = [];
       querySnapshot.forEach((doc) => {
         setDocId(doc.id);
         newMenu.push(...doc.data().sections);
+        doc.data().sections.map((section) => {
+          newSections.push(section.name);
+        });
       });
       setMenuData(newMenu);
       setCurrentSection({ name: newMenu[0].name, index: 0 });
+      setSections(newSections);
       setIsFetching(false);
     } catch (error) {
       setIsFetching(false);
@@ -80,17 +135,19 @@ export default function MenuPage() {
 
   const renderSkeleton = () => {
     const gridItems = [];
-
-    for(let i = 0; i < 6; i++) {
+    for (let i = 0; i < 6; i++) {
       gridItems.push(
         <Grid key={i} item xs={12} md={5} xl={3} textAlign="center">
           <Skeleton variant="rounded" height={200}></Skeleton>
         </Grid>
       );
     }
-
     return gridItems;
-  }
+  };
+
+  const saveChanges = useCallback(() => {
+    setMenuData(tempMenuData);
+  }, [tempMenuData]);
 
   useEffect(() => {
     fetchMenu();
@@ -98,7 +155,7 @@ export default function MenuPage() {
 
   useEffect(() => {
     const handleChangeDocument = async () => {
-      if(menuData.length === 0) {
+      if (menuData.length === 0) {
         return;
       }
       try {
@@ -109,141 +166,162 @@ export default function MenuPage() {
       }
     };
     handleChangeDocument();
+    setTempMenuData(menuData);
   }, [menuData]);
 
   const menu = (
     <>
       <AddItemModal
         open={openCreateMenuForm}
-        handleClose={() => {
-          setOpenCreateMenuForm(false);
-          fetchMenu();
-        }}
+        handleClose={handleCloseAddItemModal}
       />
       <AddSectionModal
         open={openAddSectionModal}
-        handleClose={() => setOpenAddSectionModal(false)}
+        handleClose={closeAddSectionModal}
         sectionName={newSectionName}
         setSectionName={setNewSectionName}
         addSection={addSection}
       />
-      {isFetching ?  (
-        <Grid container columnSpacing={2} justifyContent="center" padding={3} rowGap={3}>
+      {isFetching ? (
+        <Grid
+          container
+          columnSpacing={2}
+          justifyContent="center"
+          padding={3}
+          rowGap={3}
+        >
           <Grid item xs={12} textAlign="center">
-            <Skeleton variant="rectangle" height={80}/>
+            <Skeleton variant="rectangle" height={80} />
           </Grid>
           {renderSkeleton()}
         </Grid>
       ) : (
-        <Grid container rowGap={2}>
-          <Grid
-            alignItems="center"
-            container
-            padding={1}
-            sx={{ border: "2px solid black" }}
+        <>
+          <Snackbar
+            open={notification.on}
+            autoHideDuration={6000}
+            onClose={handleCloseNotification}
           >
-            <Grid item xs={12} md={9}>
-              <Grid container columnSpacing={5}>
-                {menuData.map((section, index) => {
-                  return (
-                    <Grid item key={index}>
-                      <SectionStyled
-                        currentSection={currentSection.name == section.name}
-                        padding={1}
-                        onClick={() =>
-                          setCurrentSection({ name: section.name, index })
-                        }
-                        variant="h5"
-                      >
-                        {section.name}
-                      </SectionStyled>
-                    </Grid>
-                  );
-                })}
-              </Grid>
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <Grid
-                alignItems="center"
-                justifyContent="right"
-                container
-                columnSpacing={2}
-              >
-                <Grid item>
-                  <Typography>Add Section</Typography>
-                </Grid>
-                <Grid item>
-                  <Fab
-                    color="primary"
-                    onClick={() => setOpenAddSectionModal(true)}
-                    size="small"
-                  >
-                    +
-                  </Fab>
+            <Alert
+              onClose={handleCloseNotification}
+              severity={notification.type}
+              sx={{ width: "100%" }}
+            >
+              {notification.message}
+            </Alert>
+          </Snackbar>
+
+          <Grid container rowGap={2}>
+            <Grid
+              alignItems="center"
+              container
+              padding={1}
+              sx={{ border: "2px solid black" }}
+            >
+              <Grid item xs={12} md={9}>
+                <Grid container columnSpacing={5}>
+                  {menuData.map((section, index) => {
+                    return (
+                      <Grid item key={index}>
+                        <SectionStyled
+                          currentSection={currentSection.name == section.name}
+                          padding={1}
+                          onClick={() =>
+                            setCurrentSection({ name: section.name, index })
+                          }
+                          variant="h5"
+                        >
+                          {section.name}
+                        </SectionStyled>
+                      </Grid>
+                    );
+                  })}
                 </Grid>
               </Grid>
-            </Grid>
-          </Grid>
-          <Grid
-            container
-            columnSpacing={2}
-            justifyContent="center"
-            padding={2}
-            rowGap={2}
-          >
-            {menuData.map((section, index) => {
-              if (currentSection.name === section.name) {
-                if (!section.items) {
-                  return (
-                    <Grid
-                      alignItems="center"
-                      container
-                      justifyContent="center"
-                      rowGap={2}
+              <Grid item xs={12} md={3}>
+                <Grid
+                  alignItems="center"
+                  justifyContent="right"
+                  container
+                  columnSpacing={2}
+                >
+                  <Grid item>
+                    <Typography>Add Section</Typography>
+                  </Grid>
+                  <Grid item>
+                    <Fab
+                      color="primary"
+                      onClick={() => setOpenAddSectionModal(true)}
+                      size="small"
                     >
-                      <Grid item textAlign="center" xs={12}>
-                        <SearchOffIcon
-                          fontSize="large"
-                          sx={{ color: grey[500] }}
+                      +
+                    </Fab>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid
+              container
+              columnSpacing={2}
+              justifyContent="center"
+              padding={2}
+              rowGap={2}
+            >
+              {menuData.map((section, index) => {
+                if (currentSection.name === section.name) {
+                  if (!section.items) {
+                    return (
+                      <Grid
+                        alignItems="center"
+                        container
+                        justifyContent="center"
+                        rowGap={2}
+                      >
+                        <Grid item textAlign="center" xs={12}>
+                          <SearchOffIcon
+                            fontSize="large"
+                            sx={{ color: grey[500] }}
+                          />
+                        </Grid>
+                        <Grid item textAlign="center" xs={12}>
+                          <Typography
+                            fontWeight="bold"
+                            variant="h4"
+                            sx={{ color: grey[500] }}
+                          >
+                            THIS SECTION IS EMPTY. LETS ADD SOME ITEMS INTO IT
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    );
+                  } else {
+                    return section.items.map((item, index) => (
+                      <Grid key={index} item xs={12} md={5} xl={3}>
+                        <ItemCard
+                          deleteItem={() => deleteItem(index)}
+                          item={item}
+                          saveChanges={saveChanges}
+                          setItem={handleChangeItems}
                         />
                       </Grid>
-                      <Grid item textAlign="center" xs={12}>
-                        <Typography
-                          fontWeight="bold"
-                          variant="h4"
-                          sx={{ color: grey[500] }}
-                        >
-                          THIS SECTION IS EMPTY. LETS ADD SOME ITEMS INTO IT
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  );
-                } else {
-                  return section.items.map((item, index) => (
-                    <Grid key={index} item xs={12} md={5} xl={3}>
-                      <ItemCard
-                        deleteItem={() => deleteItem(index)}
-                        item={item}
-                        setItem={handleChangeItems}
-                      />
-                    </Grid>
-                  ));
+                    ));
+                  }
                 }
-              }
-            })}
-          </Grid>
-          <Grid container justifyContent="flex-end" padding={2}>
-            <Grid item sx={{ position: "fixed", bottom: 10 }}>
-              <Fab
-                color="primary"
-                onClick={() => setOpenCreateMenuForm(true)}
-                size="small"
-              >
-                +
-              </Fab>
+              })}
+            </Grid>
+            <Grid container justifyContent="flex-end" padding={2}>
+              <Grid item sx={{ position: "fixed", bottom: 10 }}>
+                <Fab
+                  color="primary"
+                  onClick={() => setOpenCreateMenuForm(true)}
+                  size="small"
+                >
+                  +
+                </Fab>
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
+        </>
       )}
     </>
   );

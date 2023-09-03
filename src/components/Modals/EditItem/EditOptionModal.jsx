@@ -1,10 +1,10 @@
 import { Button, TextField, Modal, Grid } from '@mui/material';
-import React from 'react'
+import React, { memo } from 'react'
 import { formatToTwoDecimalPlace } from '../../../method/FormatNumber';
 import { nonNumericCharacter } from '../../../utils/constant';
 import { GridModal } from '../style';
 
-export default function EditOptionModal({ handleClose, open, option, setOption }) {
+function EditOptionModal({ handleClose, open, option, setOption }) {
   const handlePriceChange = (e) => {
     // Remove non-numeric character
     const numericValue = e.target.value.replace(nonNumericCharacter, "");
@@ -50,3 +50,4 @@ export default function EditOptionModal({ handleClose, open, option, setOption }
     </Modal>
   );
 }
+export default memo(EditOptionModal)

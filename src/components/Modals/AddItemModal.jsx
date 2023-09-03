@@ -1,9 +1,9 @@
 import { Modal, Button } from "@mui/material";
 import CreateMenuPage from "../../pages/RestaurantCreation/CreateMenu/CreateMenuPage";
-import React from "react";
+import React, { memo } from "react";
 import { GridModal } from "./style";
 
-export default function AddItemModal({ handleClose, open }) {
+function AddItemModal({ handleClose, open }) {
   return (
     <Modal open={open} onClose={handleClose}>
         <GridModal maxWidth="800px" container padding={3} rowGap={3}>
@@ -20,3 +20,4 @@ export default function AddItemModal({ handleClose, open }) {
     </Modal>
   );
 }
+export default memo(AddItemModal)

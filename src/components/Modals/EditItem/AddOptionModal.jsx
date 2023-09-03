@@ -1,15 +1,14 @@
 import { Button, TextField, Modal, Grid } from '@mui/material';
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import { nonNumericCharacter } from '../../../utils/constant';
 import { GridModal } from '../style';
 
-export default function AddOptionModal({  handleClose, open, addOption }) {
+function AddOptionModal({  handleClose, open, addOption }) {
     const [option, setOption] = useState({
         availability: true,
         name: "",
         price: 0
     })
-
     const resetField = () => {
       setOption({
         availability: true,
@@ -17,7 +16,6 @@ export default function AddOptionModal({  handleClose, open, addOption }) {
         price: 0,
       });
     };
-
   return (
     <Modal onClose={handleClose} open={open}>
       <GridModal
@@ -63,3 +61,5 @@ export default function AddOptionModal({  handleClose, open, addOption }) {
     </Modal>
   );
 }
+
+export default memo(AddOptionModal)

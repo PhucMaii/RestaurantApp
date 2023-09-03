@@ -1,8 +1,8 @@
 import { Button, Grid, Modal, TextField } from '@mui/material'
-import React from 'react'
+import React, { memo } from 'react'
 import { GridModal } from './style';
 
-export default function AddSectionModal({
+function AddSectionModal({
   addSection,
   sectionName,
   handleClose,
@@ -40,3 +40,4 @@ export default function AddSectionModal({
     </Modal>
   );
 }
+export default memo(AddSectionModal)
