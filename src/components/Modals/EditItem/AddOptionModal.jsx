@@ -1,6 +1,7 @@
 import { Button, TextField, Modal, Grid } from '@mui/material';
 import React, { useState } from "react";
 import { nonNumericCharacter } from '../../../utils/constant';
+import { GridModal } from '../style';
 
 export default function AddOptionModal({  handleClose, open, addOption }) {
     const [option, setOption] = useState({
@@ -19,21 +20,12 @@ export default function AddOptionModal({  handleClose, open, addOption }) {
 
   return (
     <Modal onClose={handleClose} open={open}>
-      <Grid
+      <GridModal
         alignItems="center"
         container
         padding={2}
         rowGap={2}
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          maxWidth: "500px",
-          backgroundColor: "white",
-          borderRadius: "10px",
-          boxShadow: "rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px",
-        }}
+        maxWidth="500px"
       >
         <Grid item xs={12}>
             <TextField
@@ -67,7 +59,7 @@ export default function AddOptionModal({  handleClose, open, addOption }) {
                 }} variant="contained">Add</Button>
             </Grid>
         </Grid>
-      </Grid>
+      </GridModal>
     </Modal>
   );
 }

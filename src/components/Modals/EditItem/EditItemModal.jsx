@@ -7,6 +7,7 @@ import {
   Typography,
   TextField,
   Switch,
+  LinearProgress,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -16,12 +17,23 @@ import EditOptionModal from "./EditOptionModal";
 import { formatToTwoDecimalPlace } from "../../../method/FormatNumber";
 import AddOptionModal from "./AddOptionModal";
 import { nonNumericCharacter } from "../../../utils/constant";
+import { GridModal } from "../style";
+import useUploadFile from "../../../hooks/useUploadFile";
 
 export default function EditItemModal({ deleteItem, item, handleClose, open, setItem }) {
   const [openAddOptionModal, setOpenAddOptionModal] = useState(false);
   const [openEditNameModal, setOpenEditNameModal] = useState(false);
   const [openEditOptionModal, setOpenEditOptionModal] = useState(false);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(null);
+
+  const {
+    allowUploadImage,
+    allowUploadImageURL,
+    imageFile,
+    imageProgress,
+    handleFileInputChange,
+    setImageURL,
+  } = useUploadFile(item.itemImageURL);
 
   const addOption = (option) => {
     const newOptions = [...item.options];
@@ -92,21 +104,12 @@ export default function EditItemModal({ deleteItem, item, handleClose, open, set
         setItem={setItem}
       />
       <Modal open={open} onClose={handleClose}>
-        <Grid
+        <GridModal
+          maxWidth="800px"
           alignItems="center"
           container
           padding={2}
           rowGap={2}
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            maxWidth: "800px",
-            backgroundColor: "white",
-            borderRadius: "10px",
-            boxShadow: "rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px",
-          }}
         >
           <Grid item xs={6}>
             <Grid alignItems="center" container columnSpacing={2}>
@@ -127,7 +130,13 @@ export default function EditItemModal({ deleteItem, item, handleClose, open, set
           <Grid item xs={6}>
             <Grid container justifyContent="right">
               <Grid item>
-                <Button variant="contained" onClick={() => {deleteItem()}} color="error">
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    deleteItem();
+                  }}
+                  color="error"
+                >
                   Delete This Item
                 </Button>
               </Grid>
@@ -220,7 +229,69 @@ export default function EditItemModal({ deleteItem, item, handleClose, open, set
               </Fab>
             </Typography>
           </Grid>
-        </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Item's Description"
+              multiline
+              value={item.itemDescription}
+              onChange={(e) => {
+                setItem(item, "itemDescription", e.target.value);
+              }}
+              variant="outlined"
+              rows={4}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Typography fontWeight="bold" variant="h6">
+              Edit Item Image URL
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              disabled={!allowUploadImageURL}
+              fullWidth
+              label="Item's Image URL"
+              value={item.itemImageURL}
+              onChange={(e) => {
+                setItem(item, "itemImageURL", e.target.value);
+                setImageURL(e.target.value);
+              }}
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Divider>Or</Divider>
+          </Grid>
+          <Grid item xs={12}>
+            <input
+              disabled={!allowUploadImage}
+              accept="image/*"
+              style={{ display: "none" }}
+              id="outlined-button-file"
+              type="file"
+              onChange={handleFileInputChange}
+            />
+            <label htmlFor="outlined-button-file">
+              <Button
+                disabled={!allowUploadImage}
+                fullWidth
+                variant="outlined"
+                component="span"
+              >
+                Upload
+              </Button>
+            </label>
+          </Grid>
+          {imageProgress !== null && (
+            <Grid item xs={12}>
+              <LinearProgress variant="determinate" value={imageProgress} />
+              <Typography fontWeight="bold" textAlign="left">
+                URL: {imageFile}
+              </Typography>
+            </Grid>
+          )}
+        </GridModal>
       </Modal>
     </>
   );

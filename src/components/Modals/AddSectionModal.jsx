@@ -1,5 +1,6 @@
 import { Button, Grid, Modal, TextField } from '@mui/material'
 import React from 'react'
+import { GridModal } from './style';
 
 export default function AddSectionModal({
   addSection,
@@ -10,21 +11,12 @@ export default function AddSectionModal({
 }) {
   return (
     <Modal open={open} onClose={handleClose}>
-      <Grid
+      <GridModal
+        maxWidth="500px"
         alignItems="center"
         columnSpacing={2}
         container
         padding={3}
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          maxWidth: "500px",
-          backgroundColor: "white",
-          borderRadius: "10px",
-          boxShadow: "rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px",
-        }}
       >
         <Grid item xs={8}>
           <TextField
@@ -44,7 +36,7 @@ export default function AddSectionModal({
             Add
           </Button>
         </Grid>
-      </Grid>
+      </GridModal>
     </Modal>
   );
 }

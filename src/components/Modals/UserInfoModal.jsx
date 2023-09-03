@@ -1,6 +1,5 @@
 import { 
     Modal, 
-    List,
     ListItem,
     ListItemAvatar,
     Avatar,
@@ -9,11 +8,13 @@ import {
 import BadgeIcon from '@mui/icons-material/Badge';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import EmailIcon from '@mui/icons-material/Email';
+import { ListModal } from "./style";
 
 export default function UserInfoModal(props) {
   return (
     <Modal open={props.open} onClose={props.handleClose}>
-      <List
+      <ListModal
+        maxWidth="500px"
         sx={{
           position: "absolute",
           top: "50%",
@@ -46,7 +47,7 @@ export default function UserInfoModal(props) {
           </ListItemAvatar>
           <ListItemText primary={props.email} />
         </ListItem>
-      </List>
+      </ListModal>
     </Modal>
   );
 }
