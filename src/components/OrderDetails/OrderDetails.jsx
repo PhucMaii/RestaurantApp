@@ -22,6 +22,7 @@ import OrderStatusModal from "../Modals/OrderStatusModal";
 import UserInfoModal from "../Modals/UserInfoModal";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase.config";
+import { convertTimestampToDate, formatToTwoDecimalPlace, reduceNameLength } from "../../utils/utils";
 
 function BasicAccordion({
   docId,
@@ -81,40 +82,6 @@ function BasicAccordion({
       setRemainingTime((prevRemainingTime) => prevRemainingTime - 60);
       localStorage.setItem(docId, remainingTime - 60);
     }
-  };
-
-  const convertTimestampToDate = (timestamp) => {
-    const date = timestamp.toDate();
-    const formattedDate = date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      second: "numeric",
-    });
-    return formattedDate;
-  };
-
-  const reduceNameLength = (fullName) => {
-    const names = fullName.split(" ");
-    // Check if there are at least first name and last name
-    if (names.length < 2) {
-      return fullName;
-    }
-
-    const firstInitial = names[0][0].toUpperCase() + ".";
-    const lastName = names[names.length - 1];
-    const reducedName = firstInitial + lastName;
-
-    return reducedName;
-  };
-
-  const formatToTwoDecimalPlace = (num) => {
-    if (typeof num === "number") {
-      return num.toFixed(2);
-    }
-    return "N/A";
   };
 
   // Save the remaining time on localStorage
