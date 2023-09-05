@@ -17,15 +17,16 @@ import {
   TypographyStyled,
   ButtonStyled,
   DividerContainerStyled,
-} from "./style";
-import OrderStatusModal from "../Modals/OrderStatusModal";
-import UserInfoModal from "../Modals/UserInfoModal";
+} from "../OrderDetails/style";
+import StarIcon from '@mui/icons-material/Star';
+import React from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase.config";
 import { convertTimestampToDate, formatToTwoDecimalPlace, reduceNameLength } from "../../utils/utils";
+import UserInfoModal from "../Modals/UserInfoModal";
+import { yellow } from "@mui/material/colors";
 
-function BasicAccordion({
-  docId,
+export default function HistoryAccordion({
   orderId,
   orderTime,
   customerName,
@@ -36,24 +37,8 @@ function BasicAccordion({
   itemsQuantity,
   subTotal,
   note,
-  orderStatus,
 }) {
-  const initialRemainingTime = 600;
-  const [remainingTime, setRemainingTime] = useState(initialRemainingTime);
-  const [status, setStatus] = useState(orderStatus);
-  const [openStatusModal, setOpenStatusModal] = useState(false);
   const [openCustomerInfoModal, setOpenCustomerInfoModal] = useState(false);
-
-  const handleOpenStatusModal = (e) => {
-    e.stopPropagation();
-    setOpenStatusModal(true);
-  };
-
-  const handleCloseStatusModal = (e) => {
-    e.stopPropagation();
-    setOpenStatusModal(false);
-  };
-
   const handleOpenCustomerInfoModal = (e) => {
     e.stopPropagation();
     setOpenCustomerInfoModal(true);
@@ -63,87 +48,8 @@ function BasicAccordion({
     e.stopPropagation();
     setOpenCustomerInfoModal(false);
   };
-
-  const handleStatusButtonClick = (e) => {
-    e.stopPropagation();
-    setStatus(e.currentTarget.textContent);
-    setOpenStatusModal(false);
-  };
-
-  const handleIncreasePrepTime = (e) => {
-    e.stopPropagation();
-    setRemainingTime((prevRemainingTime) => prevRemainingTime + 60);
-    localStorage.setItem(docId, remainingTime + 60);
-  };
-
-  const handleDecreasePrepTime = (e) => {
-    e.stopPropagation();
-    if (remainingTime > 60) {
-      setRemainingTime((prevRemainingTime) => prevRemainingTime - 60);
-      localStorage.setItem(docId, remainingTime - 60);
-    }
-  };
-
-  // Save the remaining time on localStorage
-  const startTimer = () => {
-    localStorage.setItem(docId, initialRemainingTime);
-    setRemainingTime(initialRemainingTime);
-  };
-
-  // Get the remaining time if the page is refreshed
-  useEffect(() => {
-    const localRemainingTime = localStorage.getItem(docId);
-    setRemainingTime(parseInt(localRemainingTime));
-
-    // For testing only
-    startTimer();
-  }, []);
-
-  useEffect(() => {
-    const timeInterval = setTimeout(() => {
-      if (remainingTime > 0) {
-        setRemainingTime((prevRemainingTime) => prevRemainingTime - 1);
-        localStorage.setItem(docId, remainingTime - 1);
-      } else {
-        clearTimeout(timeInterval);
-      }
-    }, 1000);
-    return () => {
-      clearTimeout(timeInterval);
-    };
-  }, [remainingTime]);
-
-  useEffect(() => {
-    if (remainingTime === 0 && status !== "Picked Up") {
-      setStatus("Ready");
-    }
-    if (status === "Ready") {
-      setRemainingTime(0);
-      localStorage.setItem(docId, remainingTime);
-    }
-  }, [remainingTime, status]);
-
-  useEffect(() => {
-    const orderRef = doc(db, "orders", docId);
-    const updateStatus = async () => {
-      try {
-        await updateDoc(orderRef, { orderStatus: status });
-        console.log("Updated");
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    updateStatus();
-  }, [status]);
-
   return (
     <>
-      <OrderStatusModal
-        open={openStatusModal}
-        handleClose={handleCloseStatusModal}
-        handleStatusButtonClick={handleStatusButtonClick}
-        status={status}
-      />
       <UserInfoModal
         open={openCustomerInfoModal}
         handleClose={handleCloseCustomerInfoModal}
@@ -159,7 +65,7 @@ function BasicAccordion({
                 {orderId}
               </TypographyStyled>
               <TypographyStyled fontWeight="light" variant="subtitle2">
-                {convertTimestampToDate(orderTime)}
+                {"August 24, 2023 at 4:01:24"}
               </TypographyStyled>
             </Box>
             <ButtonStyled
@@ -168,53 +74,6 @@ function BasicAccordion({
             >
               {reduceNameLength(customerName)}
             </ButtonStyled>
-            {hasUtensils ? (
-              <GreenText variant="subtitle1">Need Utensils</GreenText>
-            ) : (
-              <RedText variant="subtitle1">No Utensils</RedText>
-            )}
-            <ButtonStyled
-              variant="contained"
-              color={
-                status === "Preparing"
-                  ? "inherit"
-                  : status === "Ready"
-                  ? "warning"
-                  : "success"
-              }
-              onClick={handleOpenStatusModal}
-            >
-              {status}
-            </ButtonStyled>
-            {status !== "Picked Up" && (
-              <TimerFlexBox>
-                <Fab
-                  variant="contained"
-                  size="small"
-                  color="primary"
-                  onClick={handleDecreasePrepTime}
-                >
-                  -
-                </Fab>
-                <Typography variant="subtitle1">
-                  {Math.floor(remainingTime / 60) < 10
-                    ? `0${Math.floor(remainingTime / 60)}`
-                    : Math.floor(remainingTime / 60)}
-                  :
-                  {remainingTime % 60 < 10
-                    ? `0${remainingTime % 60}`
-                    : remainingTime % 60}
-                </Typography>
-                <Fab
-                  variant="contained"
-                  size="small"
-                  color="primary"
-                  onClick={handleIncreasePrepTime}
-                >
-                  +
-                </Fab>
-              </TimerFlexBox>
-            )}
             <Box direction="column">
               <TypographyStyled fontWeight="bold" variant="subtitle1">
                 Pick up {itemsQuantity} items
@@ -222,6 +81,21 @@ function BasicAccordion({
               <Typography fontWeight="bold" variant="subtitle1">
                 Total: ${formatToTwoDecimalPlace(subTotal * 1.12)}
               </Typography>
+            </Box>
+            <ButtonStyled variant="contained" color="inherit">
+              Picked up
+            </ButtonStyled>
+            <Box flexDirection="row">
+              <Box>
+                <Typography variant="h6">Review</Typography>
+              </Box>
+              <Box direction="row">
+                <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
+                <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
+                <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
+                <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
+                <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
+              </Box>
             </Box>
           </AccordionSummaryFlexBox>
         </AccordionSummary>
@@ -252,26 +126,27 @@ function BasicAccordion({
                         <Divider />
                       </Grid>
                     </Grid>
-                    {item.options.map((option, index) => {
-                      return (
-                        <Grid key={index} container rowGap={2}>
-                          <Grid textAlign="center" item xs={2}>
-                            <Typography>{index + 1}</Typography>
+                    {item.options &&
+                      item.options.map((option, index) => {
+                        return (
+                          <Grid key={index} container rowGap={2}>
+                            <Grid textAlign="center" item xs={2}>
+                              <Typography>{index + 1}</Typography>
+                            </Grid>
+                            <Grid item xs={7} textAlign="left">
+                              <Typography>{option.name}</Typography>
+                            </Grid>
+                            <Grid item xs={3} textAlign="right">
+                              <Typography>
+                                ${formatToTwoDecimalPlace(option.price)}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={12}>
+                              <Divider />
+                            </Grid>
                           </Grid>
-                          <Grid item xs={7} textAlign="left">
-                            <Typography>{option.name}</Typography>
-                          </Grid>
-                          <Grid item xs={3} textAlign="right">
-                            <Typography>
-                              ${formatToTwoDecimalPlace(option.price)}
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={12}>
-                            <Divider />
-                          </Grid>
-                        </Grid>
-                      );
-                    })}
+                        );
+                      })}
                     <Grid container rowGap={2}>
                       <Grid textAlign="center" item xs={2}></Grid>
                       <Grid item xs={7} textAlign="left">
@@ -359,5 +234,3 @@ function BasicAccordion({
     </>
   );
 }
-
-export default memo(BasicAccordion);
