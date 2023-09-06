@@ -1,21 +1,15 @@
-import React from 'react'
+import React, { memo } from 'react'
 import {
     Modal,
-    ButtonGroup,
     Button
 } from '@mui/material'
+import { ButtonGroupModal } from './style';
 
-export default function OrderStatusModal(props) {
+function OrderStatusModal(props) {
   return (
     <Modal open={props.open} onClose={props.handleClose}>
-      <ButtonGroup
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          maxWidth: "500px",
-        }}
+      <ButtonGroupModal
+        maxWidth="500px"
         orientation="vertical"
         variant="contained"
       >
@@ -71,7 +65,8 @@ export default function OrderStatusModal(props) {
             Picked Up
           </Button>
         )}
-      </ButtonGroup>
+      </ButtonGroupModal>
     </Modal>
   );
 }
+export default memo(OrderStatusModal)

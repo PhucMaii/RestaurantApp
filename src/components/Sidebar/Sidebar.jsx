@@ -31,19 +31,20 @@ import TimerIcon from "@mui/icons-material/Timer";
 import { grey, green, red, yellow } from "@mui/material/colors";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { TabStyled } from "./style";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const drawerWidth = 240;
 
 function ResponsiveDrawer(props) {
   const { window } = props;
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [currentWindow, setCurrentWindow] = React.useState(null);
-  const [openDropDown, setOpenDropDown] = React.useState(false);
-  const [openSwitch, setOpenSwitch] = React.useState(true);
-  const [busySwitch, setBusySwitch] = React.useState(true);
-  const [notification, setNotification] = React.useState({});
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [currentPath, setCurrentPath] = useState("");
+  const [openDropDown, setOpenDropDown] = useState(false);
+  const [openSwitch, setOpenSwitch] = useState(true);
+  const [busySwitch, setBusySwitch] = useState(true);
+  const [notification, setNotification] = useState({});
   const navigate = useNavigate();
+  const location = useLocation();
 
   const iconList = [
     {
@@ -109,13 +110,12 @@ function ResponsiveDrawer(props) {
   };
 
   useEffect(() => {
-    if (!openSwitch) {
-      setBusySwitch(false);
-    }
-  }, [openSwitch]);
+    setCurrentPath(location.pathname);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (!openSwitch) {
+      setBusySwitch(false);
       setNotification({
         color: red[800],
         message: "Stop Receiving Orders",
@@ -159,10 +159,9 @@ function ResponsiveDrawer(props) {
         {iconList.map((iconObj) => (
           <React.Fragment key={iconObj.text}>
             <TabStyled
-              $isChoose={iconObj.text === currentWindow}
+              isChoose={iconObj.path === currentPath}
               onClick={() => {
                 navigate(iconObj.path)
-                setCurrentWindow(iconObj.text);
                 if (iconObj.text === "Account") {
                   handleOpenDropDown();
                 }
@@ -281,7 +280,6 @@ function ResponsiveDrawer(props) {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
           width: { md: `calc(100% - ${drawerWidth}px)` },
         }}
       >

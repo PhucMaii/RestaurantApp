@@ -6,6 +6,7 @@ import SigninPage from "./pages/Signin/SigninPage";
 import HomePage from "./pages/HomePage/HomePage";
 import ForgotPasswordPage from "./pages/ForgotPassword/ForgotPasswordPage"
 import HorizontalLinearStepper from "./pages/RestaurantCreation/RestaurantCreationStepper";
+import MenuPage from "./pages/Menu/MenuPage";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route element={<ProtectedRoutes />}>
             <Route path="/home" element={<HomePage />} />
             <Route path="/create-restaurant" element={<HorizontalLinearStepper />} />
+            <Route path="/menu" element={<MenuPage />} />
           </Route>
         </Routes>
         </BrowserRouter>
