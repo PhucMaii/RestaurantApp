@@ -1,5 +1,5 @@
-import { FormControl, Grid, Typography } from "@mui/material";
-import styled from "styled-components";
+import { FormControl, Grid, Typography } from '@mui/material';
+import styled from 'styled-components';
 
 const GridStyled = styled(Grid)`
   width: 100%;
@@ -8,7 +8,7 @@ const GridStyled = styled(Grid)`
   @media only screen and (min-width: 701px) {
     padding: 10%;
     align-items: center;
-    justify-content: center
+    justify-content: center;
   }
 `;
 const TitleStyled = styled(Typography)`
@@ -26,7 +26,6 @@ const LogoStyled = styled.img`
 `;
 const TopicImageStyled = styled.img`
   width: 100%;
-
 `;
 const TopicImageGrid = styled(Grid)`
   @media only screen and (max-width: 700px) {

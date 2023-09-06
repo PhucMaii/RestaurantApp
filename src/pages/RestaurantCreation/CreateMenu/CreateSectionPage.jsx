@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { Grid, Typography, Button, Alert } from "@mui/material";
-import { MenuImage, HelperTextStyled } from "./styles";
-import MultipleValueTextField from "../../../components/MultipleValueTextField";
-import { db } from "../../../../firebase.config";
+import React, { useState } from 'react';
+import { Grid, Typography, Button, Alert } from '@mui/material';
+import { MenuImage, HelperTextStyled } from './styles';
+import MultipleValueTextField from '../../../components/MultipleValueTextField';
+import { db } from '../../../../firebase.config';
 import {
   addDoc,
   collection,
@@ -11,17 +11,19 @@ import {
   where,
   updateDoc,
   arrayUnion,
-} from "firebase/firestore";
+} from 'firebase/firestore';
 
 export default function CreateSectionPage() {
-  const [currSection, setCurrSection] = useState("");
+  const [currSection, setCurrSection] = useState('');
   const [sections, setSections] = useState([]);
   const [notification, setNotification] = useState({});
 
   const handleAddSections = async () => {
     try {
-      const menuCollection = collection(db, "menu");
-      const restaurantRef = JSON.parse(localStorage.getItem("current-user")).docId;
+      const menuCollection = collection(db, 'menu');
+      const restaurantRef = JSON.parse(
+        localStorage.getItem('current-user'),
+      ).docId;
       // Convert sections array to be an array of objects with the name is the section item
       const sectionNameList = sections.map((section) => {
         return { name: section };
@@ -32,7 +34,7 @@ export default function CreateSectionPage() {
       };
       const menu = query(
         menuCollection,
-        where("restaurantRef", "==", `/users/${restaurantRef}`)
+        where('restaurantRef', '==', `/users/${restaurantRef}`),
       );
       const querySnapshot = await getDocs(menu);
 
@@ -51,16 +53,16 @@ export default function CreateSectionPage() {
       }
       setNotification({
         on: true,
-        severity: "success",
+        severity: 'success',
         message: `You added ${
-          sections.length > 2 ? sections.slice(0, 2) + "..." : sections
+          sections.length > 2 ? sections.slice(0, 2) + '...' : sections
         } successfully. Press Next if you are done with creating sections`,
       });
       setSections([]);
     } catch (error) {
       setNotification({
         on: true,
-        severity: "error",
+        severity: 'error',
         message: error.code,
       });
     }
@@ -97,7 +99,7 @@ export default function CreateSectionPage() {
       />
       <Button
         onClick={handleAddSections}
-        sx={{ width: "50%" }}
+        sx={{ width: '50%' }}
         variant="contained"
       >
         Add

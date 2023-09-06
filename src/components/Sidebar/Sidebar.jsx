@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Box,
@@ -48,39 +48,39 @@ function ResponsiveDrawer(props) {
 
   const iconList = [
     {
-      text: "Current Order",
+      text: 'Current Order',
       icon: <HomeIcon />,
-      path: "/home"
+      path: '/home',
     },
     {
-      text: "Menu",
+      text: 'Menu',
       icon: <MenuIcon />,
-      path: "/menu"
+      path: '/menu',
     },
     {
-      text: "History",
+      text: 'History',
       icon: <HistoryIcon />,
-      path: "/history"
+      path: '/history',
     },
     {
-      text: "Feedback",
+      text: 'Feedback',
       icon: <StarIcon />,
-      path: "/feedback"
+      path: '/feedback',
     },
     {
-      text: "Settings",
+      text: 'Settings',
       icon: <SettingsIcon />,
-      path: "/settings"
+      path: '/settings',
     },
     {
-      text: "Account",
+      text: 'Account',
       icon: <AccountCircleIcon />,
-      path: "/account"
+      path: '/account',
     },
     {
-      text: "Sign out",
+      text: 'Sign out',
       icon: <LogoutIcon />,
-      path: "/signout"
+      path: '/',
     },
   ];
 
@@ -94,8 +94,8 @@ function ResponsiveDrawer(props) {
 
   const handleSignout = () => {
     localStorage.clear();
-    navigate("/");
-  }
+    navigate('/');
+  };
 
   const toggleOpenSwitch = () => {
     setOpenSwitch((prevSwitch) => !openSwitch);
@@ -118,19 +118,19 @@ function ResponsiveDrawer(props) {
       setBusySwitch(false);
       setNotification({
         color: red[800],
-        message: "Stop Receiving Orders",
+        message: 'Stop Receiving Orders',
         icon: <DoNotDisturbOnIcon />,
       });
     } else if (busySwitch) {
       setNotification({
         color: yellow[800],
-        message: "Preparing Time Is Increased",
+        message: 'Preparing Time Is Increased',
         icon: <TimerIcon />,
       });
     } else {
       setNotification({
         color: green[700],
-        message: "Accepting Orders",
+        message: 'Accepting Orders',
         icon: <CheckCircleIcon />,
       });
     }
@@ -167,10 +167,12 @@ function ResponsiveDrawer(props) {
                 }
               }}
             >
-              <ListItemButton onClick={iconObj.text === "Sign out" && handleSignout}>
+              <ListItemButton
+                onClick={iconObj.text === 'Sign out' && handleSignout}
+              >
                 <ListItemIcon>{iconObj.icon}</ListItemIcon>
                 <ListItemText primary={iconObj.text} />
-                {iconObj.text === "Account" ? (
+                {iconObj.text === 'Account' ? (
                   openDropDown ? (
                     <ExpandLess />
                   ) : (
@@ -179,7 +181,7 @@ function ResponsiveDrawer(props) {
                 ) : null}
               </ListItemButton>
             </TabStyled>
-            {iconObj.text === "Account" && (
+            {iconObj.text === 'Account' && (
               <Collapse in={openDropDown}>
                 <List>
                   <ListItem>
@@ -213,7 +215,7 @@ function ResponsiveDrawer(props) {
     window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -228,7 +230,7 @@ function ResponsiveDrawer(props) {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: "none" } }}
+            sx={{ mr: 2, display: { md: 'none' } }}
           >
             <MenuIcon />
           </IconButton>
@@ -252,9 +254,9 @@ function ResponsiveDrawer(props) {
             keepMounted: true, // Better open performance on mobile.
           }}
           sx={{
-            display: { xs: "block", md: "none" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
+            display: { xs: 'block', md: 'none' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
               width: drawerWidth,
             },
           }}
@@ -264,9 +266,9 @@ function ResponsiveDrawer(props) {
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: "none", md: "block" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
+            display: { xs: 'none', md: 'block' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
               width: drawerWidth,
               backgroundColor: grey[200],
             },

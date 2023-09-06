@@ -13,7 +13,7 @@ function OrderStatusModal(props) {
         orientation="vertical"
         variant="contained"
       >
-        {props.status === "Preparing" && (
+        {props.status === 'Preparing' && (
           <>
             <Button
               color="inherit"
@@ -38,7 +38,7 @@ function OrderStatusModal(props) {
             </Button>
           </>
         )}
-        {props.status === "Ready" && (
+        {props.status === 'Ready' && (
           <>
             <Button
               color="warning"
@@ -56,7 +56,7 @@ function OrderStatusModal(props) {
             </Button>
           </>
         )}
-        {props.status === "Picked Up" && (
+        {props.status === 'Picked Up' && (
           <Button
             color="success"
             key="PickedUp"

@@ -17,14 +17,14 @@ function UserInfoModal(props) {
       <ListModal
         maxWidth="500px"
         sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          maxWidth: "500px",
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          maxWidth: '500px',
         }}
       >
-        <ListItem sx={{ backgroundColor: "white" }}>
+        <ListItem sx={{ backgroundColor: 'white' }}>
           <ListItemAvatar>
             <Avatar>
               <BadgeIcon />
@@ -32,7 +32,7 @@ function UserInfoModal(props) {
           </ListItemAvatar>
           <ListItemText primary={props.name} />
         </ListItem>
-        <ListItem sx={{ backgroundColor: "white" }}>
+        <ListItem sx={{ backgroundColor: 'white' }}>
           <ListItemAvatar>
             <Avatar>
               <ContactPhoneIcon />
@@ -40,7 +40,7 @@ function UserInfoModal(props) {
           </ListItemAvatar>
           <ListItemText primary={props.phoneNumber} />
         </ListItem>
-        <ListItem sx={{ backgroundColor: "white" }}>
+        <ListItem sx={{ backgroundColor: 'white' }}>
           <ListItemAvatar>
             <Avatar>
               <EmailIcon />
