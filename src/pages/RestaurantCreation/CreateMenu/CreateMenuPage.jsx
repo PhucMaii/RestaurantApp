@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   Grid,
   TextField,
@@ -8,49 +8,49 @@ import {
   Button,
   LinearProgress,
   Alert,
-} from "@mui/material";
-import MultipleValueTextField from "../../../components/MultipleValueTextField";
+} from '@mui/material';
+import MultipleValueTextField from '../../../components/MultipleValueTextField';
 import {
   collection,
   getDocs,
   query,
   updateDoc,
   where,
-} from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { db, storage } from "../../../../firebase.config";
+} from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { db, storage } from '../../../../firebase.config';
 
 export default function CreateMenuPage() {
   const [sections, setSections] = useState([]);
   const [notification, setNotification] = useState({
-    message: "",
+    message: '',
     open: false,
-    type: "error",
+    type: 'error',
   });
-  const [selectedSection, setSelectedSection] = useState("");
+  const [selectedSection, setSelectedSection] = useState('');
   const [options, setOptions] = useState([]);
   const [itemData, setItemData] = useState({
     availability: true,
-    itemName: "",
+    itemName: '',
     options: [],
-    itemDescription: "",
-    itemImageURL: "",
+    itemDescription: '',
+    itemImageURL: '',
     itemPrice: 0,
   });
   const [_imageFile, setImageFile] = useState(null);
-  const [image, setImage] = useState("");
-  const [imageURL, setImageURL] = useState("");
+  const [image, setImage] = useState('');
+  const [imageURL, setImageURL] = useState('');
   // Allow user to enter image URL if true
   const [allowImageURL, setAllowImageURL] = useState(true);
   // Allow user to upload file if true
   const [allowUploadImage, setAllowUploadImage] = useState(true);
-  const [currOption, setCurrOption] = useState("");
+  const [currOption, setCurrOption] = useState('');
   const [imageProgress, setImageProgress] = useState(null);
-  const menuCollection = collection(db, "menu");
-  const restaurantRef = JSON.parse(localStorage.getItem("current-user")).docId;
+  const menuCollection = collection(db, 'menu');
+  const restaurantRef = JSON.parse(localStorage.getItem('current-user')).docId;
   const menu = query(
     menuCollection,
-    where("restaurantRef", "==", `/users/${restaurantRef}`)
+    where('restaurantRef', '==', `/users/${restaurantRef}`),
   );
   const handleFileInputChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -61,14 +61,14 @@ export default function CreateMenuPage() {
     const uploadImage = uploadBytesResumable(storageRef, e.target.files[0]);
     // Snapshot will provide how much image is uploaded
     uploadImage.on(
-      "state_changed",
+      'state_changed',
       (snapshot) => {
         const progressOfImageUpload =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setImageProgress(progressOfImageUpload);
       },
       (error) => {
-        console.log("There was error with uploading image", error);
+        console.log('There was error with uploading image', error);
       },
       () => {
         getDownloadURL(uploadImage.snapshot.ref).then((url) => {
@@ -78,14 +78,14 @@ export default function CreateMenuPage() {
             itemImageURL: url,
           }));
         });
-      }
+      },
     );
   };
 
   const isItemDataValid = () => {
     return (
-      itemData.itemName.trim() !== "" &&
-      itemData.itemDescription.trim() !== "" &&
+      itemData.itemName.trim() !== '' &&
+      itemData.itemDescription.trim() !== '' &&
       itemData.itemPrice > 0
     );
   };
@@ -121,9 +121,9 @@ export default function CreateMenuPage() {
     console.log(isValid);
     if (!isValid) {
       setNotification({
-        message: "Please Fill Out All Requiresd Fields",
+        message: 'Please Fill Out All Requiresd Fields',
         on: true,
-        type: "error",
+        type: 'error',
       });
       return;
     }
@@ -133,7 +133,7 @@ export default function CreateMenuPage() {
         const docRef = doc.ref;
         const menuData = doc.data();
         const targetSection = menuData.sections.find(
-          (section) => section.name === selectedSection
+          (section) => section.name === selectedSection,
         );
         if (!targetSection.items) {
           targetSection.items = [];
@@ -143,17 +143,17 @@ export default function CreateMenuPage() {
         setNotification({
           message: `${itemData.itemName} is added successfully into your menu. Press Finish when you are done.`,
           on: true,
-          type: "success",
+          type: 'success',
         });
         // Reset all the fields
-        setImageURL("");
-        setImage("");
+        setImageURL('');
+        setImage('');
         setOptions([]);
         setItemData({
-          itemName: "",
+          itemName: '',
           options,
-          itemDescription: "",
-          itemImageURL: "",
+          itemDescription: '',
+          itemImageURL: '',
           itemPrice: 0,
         });
       });
@@ -161,7 +161,7 @@ export default function CreateMenuPage() {
       setNotification({
         message: error.code,
         on: true,
-        type: "error",
+        type: 'error',
       });
     }
   };
@@ -180,9 +180,9 @@ export default function CreateMenuPage() {
 
   // only allow user to either enter image url or upload image file
   useEffect(() => {
-    if (imageURL !== "" && image === "") {
+    if (imageURL !== '' && image === '') {
       setAllowUploadImage(false);
-    } else if (image !== "" && imageURL === "") {
+    } else if (image !== '' && imageURL === '') {
       setAllowImageURL(false);
     } else {
       setAllowUploadImage(true);
@@ -315,7 +315,7 @@ export default function CreateMenuPage() {
         <input
           disabled={!allowUploadImage}
           accept="image/*"
-          style={{ display: "none" }}
+          style={{ display: 'none' }}
           id="outlined-button-file"
           type="file"
           onChange={handleFileInputChange}

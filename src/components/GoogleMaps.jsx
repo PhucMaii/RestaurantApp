@@ -129,12 +129,12 @@ export default function GoogleMaps(props) {
               <Grid item sx={{ display: 'flex', width: 44 }}>
                 <LocationOnIcon sx={{ color: 'text.secondary' }} />
               </Grid>
-              <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+              <Grid
+                item
+                sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}
+              >
                 {parts.map((part, index) => (
-                  <Box
-                    key={index}
-                    component="span"
-                  >
+                  <Box key={index} component="span">
                     {part.text}
                   </Box>
                 ))}

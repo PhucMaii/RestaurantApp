@@ -1,5 +1,5 @@
-import { FormControl, Grid, Typography } from "@mui/material"
-import styled from "styled-components"
+import { FormControl, Grid, Typography } from '@mui/material';
+import styled from 'styled-components';
 
 const GridStyled = styled(Grid)`
   width: 100%;

@@ -1,5 +1,5 @@
-import { TextField, Grid, Chip } from "@mui/material";
-import React from "react";
+import { TextField, Grid, Chip } from '@mui/material';
+import React from 'react';
 
 export default function MultipleValueTextField({
   currValue,
@@ -9,13 +9,13 @@ export default function MultipleValueTextField({
   labelName,
   variant,
   width,
-  chipWidth
+  chipWidth,
 }) {
   const handleEnterKeyDown = (e) => {
     if (e.keyCode === 13) {
       // Enter Key
       setValues((oldState) => [...oldState, e.target.value]);
-      setCurrValue("");
+      setCurrValue('');
     }
   };
 
@@ -49,7 +49,7 @@ export default function MultipleValueTextField({
               size="medium"
               onDelete={() => handleDelete(item, index)}
               label={item}
-              style={{ marginRight: "10px", marginBottom: "10px" }}
+              style={{ marginRight: '10px', marginBottom: '10px' }}
             />
           );
         })}

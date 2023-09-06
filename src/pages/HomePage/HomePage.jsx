@@ -1,19 +1,19 @@
-import { Grid, Typography, Divider, Fab, Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import BasicAccordion from "../../components/OrderDetails/OrderDetails";
-import { db } from "../../../firebase.config";
-import { collection, onSnapshot } from "firebase/firestore";
-import { hasRestaurant } from "../../utils/auth";
-import { useNavigate } from "react-router-dom";
-import ResponsiveDrawer from "../../components/Sidebar/Sidebar";
+import { Grid, Typography, Divider, Fab, Button } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import BasicAccordion from '../../components/OrderDetails/OrderDetails';
+import { db } from '../../../firebase.config';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { hasRestaurant } from '../../utils/auth';
+import { useNavigate } from 'react-router-dom';
+import ResponsiveDrawer from '../../components/Sidebar/Sidebar';
 
 export default function HomePage() {
   const [isOwner, _setIsOwner] = useState(hasRestaurant());
   const [readyOrders, setReadyOrders] = useState([]);
   const [preparingOrders, setPreparingOrders] = useState([]);
   const [preparingTime, setPreparingTime] = useState(600);
-  const orderCollection = collection(db, "orders");
+  const orderCollection = collection(db, 'orders');
   const navigate = useNavigate();
 
   const handleIncreasePreparingTime = () => {
@@ -25,7 +25,7 @@ export default function HomePage() {
   };
 
   const navigateToCreateRestaurant = () => {
-    navigate("/create-restaurant");
+    navigate('/create-restaurant');
   };
 
   useEffect(() => {
@@ -35,18 +35,18 @@ export default function HomePage() {
           const updatedData = snapshot.docs.map((doc) => {
             const data = doc.data();
             if (
-              data.orderStatus === "Ready" ||
-              data.orderStatus === "Preparing"
+              data.orderStatus === 'Ready' ||
+              data.orderStatus === 'Preparing'
             ) {
               return { id: doc.id, ...data };
             }
             return null;
           });
           const preparingOrders = updatedData.filter(
-            (data) => data !== null && data.orderStatus !== "Ready"
+            (data) => data !== null && data.orderStatus !== 'Ready',
           );
           const newReadyOrders = updatedData.filter(
-            (data) => data !== null && data.orderStatus !== "Preparing"
+            (data) => data !== null && data.orderStatus !== 'Preparing',
           );
           setPreparingOrders(preparingOrders);
           setReadyOrders(newReadyOrders);
@@ -72,7 +72,7 @@ export default function HomePage() {
           <Grid container justifyContent="center"></Grid>
           {preparingOrders.map((order) => {
             if (!order.items) {
-              console.log("Order has no items:", order.id);
+              console.log('Order has no items:', order.id);
               return null; // Skip rendering this order
             }
             return (
@@ -122,7 +122,7 @@ export default function HomePage() {
         <Grid container justifyContent="center" rowGap={3}>
           {readyOrders.map((order) => {
             if (!order.items) {
-              console.log("Order has no items:", order.id);
+              console.log('Order has no items:', order.id);
               return null; // Skip rendering this order
             }
             return (
@@ -165,7 +165,7 @@ export default function HomePage() {
           })}
         </Grid>
       </Grid>
-      </Grid>
+    </Grid>
   );
 
   return isOwner ? (

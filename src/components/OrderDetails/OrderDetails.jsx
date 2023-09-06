@@ -1,4 +1,4 @@
-import { useState, useEffect, memo } from "react";
+import React, { useState, useEffect, memo } from 'react';
 import {
   AccordionSummary,
   Typography,
@@ -6,7 +6,7 @@ import {
   Fab,
   Grid,
   Divider,
-} from "@mui/material";
+} from '@mui/material';
 import {
   GreenText,
   RedText,
@@ -17,12 +17,16 @@ import {
   TypographyStyled,
   ButtonStyled,
   DividerContainerStyled,
-} from "./style";
-import OrderStatusModal from "../Modals/OrderStatusModal";
-import UserInfoModal from "../Modals/UserInfoModal";
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../../../firebase.config";
-import { convertTimestampToDate, formatToTwoDecimalPlace, reduceNameLength } from "../../utils/utils";
+} from './style';
+import OrderStatusModal from '../Modals/OrderStatusModal';
+import UserInfoModal from '../Modals/UserInfoModal';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../../firebase.config';
+import {
+  convertTimestampToDate,
+  formatToTwoDecimalPlace,
+  reduceNameLength,
+} from '../../utils/utils';
 
 function BasicAccordion({
   docId,
@@ -114,21 +118,21 @@ function BasicAccordion({
   }, [remainingTime]);
 
   useEffect(() => {
-    if (remainingTime === 0 && status !== "Picked Up") {
-      setStatus("Ready");
+    if (remainingTime === 0 && status !== 'Picked Up') {
+      setStatus('Ready');
     }
-    if (status === "Ready") {
+    if (status === 'Ready') {
       setRemainingTime(0);
       localStorage.setItem(docId, remainingTime);
     }
   }, [remainingTime, status]);
 
   useEffect(() => {
-    const orderRef = doc(db, "orders", docId);
+    const orderRef = doc(db, 'orders', docId);
     const updateStatus = async () => {
       try {
         await updateDoc(orderRef, { orderStatus: status });
-        console.log("Updated");
+        console.log('Updated');
       } catch (error) {
         console.log(error);
       }
@@ -176,17 +180,17 @@ function BasicAccordion({
             <ButtonStyled
               variant="contained"
               color={
-                status === "Preparing"
-                  ? "inherit"
-                  : status === "Ready"
-                  ? "warning"
-                  : "success"
+                status === 'Preparing'
+                  ? 'inherit'
+                  : status === 'Ready'
+                  ? 'warning'
+                  : 'success'
               }
               onClick={handleOpenStatusModal}
             >
               {status}
             </ButtonStyled>
-            {status !== "Picked Up" && (
+            {status !== 'Picked Up' && (
               <TimerFlexBox>
                 <Fab
                   variant="contained"
