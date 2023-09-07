@@ -35,8 +35,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 const drawerWidth = 250;
 
-function ResponsiveDrawer(props) {
-  const { window } = props;
+function ResponsiveDrawer({window, tab}) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState("");
   const [openDropDown, setOpenDropDown] = useState(false);
@@ -94,18 +93,17 @@ function ResponsiveDrawer(props) {
 
   const handleSignout = () => {
     localStorage.clear();
-    navigate('/');
   };
 
   const toggleOpenSwitch = () => {
-    setOpenSwitch((prevSwitch) => !openSwitch);
+    setOpenSwitch((prevSwitch) => !prevSwitch);
   };
 
   const toggleBusySwitch = () => {
     if (!openSwitch) {
       setBusySwitch(false);
     } else {
-      setBusySwitch((prevSwitch) => !busySwitch);
+      setBusySwitch((prevSwitch) => !prevSwitch);
     }
   };
 
@@ -159,17 +157,18 @@ function ResponsiveDrawer(props) {
         {iconList.map((iconObj) => (
           <React.Fragment key={iconObj.text}>
             <TabStyled
-              isChoose={iconObj.path === currentPath}
+              ischoose={iconObj.path === currentPath ? "true" : "false"} // React doesn't understand isChoose is a boolean
               onClick={() => {
                 navigate(iconObj.path)
                 if (iconObj.text === "Account") {
                   handleOpenDropDown();
                 }
+                if(iconObj.text === "Sign out") {
+                  handleSignout();
+                }
               }}
             >
-              <ListItemButton
-                onClick={iconObj.text === 'Sign out' && handleSignout}
-              >
+              <ListItemButton>
                 <ListItemIcon>{iconObj.icon}</ListItemIcon>
                 <ListItemText primary={iconObj.text} />
                 {iconObj.text === 'Account' ? (
@@ -286,17 +285,14 @@ function ResponsiveDrawer(props) {
         }}
       >
         <Toolbar />
-        {props.tab}
+        {tab}
       </Box>
     </Box>
   );
 }
 
 ResponsiveDrawer.propTypes = {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
+  tab: PropTypes.node.isRequired,
   window: PropTypes.func,
 };
 

@@ -22,5 +22,11 @@ module.exports = {
   plugins: ['react'],
   rules: {
     'react/react-in-jsx-scope': 'error',
+    'no-unused-vars': [
+        'error',
+        {
+            varsIgnorePattern: '^_'
+        }
+    ]
   },
 };

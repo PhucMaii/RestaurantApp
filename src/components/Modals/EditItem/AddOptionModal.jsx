@@ -1,9 +1,10 @@
 import { Button, TextField, Modal, Grid } from '@mui/material';
 import React, { memo, useState } from "react";
+import PropTypes from 'prop-types';
 import { nonNumericCharacter } from '../../../utils/constant';
 import { GridModal } from '../style';
 
-function AddOptionModal({  handleClose, open, addOption }) {
+function AddOptionModal({ handleClose, open, addOption }) {
     const [option, setOption] = useState({
         availability: true,
         name: "",
@@ -60,6 +61,12 @@ function AddOptionModal({  handleClose, open, addOption }) {
       </GridModal>
     </Modal>
   );
+}
+
+AddOptionModal.propTypes = {
+  handleClose: PropTypes.func.isRequired, 
+  open: PropTypes.bool.isRequired,
+  addOption: PropTypes.func.isRequired,
 }
 
 export default memo(AddOptionModal)

@@ -9,7 +9,8 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "prettier --write \"**/*.{js,ts,json}\"",
-    "format:check": "prettier --check \"**/*.{js,ts,json}\""
+    "format:check": "prettier --check \"**/*.{js,ts,json}\"",
+    "check": "npm run lint && npm run format:check && npm run build"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -21,6 +22,7 @@
     "dotenv": "^16.3.1",
     "firebase": "^10.1.0",
     "prettier": "^3.0.3",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.4",

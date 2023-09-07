@@ -1,5 +1,6 @@
 import { Button, Grid, Modal, TextField } from '@mui/material'
-import React, { memo } from 'react'
+import React, { memo } from 'react';
+import PropTypes from 'prop-types';
 import { GridModal } from './style';
 
 function AddSectionModal({
@@ -40,4 +41,13 @@ function AddSectionModal({
     </Modal>
   );
 }
+
+AddSectionModal.propTypes = {
+  addSection: PropTypes.func.isRequired,
+  sectionName: PropTypes.string.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  setSectionName: PropTypes.func.isRequired,
+}
+
 export default memo(AddSectionModal)

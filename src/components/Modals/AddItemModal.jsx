@@ -1,6 +1,7 @@
 import { Modal, Button } from "@mui/material";
 import CreateMenuPage from "../../pages/RestaurantCreation/CreateMenu/CreateMenuPage";
 import React, { memo } from "react";
+import PropTypes from 'prop-types';
 import { GridModal } from "./style";
 
 function AddItemModal({ handleClose, open }) {
@@ -20,4 +21,10 @@ function AddItemModal({ handleClose, open }) {
     </Modal>
   );
 }
+
+AddItemModal.propTypes = {
+  handleClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired
+}
+
 export default memo(AddItemModal)
