@@ -195,7 +195,6 @@ export default function HomePage() {
           <Divider />
         </Grid>
         <Grid container justifyContent="center" rowGap={3}>
-          <Grid container justifyContent="center"></Grid>
           {preparingOrders.map((order) => {
             if (!order.items) {
               return null; // Skip rendering this order

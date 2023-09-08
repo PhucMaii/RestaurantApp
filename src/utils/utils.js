@@ -14,6 +14,12 @@ export const convertTimestampToDate = (timestamp) => {
   return formattedDate;
 };
 
+export const convertToDay = (timestamp) => {
+    const formattedDate = convertTimestampToDate(timestamp);
+    const date = formattedDate.split(" at ")[0];
+    return date;
+}
+
 export const formatToTwoDecimalPlace = (num) => {
   if (typeof num === "number") {
     return num.toFixed(2);

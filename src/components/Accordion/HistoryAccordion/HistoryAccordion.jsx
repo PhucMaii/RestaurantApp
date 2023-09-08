@@ -15,6 +15,7 @@ import {
   DividerContainerStyled,
 } from "../style";
 import StarIcon from '@mui/icons-material/Star';
+import StarOutlineOutlinedIcon from '@mui/icons-material/StarOutlineOutlined';
 import React from "react";
 import { convertTimestampToDate, formatToTwoDecimalPlace, reduceNameLength } from "../../../utils/utils";
 import UserInfoModal from "../../Modals/UserInfoModal";
@@ -29,6 +30,8 @@ export default function HistoryAccordion({
   note,
   orderId,
   orderTime,
+  reviewMsg,
+  reviewStars,
   subTotal
 }) {
   const [openCustomerInfoModal, setOpenCustomerInfoModal] = useState(false);
@@ -42,6 +45,24 @@ export default function HistoryAccordion({
     e.stopPropagation();
     setOpenCustomerInfoModal(false);
   };
+
+  const renderStarIcon = () => {
+    const renderedStars = [];
+    const notReviewedStars = 5 - reviewStars;
+    for(let i = 0; i < reviewStars; i++) {
+      renderedStars.push((
+        <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
+      ))
+    }
+    if(notReviewedStars > 0) {
+      for(let i = 0; i < notReviewedStars; i++) {
+        renderedStars.push((
+          <StarOutlineOutlinedIcon fontSize="large" sx={{ color: yellow[600] }} />
+        ))
+      }
+    }
+    return renderedStars;
+  } 
 
   return (
     <>
@@ -85,11 +106,7 @@ export default function HistoryAccordion({
                 <Typography variant="h5">Review:</Typography>
               </Box>
               <Box>
-                <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
-                <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
-                <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
-                <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
-                <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
+                {renderStarIcon()}
               </Box>
             </Box>
           </AccordionSummaryFlexBox>
@@ -171,7 +188,7 @@ export default function HistoryAccordion({
                   </Typography>
                 </Grid>
                 <Grid item textAlign="center" p={3}>
-                  <Typography>{note ? note : "No Review For This Order Yet"}</Typography>
+                  <Typography>{reviewMsg}</Typography>
                 </Grid>
               </Grid>
               <Grid container justifyContent="center" rowGap={3} mt={3}>
