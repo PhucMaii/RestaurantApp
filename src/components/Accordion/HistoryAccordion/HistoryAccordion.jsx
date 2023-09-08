@@ -17,7 +17,6 @@ import {
 } from "../style";
 import StarIcon from '@mui/icons-material/Star';
 import StarOutlineOutlinedIcon from '@mui/icons-material/StarOutlineOutlined';
-import React from "react";
 import { convertTimestampToDate, formatToTwoDecimalPlace, reduceNameLength } from "../../../utils/utils";
 import UserInfoModal from "../../Modals/UserInfoModal";
 import { yellow } from "@mui/material/colors";
@@ -51,13 +50,13 @@ function HistoryAccordion({
     const notReviewedStars = 5 - reviewStars;
     for(let i = 0; i < reviewStars; i++) {
       renderedStars.push((
-        <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
+        <StarIcon key={`${orderId} - ${i}`} fontSize="large" sx={{ color: yellow[600] }} />
       ))
     }
     if(notReviewedStars > 0) {
       for(let i = 0; i < notReviewedStars; i++) {
         renderedStars.push((
-          <StarOutlineOutlinedIcon fontSize="large" sx={{ color: yellow[600] }} />
+          <StarOutlineOutlinedIcon key={`${orderId} - ${reviewStars + i + 1}`} fontSize="large" sx={{ color: yellow[600] }} />
         ))
       }
     }

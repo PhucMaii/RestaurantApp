@@ -11,7 +11,7 @@ export default function ForgotPasswordPage() {
   const handleGetEmailToReset = (e) => {
     e.preventDefault();
     sendPasswordResetEmail(auth, email)
-      .then((data) => {
+      .then(() => {
         alert('Check your email');
       })
       .catch((err) => alert(err.code));
@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
         </Grid>
         <Grid container justifyContent="center">
           <Typography textAlign="center" color={grey[500]}>
-            Don't worry. We will send you a link to reset it
+            Don&apos;t worry. We will send you a link to reset it
           </Typography>
         </Grid>
       </Grid>

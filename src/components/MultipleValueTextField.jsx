@@ -1,15 +1,16 @@
 import { TextField, Grid, Chip } from '@mui/material';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export default function MultipleValueTextField({
+  chipWidth,
   currValue,
+  labelName,
   setCurrValue,
   setValues,
   values,
-  labelName,
   variant,
   width,
-  chipWidth,
 }) {
   const handleEnterKeyDown = (e) => {
     if (e.keyCode === 13) {
@@ -46,6 +47,7 @@ export default function MultipleValueTextField({
         {values.map((item, index) => {
           return (
             <Chip
+              key={index}
               size="medium"
               onDelete={() => handleDelete(item, index)}
               label={item}
@@ -56,4 +58,15 @@ export default function MultipleValueTextField({
       </Grid>
     </Grid>
   );
+}
+
+MultipleValueTextField.propTypes = {
+  chipWidth: PropTypes.number.isRequired,
+  currValue: PropTypes.string.isRequired,
+  labelName: PropTypes.string.isRequired,
+  setCurrValue: PropTypes.func.isRequired,
+  setValues: PropTypes.func.isRequired,
+  values: PropTypes.array.isRequired,
+  variant: PropTypes.string.isRequired,
+  width: PropTypes.string.isRequired
 }

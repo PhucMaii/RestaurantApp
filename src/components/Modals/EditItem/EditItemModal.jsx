@@ -12,6 +12,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import React, { memo, useState } from "react";
+import PropTypes from 'prop-types';
 import EditItemNameModal from "./EditItemNameModal";
 import EditOptionModal from "./EditOptionModal";
 import { formatToTwoDecimalPlace } from "../../../method/FormatNumber";
@@ -189,7 +190,7 @@ function EditItemModal({
                   <Grid item>
                     <Typography variant="subtitle2">
                       <Switch
-                        onChange={(e) => {
+                        onChange={() => {
                           handleChangeOption(
                             option,
                             "availability",
@@ -313,6 +314,15 @@ function EditItemModal({
       </Modal>
     </>
   );
+}
+
+EditItemModal.propTypes = {
+  deleteItem: PropTypes.func.isRequired,
+  item: PropTypes.object.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  saveChanges: PropTypes.func.isRequired,
+  setItem: PropTypes.func.isRequired,
 }
 
 export default memo(EditItemModal)

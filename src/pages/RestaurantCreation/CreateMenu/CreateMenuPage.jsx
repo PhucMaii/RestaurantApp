@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Grid,
   TextField,
@@ -17,8 +17,8 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
-import { db, storage } from '../../../../firebase.config';
+import { db } from '../../../../firebase.config';
+import useUploadFile from '../../../hooks/useUploadFile';
 
 export default function CreateMenuPage() {
   const [sections, setSections] = useState([]);
@@ -37,50 +37,23 @@ export default function CreateMenuPage() {
     itemImageURL: '',
     itemPrice: 0,
   });
-  const [_imageFile, setImageFile] = useState(null);
   const [image, setImage] = useState('');
-  const [imageURL, setImageURL] = useState('');
-  // Allow user to enter image URL if true
-  const [allowImageURL, setAllowImageURL] = useState(true);
-  // Allow user to upload file if true
-  const [allowUploadImage, setAllowUploadImage] = useState(true);
   const [currOption, setCurrOption] = useState('');
-  const [imageProgress, setImageProgress] = useState(null);
+  const {
+    allowUploadImage,
+    allowUploadImageURL,
+    imageFile,
+    imageURL,
+    imageProgress,
+    handleFileInputChange,
+    setImageURL
+  } = useUploadFile(image);
   const menuCollection = collection(db, 'menu');
   const restaurantRef = JSON.parse(localStorage.getItem('current-user')).docId;
   const menu = query(
     menuCollection,
     where('restaurantRef', '==', `/users/${restaurantRef}`),
   );
-  const handleFileInputChange = (e) => {
-    const selectedFile = e.target.files[0];
-    setImageFile(selectedFile);
-    // Where the image is going to be stored
-    const storageRef = ref(storage, `itemImages/${Date.now()}/menuItem`);
-    // How much image is uploaded by %
-    const uploadImage = uploadBytesResumable(storageRef, e.target.files[0]);
-    // Snapshot will provide how much image is uploaded
-    uploadImage.on(
-      'state_changed',
-      (snapshot) => {
-        const progressOfImageUpload =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setImageProgress(progressOfImageUpload);
-      },
-      (error) => {
-        console.log('There was error with uploading image', error);
-      },
-      () => {
-        getDownloadURL(uploadImage.snapshot.ref).then((url) => {
-          setImage(url);
-          setItemData((prevData) => ({
-            ...prevData,
-            itemImageURL: url,
-          }));
-        });
-      },
-    );
-  };
 
   const isItemDataValid = () => {
     return (
@@ -118,7 +91,6 @@ export default function CreateMenuPage() {
 
   const addItem = async () => {
     const isValid = isItemDataValid();
-    console.log(isValid);
     if (!isValid) {
       setNotification({
         message: 'Please Fill Out All Requiresd Fields',
@@ -177,18 +149,6 @@ export default function CreateMenuPage() {
       options: formatOption(),
     }));
   }, [options]);
-
-  // only allow user to either enter image url or upload image file
-  useEffect(() => {
-    if (imageURL !== '' && image === '') {
-      setAllowUploadImage(false);
-    } else if (image !== '' && imageURL === '') {
-      setAllowImageURL(false);
-    } else {
-      setAllowUploadImage(true);
-      setAllowImageURL(true);
-    }
-  }, [image, imageURL]);
 
   return (
     <Grid container rowGap={3} p={4}>
@@ -256,7 +216,7 @@ export default function CreateMenuPage() {
       <Grid container justifyContent="center">
         <Grid item xs={12}>
           <Typography variant="subtitle1">
-            Item's Option (Optional). Press Enter To Add Each Option
+            Item&apos;s Option (Optional). Press Enter To Add Each Option
           </Typography>
         </Grid>
         <Grid item xs={12}>
@@ -291,7 +251,7 @@ export default function CreateMenuPage() {
       </Grid>
       <Grid item xs={12}>
         <TextField
-          disabled={!allowImageURL}
+          disabled={!allowUploadImageURL}
           fullWidth
           variant="filled"
           value={imageURL}
@@ -335,7 +295,7 @@ export default function CreateMenuPage() {
         <Grid item xs={12}>
           <LinearProgress variant="determinate" value={imageProgress} />
           <Typography fontWeight="bold" textAlign="left">
-            URL: {image}
+            URL: {imageFile}
           </Typography>
         </Grid>
       )}

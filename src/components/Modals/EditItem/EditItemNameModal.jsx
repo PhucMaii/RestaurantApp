@@ -1,5 +1,6 @@
 import { Button, Grid, Modal, TextField } from '@mui/material'
-import React, { memo } from 'react'
+import React, { memo } from 'react';
+import PropTypes from 'prop-types';
 import { GridModal } from '../style';
 
 function EditItemNameModal({ item, handleClose, open, setItem }) {
@@ -35,4 +36,12 @@ function EditItemNameModal({ item, handleClose, open, setItem }) {
     </Modal>
   );
 }
+
+EditItemNameModal.propTypes = {
+  item: PropTypes.object.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  setItem: PropTypes.func.isRequired,
+}
+
 export default memo(EditItemNameModal)

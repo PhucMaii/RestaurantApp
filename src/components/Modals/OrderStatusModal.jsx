@@ -1,66 +1,72 @@
-import React, { memo } from 'react'
+import React, { memo } from 'react';
+import PropTypes from 'prop-types';
 import {
     Modal,
     Button
-} from '@mui/material'
+} from '@mui/material';
 import { ButtonGroupModal } from './style';
 
-function OrderStatusModal(props) {
+function OrderStatusModal({
+  handleClose,
+  open,
+  handleStatusButtonClick,
+  status,
+}) {
   return (
-    <Modal open={props.open} onClose={props.handleClose}>
+    <Modal open={open} onClose={handleClose}>
       <ButtonGroupModal
         maxWidth="500px"
         orientation="vertical"
         variant="contained"
       >
-        {props.status === 'Preparing' && (
+        {status === 'Preparing' && (
           <>
             <Button
               color="inherit"
               key="Preparing"
-              onClick={props.handleStatusButtonClick}
+              onClick={handleStatusButtonClick}
             >
               Preparing
             </Button>
             <Button
               color="warning"
               key="Ready"
-              onClick={props.handleStatusButtonClick}
+              onClick={handleStatusButtonClick}
             >
               Ready
             </Button>
             <Button
               color="success"
               key="PickedUp"
-              onClick={props.handleStatusButtonClick}
+              onClick={handleStatusButtonClick}
             >
               Picked Up
             </Button>
           </>
         )}
-        {props.status === 'Ready' && (
+        {status === 'Ready' && (
           <>
             <Button
               color="warning"
               key="Ready"
-              onClick={props.handleStatusButtonClick}
+              onClick={handleStatusButtonClick}
             >
               Ready
             </Button>
             <Button
               color="success"
               key="PickedUp"
-              onClick={props.handleStatusButtonClick}
+              onClick={handleStatusButtonClick}
             >
               Picked Up
             </Button>
           </>
         )}
-        {props.status === 'Picked Up' && (
+        {status === 'Picked Up' && (
           <Button
             color="success"
             key="PickedUp"
-            onClick={props.handleStatusButtonClick}
+            onClick={handleStatusButtonClick}
           >
             Picked Up
           </Button>
@@ -69,4 +75,12 @@ function OrderStatusModal(props) {
     </Modal>
   );
 }
+
+OrderStatusModal.propTypes = {
+  handleClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  handleStatusButtonClick: PropTypes.func.isRequired,
+  status:  PropTypes.string.isRequired,
+}
+
 export default memo(OrderStatusModal)

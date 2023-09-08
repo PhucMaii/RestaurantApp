@@ -1,4 +1,4 @@
-import { FormControl, Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import styled from 'styled-components';
 
 const GridStyled = styled(Grid)`
@@ -14,14 +14,6 @@ const GridStyled = styled(Grid)`
     align-items: center;
   }
 `;
-const TitleStyled = styled(Typography)`
-  font-weight: bold;
-  margin-bottom: 50px;
-  text-align: center;
-`;
-const OutlinedInputStyled = styled(FormControl)`
-  width: 100%;
-`;
 const TopicImageStyled = styled.img`
   width: 100%;
 `;
@@ -35,8 +27,6 @@ const GridContainerStyled = styled(Grid)`
 `;
 export {
   GridStyled,
-  TitleStyled,
-  OutlinedInputStyled,
   TopicImageStyled,
   TopicImageGrid,
   GridContainerStyled,

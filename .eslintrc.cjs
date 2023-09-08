@@ -23,13 +23,13 @@ module.exports = {
   rules: {
     'react/react-in-jsx-scope': 'error',
     'no-unused-vars': [
-      'error',
-      {
-        varsIgnorePattern: '^_',
-      },
-    ],
+        'error',
+        {
+            varsIgnorePattern: '^_'
+        }
+    ]
   },
   globals: {
-    process: true,
-  },
+    process: true
+  }
 };

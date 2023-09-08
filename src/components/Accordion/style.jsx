@@ -16,7 +16,7 @@ const RedText = styled(Typography)`
   color: ${red[700]};
 `;
 const AccordionStyled = styled(Accordion)`
-  width: 1000px;
+  width: 1100px;
   border: 2px solid black;
   border-radius: 15px !important;
   @media only screen and (max-width: 800px) {
