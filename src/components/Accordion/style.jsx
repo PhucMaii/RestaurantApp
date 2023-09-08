@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 import {
   Typography,
   Accordion,
@@ -6,8 +6,8 @@ import {
   AccordionDetails,
   Button,
   Grid,
-} from "@mui/material";
-import { green, grey, red } from "@mui/material/colors";
+} from '@mui/material';
+import { green, grey, red } from '@mui/material/colors';
 
 const GreenText = styled(Typography)`
   color: ${green[700]};

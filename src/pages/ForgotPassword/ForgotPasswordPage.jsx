@@ -1,18 +1,18 @@
-import { Grid, TextField, Typography, Button } from "@mui/material";
-import { grey } from "@mui/material/colors";
-import React, { useState } from "react";
-import { GridContainerStyled } from "./styles";
-import { sendPasswordResetEmail } from "firebase/auth";
-import { auth } from "../../../firebase.config";
+import { Grid, TextField, Typography, Button } from '@mui/material';
+import { grey } from '@mui/material/colors';
+import React, { useState } from 'react';
+import { GridContainerStyled } from './styles';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../../../firebase.config';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
-  
+
   const handleGetEmailToReset = (e) => {
     e.preventDefault();
     sendPasswordResetEmail(auth, email)
       .then((data) => {
-        alert("Check your email");
+        alert('Check your email');
       })
       .catch((err) => alert(err.code));
   };

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import React, { useState, memo } from "react";
+import PropTypes from 'prop-types';
 import {
   AccordionSummary,
   Typography,
@@ -21,13 +22,12 @@ import { convertTimestampToDate, formatToTwoDecimalPlace, reduceNameLength } fro
 import UserInfoModal from "../../Modals/UserInfoModal";
 import { yellow } from "@mui/material/colors";
 
-export default function HistoryAccordion({
+function HistoryAccordion({
   customerName,
   customerEmail,
   customerPhoneNumber,
   items,
   itemsQuantity,
-  note,
   orderId,
   orderTime,
   reviewMsg,
@@ -246,3 +246,18 @@ export default function HistoryAccordion({
     </>
   );
 }
+
+HistoryAccordion.propTypes = {
+  customerName: PropTypes.string.isRequired,
+  customerEmail: PropTypes.string.isRequired,
+  customerPhoneNumber: PropTypes.string.isRequired,
+  items: PropTypes.array.isRequired,
+  itemsQuantity: PropTypes.number.isRequired,
+  orderId: PropTypes.string.isRequired,
+  orderTime: PropTypes.instanceOf(Date).isRequired,
+  reviewMsg: PropTypes.string.isRequired,
+  reviewStars: PropTypes.number.isRequired,
+  subTotal: PropTypes.number.isRequired,
+}
+
+export default memo(HistoryAccordion)

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   InputAdornment,
   IconButton,
@@ -14,15 +14,15 @@ import {
   Button,
   CircularProgress,
   useMediaQuery,
-} from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
   createUserWithEmailAndPassword,
   getAdditionalUserInfo,
   signInWithEmailAndPassword,
   signInWithPopup,
-} from "firebase/auth";
-import { auth, db, googleProvider } from "../../../firebase.config";
+} from 'firebase/auth';
+import { auth, db, googleProvider } from '../../../firebase.config';
 import {
   GridStyled,
   LogoStyled,
@@ -31,73 +31,74 @@ import {
   TopicImageStyled,
   InputGrid,
   TopicImageGrid,
-} from "./styles";
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+} from './styles';
+import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
 
 export default function SigninPage() {
   // Hooks
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [notification, setNotification] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const isXLargeScreen = useMediaQuery((theme) => theme.breakpoints.up("xl"));
-  const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.up("sm"));
+  const isXLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('xl'));
+  const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.up('sm'));
   const navigate = useNavigate();
-  const userCollection = collection(db, "users");
-
+  const userCollection = collection(db, 'users');
 
   const handleEmailAndPasswordLogin = async () => {
     if (password.length < 6) {
       setNotification({
         on: true,
-        type: "error",
-        message: "Password should be at least 6 characters",
+        type: 'error',
+        message: 'Password should be at least 6 characters',
       });
       return;
     }
-    const userData = { email, password, provider: "Email/Password Provider" };
+    const userData = { email, password, provider: 'Email/Password Provider' };
     try {
       setIsLoading(true);
-      let userID, hasRestaurant
-      const user = query(userCollection, where("email", "==", email));
+      let userID, hasRestaurant;
+      const user = query(userCollection, where('email', '==', email));
       const querySnapshot = await getDocs(user);
       querySnapshot.forEach((doc) => {
         userID = doc.id;
+        console.log(doc.id);
         hasRestaurant = doc.data().hasRestaurant;
-      })
+      });
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       localStorage.setItem(
-        "current-user",
-        JSON.stringify({ ...userData, hasRestaurant, docId: userID })
+        'current-user',
+        JSON.stringify({ ...userData, hasRestaurant, docId: userID }),
       );
-      navigate("/home");
+      navigate('/home');
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
-      if (error.code === "auth/user-not-found") {
+      if (error.code === 'auth/user-not-found') {
         setIsLoading(true);
         const newUser = await createUserWithEmailAndPassword(
           auth,
           email,
-          password
+          password,
         );
-        const data = {...userData, hasRestaurant: false};
+        const data = { ...userData, hasRestaurant: false };
         const docRef = await addDoc(userCollection, data);
+        console.log(docRef.id);
         localStorage.setItem(
-          "current-user",
-          JSON.stringify({...data, docId: docRef})
+          'current-user',
+          JSON.stringify({ ...data, docId: docRef }),
         );
-        navigate("/create-restaurant");
+        navigate('/create-restaurant');
         setIsLoading(false);
       } else {
         setNotification({
           on: true,
-          type: "error",
+          type: 'error',
           message: error.code,
         });
       }
@@ -109,38 +110,38 @@ export default function SigninPage() {
       setIsLoading(true);
       const userCredential = await signInWithPopup(auth, googleProvider);
       const user = userCredential.user;
-      const userData = { email: user.email, provider: "Google Provider" };
+      const userData = { email: user.email, provider: 'Google Provider' };
       if (getAdditionalUserInfo(userCredential).isNewUser) {
-        const data = {...userData, hasRestaurant: false};
+        const data = { ...userData, hasRestaurant: false };
         const docRef = await addDoc(userCollection, data);
         localStorage.setItem(
-          "current-user",
-          JSON.stringify({ ...data, docId: docRef })
+          'current-user',
+          JSON.stringify({ ...data, docId: docRef }),
         );
-        navigate("/create-restaurant");
+        navigate('/create-restaurant');
       } else {
         let userID, hasRestaurant;
         const userSnapShot = query(
           userCollection,
-          where("email", "==", user.email)
-          );
-          const querySnapshot = await getDocs(userSnapShot);
-          querySnapshot.forEach((doc) => {
-            userID = doc.id;
-            hasRestaurant = doc.data().hasRestaurant
-          });
-          localStorage.setItem(
-            "current-user",
-            JSON.stringify({ ...userData, hasRestaurant, docId: userID })
-          );
-        navigate("/home");
+          where('email', '==', user.email),
+        );
+        const querySnapshot = await getDocs(userSnapShot);
+        querySnapshot.forEach((doc) => {
+          userID = doc.id;
+          hasRestaurant = doc.data().hasRestaurant;
+        });
+        localStorage.setItem(
+          'current-user',
+          JSON.stringify({ ...userData, hasRestaurant, docId: userID }),
+        );
+        navigate('/home');
       }
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
       setNotification({
         on: true,
-        type: "error",
+        type: 'error',
         message: error.code,
       });
     }
@@ -160,7 +161,7 @@ export default function SigninPage() {
             <InputGrid container rowGap={isXLargeScreen ? 8 : 3}>
               <Grid item xs={12}>
                 <TitleStyled
-                  variant={isSmallScreen ? "h4" : "h3"}
+                  variant={isSmallScreen ? 'h4' : 'h3'}
                   color="secondary"
                 >
                   Welcome Back
@@ -190,7 +191,7 @@ export default function SigninPage() {
                   </InputLabel>
                   <OutlinedInput
                     id="outlined-adornemnt-password"
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="Enter your password..."
                     endAdornment={
                       <InputAdornment position="end">
@@ -218,7 +219,7 @@ export default function SigninPage() {
                   REGISTER
                 </Button>
                 <Typography variant="subtitle2">
-                  <Link onClick={() => navigate("/forgot-password")}>
+                  <Link onClick={() => navigate('/forgot-password')}>
                     Forgot Password ?
                   </Link>
                 </Typography>

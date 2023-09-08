@@ -55,7 +55,7 @@ export default function HomePage() {
   };
 
   const navigateToCreateRestaurant = () => {
-    navigate("/create-restaurant");
+    navigate('/create-restaurant');
   };
 
   const updatePreparingTime = async () => {

@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Grid, TextField, Button, Alert } from "@mui/material";
-import GoogleMaps from "../../../components/GoogleMaps";
-import { db } from "../../../../firebase.config";
+import React, { useState, useEffect } from 'react';
+import { Grid, TextField, Button, Alert } from '@mui/material';
+import GoogleMaps from '../../../components/GoogleMaps';
+import { db } from '../../../../firebase.config';
 import {
   GridContainerStyled,
   GridStyled,
   TitleStyled,
   TopicImageStyled,
-} from "./styles";
-import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
+} from './styles';
+import { doc, updateDoc } from 'firebase/firestore';
 
 export default function CreateRestaurant(props) {
   const [restaurantData, setRestaurantData] = useState({
@@ -24,8 +24,8 @@ export default function CreateRestaurant(props) {
 
   const isRestaurantDataValid = () => {
     return (
-      restaurantData.restaurantName.trim() !== "" &&
-      restaurantData.restaurantType.trim() !== "" &&
+      restaurantData.restaurantName.trim() !== '' &&
+      restaurantData.restaurantType.trim() !== '' &&
       /^\d{10}$/.test(restaurantData.restaurantPhoneNumber)
     );
   };
@@ -41,9 +41,9 @@ export default function CreateRestaurant(props) {
     }
   }, [receivedAdress]);
 
-  useEffect(() => { 
-    setFieldsValid(isRestaurantDataValid())
-  }, [restaurantData])
+  useEffect(() => {
+    setFieldsValid(isRestaurantDataValid());
+  }, [restaurantData]);
 
   const handleReceiveAddress = (data) => {
     setReceivedAddress(data);
@@ -52,37 +52,37 @@ export default function CreateRestaurant(props) {
   const handleTextFieldChange = (field, value) => {
     setRestaurantData({
       ...restaurantData,
-      [field]: value
-    })
-  }
+      [field]: value,
+    });
+  };
 
   const handleCreateRestaurant = async () => {
-    if(!fieldsValid) {
+    if (!fieldsValid) {
       setNotifications({
         on: true,
-        type: "error",
-        message: "Input Field is not valid"
+        type: 'error',
+        message: 'Input Field is not valid',
       });
       return;
     }
     try {
-      const userAuthData = JSON.parse(localStorage.getItem("current-user"));
+      const userAuthData = JSON.parse(localStorage.getItem('current-user'));
       userAuthData.hasRestaurant = true;
-      const documentRef = doc(db, "users", userAuthData.docId);
+      const documentRef = doc(db, 'users', userAuthData.docId);
       const data = { ...userAuthData, ...restaurantData };
       await updateDoc(documentRef, data);
-      localStorage.setItem("current-user", JSON.stringify(userAuthData));
+      localStorage.setItem('current-user', JSON.stringify(userAuthData));
       setNotifications({
         on: true,
-        type: "success",
+        type: 'success',
         message:
-          "Congratulations! You Created Your Own Restaurant Successfully",
+          'Congratulations! You Created Your Own Restaurant Successfully',
       });
       props.goToNextStep();
     } catch (error) {
       setNotifications({
         on: true,
-        type: "error",
+        type: 'error',
         message: error.code,
       });
     }
@@ -91,7 +91,7 @@ export default function CreateRestaurant(props) {
   return (
     <GridStyled container columnSpacing={2}>
       <Grid item xs={6}>
-        <TitleStyled component='div'  color="secondary" variant={"h3"}>
+        <TitleStyled component="div" color="secondary" variant={'h3'}>
           Account creation successful! Now, let's input your restaurant details.
         </TitleStyled>
         {notifications.on && (
@@ -107,7 +107,7 @@ export default function CreateRestaurant(props) {
                 label="Restaurant Name"
                 value={restaurantData.restaurantName || ''}
                 onChange={(e) => {
-                  handleTextFieldChange("restaurantName", e.target.value);
+                  handleTextFieldChange('restaurantName', e.target.value);
                 }}
               />
             </Grid>
@@ -118,8 +118,8 @@ export default function CreateRestaurant(props) {
                 placeholder="eg: Chinese"
                 label="Restaurant Type"
                 value={restaurantData.restaurantType || ''}
-                onChange={(e) =>{
-                  handleTextFieldChange("restaurantType", e.target.value);
+                onChange={(e) => {
+                  handleTextFieldChange('restaurantType', e.target.value);
                 }}
               />
             </Grid>
@@ -132,8 +132,11 @@ export default function CreateRestaurant(props) {
                 placeholder="Enter 10 numbers for your phone number"
                 label="Phone Number"
                 value={restaurantData.restaurantPhoneNumber || ''}
-                onChange={(e) =>{
-                  handleTextFieldChange("restaurantPhoneNumber", e.target.value.trim());
+                onChange={(e) => {
+                  handleTextFieldChange(
+                    'restaurantPhoneNumber',
+                    e.target.value.trim(),
+                  );
                 }}
               />
             </Grid>

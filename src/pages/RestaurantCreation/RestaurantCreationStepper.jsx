@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import CreateMenuPage from "./CreateMenu/CreateMenuPage";
-import CreateRestaurantPage from "./CreateRestaurant/CreateRestaurantPage";
-import CreateSectionPage from "./CreateMenu/CreateSectionPage";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import Box from '@mui/material/Box';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import CreateMenuPage from './CreateMenu/CreateMenuPage';
+import CreateRestaurantPage from './CreateRestaurant/CreateRestaurantPage';
+import CreateSectionPage from './CreateMenu/CreateSectionPage';
+import { useNavigate } from 'react-router-dom';
 
 const steps = [
-  "Restaurant Details",
-  "Create Sections For Your Menu",
-  "Add Food Items Into Your Menu",
+  'Restaurant Details',
+  'Create Sections For Your Menu',
+  'Add Food Items Into Your Menu',
 ];
 
 export default function HorizontalLinearStepper() {
@@ -46,12 +46,12 @@ export default function HorizontalLinearStepper() {
 
   useEffect(() => {
     if (activeStep === steps.length) {
-      navigate("/home");
+      navigate('/home');
     }
   }, [activeStep]);
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: '100%' }}>
       <Stepper activeStep={activeStep}>
         {steps.map((label, index) => {
           const stepProps = {};
@@ -72,7 +72,7 @@ export default function HorizontalLinearStepper() {
         })}
       </Stepper>
       {activeStep === steps.length ? (
-        ""
+        ''
       ) : (
         <>
           <Typography sx={{ mt: 2, mb: 1 }}>
@@ -84,7 +84,7 @@ export default function HorizontalLinearStepper() {
               <CreateMenuPage />
             )}
           </Typography>
-          <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"
               disabled={activeStep === 0 || activeStep === 1}
@@ -93,9 +93,9 @@ export default function HorizontalLinearStepper() {
             >
               Back
             </Button>
-            <Box sx={{ flex: "1 1 auto" }} />
+            <Box sx={{ flex: '1 1 auto' }} />
             <Button onClick={handleNext} disabled={activeStep === 0}>
-              {activeStep === steps.length - 1 ? "Finish" : "Next"}
+              {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
             </Button>
           </Box>
         </>

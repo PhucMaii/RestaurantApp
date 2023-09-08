@@ -1,4 +1,5 @@
-import { useState, useEffect, memo } from "react";
+import React, { useState, useEffect, memo } from 'react';
+import PropTypes from 'prop-types';
 import {
   AccordionSummary,
   Typography,
@@ -6,7 +7,7 @@ import {
   Fab,
   Grid,
   Divider,
-} from "@mui/material";
+} from '@mui/material';
 import {
   GreenText,
   RedText,
@@ -68,21 +69,21 @@ function OrderDetailsAccordion({
   }, [remainingTime]);
 
   useEffect(() => {
-    if (remainingTime === 0 && status !== "Picked Up") {
-      setStatus("Ready");
+    if (remainingTime === 0 && status !== 'Picked Up') {
+      setStatus('Ready');
     }
-    if (status === "Ready") {
+    if (status === 'Ready') {
       setRemainingTime(0);
       localStorage.setItem(docId, remainingTime);
     }
   }, [remainingTime, status]);
 
   useEffect(() => {
-    const orderRef = doc(db, "orders", docId);
+    const orderRef = doc(db, 'orders', docId);
     const updateStatus = async () => {
       try {
         await updateDoc(orderRef, { orderStatus: status });
-        console.log("Updated");
+        console.log('Updated');
       } catch (error) {
         console.log(error);
       }
@@ -177,17 +178,17 @@ function OrderDetailsAccordion({
             <ButtonStyled
               variant="contained"
               color={
-                status === "Preparing"
-                  ? "inherit"
-                  : status === "Ready"
-                  ? "warning"
-                  : "success"
+                status === 'Preparing'
+                  ? 'inherit'
+                  : status === 'Ready'
+                  ? 'warning'
+                  : 'success'
               }
               onClick={handleOpenStatusModal}
             >
               {status}
             </ButtonStyled>
-            {status !== "Picked Up" && (
+            {status !== 'Picked Up' && (
               <TimerFlexBox>
                 <Fab
                   variant="contained"
@@ -359,6 +360,22 @@ function OrderDetailsAccordion({
       </AccordionStyled>
     </>
   );
+}
+
+OrderDetailsAccordion.propTypes = {
+  customerEmail: PropTypes.string.isRequired,
+  customerName: PropTypes.string.isRequired,
+  customerPhoneNumber: PropTypes.string.isRequired,
+  docId: PropTypes.string.isRequired,
+  hasUtensils: PropTypes.bool.isRequired,
+  items: PropTypes.array.isRequired,
+  itemsQuantity: PropTypes.number.isRequired,
+  note: PropTypes.string.isRequired,
+  orderId: PropTypes.string.isRequired,
+  orderTime: PropTypes.instanceOf(Date).isRequired,
+  orderStatus: PropTypes.string.isRequired,
+  preparingTime: PropTypes.number.isRequired,
+  subTotal: PropTypes.number.isRequired,
 }
 
 export default memo(OrderDetailsAccordion);

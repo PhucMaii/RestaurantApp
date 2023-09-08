@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./Provider/ThemeProvider";
@@ -7,6 +8,7 @@ import HomePage from "./pages/HomePage/HomePage";
 import ForgotPasswordPage from "./pages/ForgotPassword/ForgotPasswordPage"
 import HorizontalLinearStepper from "./pages/RestaurantCreation/RestaurantCreationStepper";
 import HistoryPage from "./pages/History/HistoryPage";
+import MenuPage from "./pages/Menu/MenuPage";
 
 function App() {
   return (
@@ -20,6 +22,7 @@ function App() {
             <Route path="/home" element={<HomePage />} />
             <Route path="/create-restaurant" element={<HorizontalLinearStepper />} />
             <Route path="/history" element={<HistoryPage />} />
+            <Route path="/menu" element={<MenuPage />} />
           </Route>
         </Routes>
         </BrowserRouter>

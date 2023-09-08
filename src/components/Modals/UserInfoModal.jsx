@@ -1,6 +1,5 @@
 import { 
     Modal, 
-    List,
     ListItem,
     ListItemAvatar,
     Avatar,
@@ -9,20 +8,23 @@ import {
 import BadgeIcon from '@mui/icons-material/Badge';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import EmailIcon from '@mui/icons-material/Email';
+import { ListModal } from "./style";
+import { memo } from "react";
 
-export default function UserInfoModal(props) {
+function UserInfoModal(props) {
   return (
     <Modal open={props.open} onClose={props.handleClose}>
-      <List
+      <ListModal
+        maxWidth="500px"
         sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          maxWidth: "500px",
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          maxWidth: '500px',
         }}
       >
-        <ListItem sx={{ backgroundColor: "white" }}>
+        <ListItem sx={{ backgroundColor: 'white' }}>
           <ListItemAvatar>
             <Avatar>
               <BadgeIcon />
@@ -30,7 +32,7 @@ export default function UserInfoModal(props) {
           </ListItemAvatar>
           <ListItemText primary={props.name} />
         </ListItem>
-        <ListItem sx={{ backgroundColor: "white" }}>
+        <ListItem sx={{ backgroundColor: 'white' }}>
           <ListItemAvatar>
             <Avatar>
               <ContactPhoneIcon />
@@ -38,7 +40,7 @@ export default function UserInfoModal(props) {
           </ListItemAvatar>
           <ListItemText primary={props.phoneNumber} />
         </ListItem>
-        <ListItem sx={{ backgroundColor: "white" }}>
+        <ListItem sx={{ backgroundColor: 'white' }}>
           <ListItemAvatar>
             <Avatar>
               <EmailIcon />
@@ -46,7 +48,8 @@ export default function UserInfoModal(props) {
           </ListItemAvatar>
           <ListItemText primary={props.email} />
         </ListItem>
-      </List>
+      </ListModal>
     </Modal>
   );
 }
+export default memo(UserInfoModal)

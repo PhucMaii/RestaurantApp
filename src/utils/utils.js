@@ -26,6 +26,7 @@ export const formatToTwoDecimalPlace = (num) => {
   }
   return "N/A";
 };
+
 export const reduceNameLength = (fullName) => {
   const names = fullName.split(" ");
   // Check if there are at least first name and last name
