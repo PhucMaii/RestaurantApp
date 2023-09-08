@@ -16,6 +16,7 @@ export default function CreateRestaurant(props) {
     restaurantType: "",
     restaurantPhoneNumber: "",
     restaurantAddress: "",
+    preparingTime: 600
   });
   const [fieldsValid, setFieldsValid] = useState(true);
   const [notifications, setNotifications] = useState({});

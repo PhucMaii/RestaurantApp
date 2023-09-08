@@ -1,4 +1,7 @@
 export const convertTimestampToDate = (timestamp) => {
+    if(!timestamp) {
+        return "N/A";
+    }
   const date = timestamp.toDate();
   const formattedDate = date.toLocaleDateString("en-US", {
     year: "numeric",

@@ -17,45 +17,140 @@ import {
   TypographyStyled,
   ButtonStyled,
   DividerContainerStyled,
-} from "../OrderDetails/style";
-import StarIcon from '@mui/icons-material/Star';
-import React from "react";
+} from "../style";
+import OrderStatusModal from "../../Modals/OrderStatusModal";
+import UserInfoModal from "../../Modals/UserInfoModal";
 import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../../../firebase.config";
-import { convertTimestampToDate, formatToTwoDecimalPlace, reduceNameLength } from "../../utils/utils";
-import UserInfoModal from "../Modals/UserInfoModal";
-import { yellow } from "@mui/material/colors";
+import { db } from "../../../../firebase.config";
+import { convertTimestampToDate, formatToTwoDecimalPlace, reduceNameLength } from "../../../utils/utils";
 
-export default function HistoryAccordion({
-  orderId,
-  orderTime,
-  customerName,
+function OrderDetailsAccordion({
   customerEmail,
+  customerName,
   customerPhoneNumber,
+  docId,
   hasUtensils,
   items,
   itemsQuantity,
-  subTotal,
   note,
+  orderId,
+  orderTime,
+  orderStatus,
+  preparingTime,
+  subTotal,
 }) {
+  const [openStatusModal, setOpenStatusModal] = useState(false);
   const [openCustomerInfoModal, setOpenCustomerInfoModal] = useState(false);
-  const handleOpenCustomerInfoModal = (e) => {
+  const [remainingTime, setRemainingTime] = useState(preparingTime);
+  const [status, setStatus] = useState(orderStatus);
+  
+  // Get the remaining time if the page is refreshed
+  useEffect(() => {
+    const localRemainingTime = localStorage.getItem(docId);
+    setRemainingTime(parseInt(localRemainingTime));
+
+    // For testing only
+    startTimer();
+  }, []);
+
+  useEffect(() => {
+    const timeInterval = setTimeout(() => {
+      if (remainingTime > 0) {
+        setRemainingTime((prevRemainingTime) => prevRemainingTime - 1);
+        localStorage.setItem(docId, remainingTime - 1);
+      } else {
+        clearTimeout(timeInterval);
+      }
+    }, 1000);
+    return () => {
+      clearTimeout(timeInterval);
+    };
+  }, [remainingTime]);
+
+  useEffect(() => {
+    if (remainingTime === 0 && status !== "Picked Up") {
+      setStatus("Ready");
+    }
+    if (status === "Ready") {
+      setRemainingTime(0);
+      localStorage.setItem(docId, remainingTime);
+    }
+  }, [remainingTime, status]);
+
+  useEffect(() => {
+    const orderRef = doc(db, "orders", docId);
+    const updateStatus = async () => {
+      try {
+        await updateDoc(orderRef, { orderStatus: status });
+        console.log("Updated");
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    updateStatus();
+  }, [status]);
+
+  const handleCloseStatusModal = (e) => {
     e.stopPropagation();
-    setOpenCustomerInfoModal(true);
+    setOpenStatusModal(false);
   };
 
   const handleCloseCustomerInfoModal = (e) => {
     e.stopPropagation();
     setOpenCustomerInfoModal(false);
   };
+
+  const handleDecreasePrepTime = (e) => {
+    e.stopPropagation();
+    if (remainingTime > 60) {
+      setRemainingTime((prevRemainingTime) => prevRemainingTime - 60);
+      localStorage.setItem(docId, remainingTime - 60);
+    }
+  };
+
+  const handleIncreasePrepTime = (e) => {
+    e.stopPropagation();
+    setRemainingTime((prevRemainingTime) => prevRemainingTime + 60);
+    localStorage.setItem(docId, remainingTime + 60);
+  };
+
+  const handleOpenCustomerInfoModal = (e) => {
+    e.stopPropagation();
+    setOpenCustomerInfoModal(true);
+  };
+
+  const handleOpenStatusModal = (e) => {
+    e.stopPropagation();
+    setOpenStatusModal(true);
+  };
+
+  const handleStatusButtonClick = (e) => {
+    e.stopPropagation();
+    setStatus(e.currentTarget.textContent);
+    setOpenStatusModal(false);
+  };
+
+  // Save the remaining time on localStorage
+  const startTimer = () => {
+    localStorage.setItem(docId, preparingTime);
+    setRemainingTime(preparingTime);
+  };
+
+
   return (
     <>
+      <OrderStatusModal
+        handleClose={handleCloseStatusModal}
+        handleStatusButtonClick={handleStatusButtonClick}
+        open={openStatusModal}
+        status={status}
+      />
       <UserInfoModal
-        open={openCustomerInfoModal}
+        email={customerEmail}
         handleClose={handleCloseCustomerInfoModal}
         name={customerName}
+        open={openCustomerInfoModal}
         phoneNumber={customerPhoneNumber}
-        email={customerEmail}
       />
       <AccordionStyled>
         <AccordionSummary aria-controls="panel1a-content" id="panel1a-header">
@@ -65,7 +160,7 @@ export default function HistoryAccordion({
                 {orderId}
               </TypographyStyled>
               <TypographyStyled fontWeight="light" variant="subtitle2">
-                {"August 24, 2023 at 4:01:24"}
+                {convertTimestampToDate(orderTime)}
               </TypographyStyled>
             </Box>
             <ButtonStyled
@@ -74,6 +169,53 @@ export default function HistoryAccordion({
             >
               {reduceNameLength(customerName)}
             </ButtonStyled>
+            {hasUtensils ? (
+              <GreenText variant="subtitle1">Need Utensils</GreenText>
+            ) : (
+              <RedText variant="subtitle1">No Utensils</RedText>
+            )}
+            <ButtonStyled
+              variant="contained"
+              color={
+                status === "Preparing"
+                  ? "inherit"
+                  : status === "Ready"
+                  ? "warning"
+                  : "success"
+              }
+              onClick={handleOpenStatusModal}
+            >
+              {status}
+            </ButtonStyled>
+            {status !== "Picked Up" && (
+              <TimerFlexBox>
+                <Fab
+                  variant="contained"
+                  size="small"
+                  color="primary"
+                  onClick={handleDecreasePrepTime}
+                >
+                  -
+                </Fab>
+                <Typography variant="subtitle1">
+                  {Math.floor(remainingTime / 60) < 10
+                    ? `0${Math.floor(remainingTime / 60)}`
+                    : Math.floor(remainingTime / 60)}
+                  :
+                  {remainingTime % 60 < 10
+                    ? `0${remainingTime % 60}`
+                    : remainingTime % 60}
+                </Typography>
+                <Fab
+                  variant="contained"
+                  size="small"
+                  color="primary"
+                  onClick={handleIncreasePrepTime}
+                >
+                  +
+                </Fab>
+              </TimerFlexBox>
+            )}
             <Box direction="column">
               <TypographyStyled fontWeight="bold" variant="subtitle1">
                 Pick up {itemsQuantity} items
@@ -81,21 +223,6 @@ export default function HistoryAccordion({
               <Typography fontWeight="bold" variant="subtitle1">
                 Total: ${formatToTwoDecimalPlace(subTotal * 1.12)}
               </Typography>
-            </Box>
-            <ButtonStyled variant="contained" color="inherit">
-              Picked up
-            </ButtonStyled>
-            <Box flexDirection="row">
-              <Box>
-                <Typography variant="h6">Review</Typography>
-              </Box>
-              <Box direction="row">
-                <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
-                <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
-                <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
-                <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
-                <StarIcon fontSize="large" sx={{ color: yellow[600] }} />
-              </Box>
             </Box>
           </AccordionSummaryFlexBox>
         </AccordionSummary>
@@ -126,27 +253,26 @@ export default function HistoryAccordion({
                         <Divider />
                       </Grid>
                     </Grid>
-                    {item.options &&
-                      item.options.map((option, index) => {
-                        return (
-                          <Grid key={index} container rowGap={2}>
-                            <Grid textAlign="center" item xs={2}>
-                              <Typography>{index + 1}</Typography>
-                            </Grid>
-                            <Grid item xs={7} textAlign="left">
-                              <Typography>{option.name}</Typography>
-                            </Grid>
-                            <Grid item xs={3} textAlign="right">
-                              <Typography>
-                                ${formatToTwoDecimalPlace(option.price)}
-                              </Typography>
-                            </Grid>
-                            <Grid item xs={12}>
-                              <Divider />
-                            </Grid>
+                    {item.options.map((option, index) => {
+                      return (
+                        <Grid key={index} container rowGap={2}>
+                          <Grid textAlign="center" item xs={2}>
+                            <Typography>{index + 1}</Typography>
                           </Grid>
-                        );
-                      })}
+                          <Grid item xs={7} textAlign="left">
+                            <Typography>{option.name}</Typography>
+                          </Grid>
+                          <Grid item xs={3} textAlign="right">
+                            <Typography>
+                              ${formatToTwoDecimalPlace(option.price)}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={12}>
+                            <Divider />
+                          </Grid>
+                        </Grid>
+                      );
+                    })}
                     <Grid container rowGap={2}>
                       <Grid textAlign="center" item xs={2}></Grid>
                       <Grid item xs={7} textAlign="left">
@@ -234,3 +360,5 @@ export default function HistoryAccordion({
     </>
   );
 }
+
+export default memo(OrderDetailsAccordion);
