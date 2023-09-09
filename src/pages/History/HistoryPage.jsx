@@ -23,7 +23,7 @@ export default function HistoryPage() {
     // Get orders since 3 days ago
     const endDate = new Date();
     const startDate = new Date(endDate);
-    startDate.setDate(endDate.getDate() - 3);
+    startDate.setDate(endDate.getDate() - 2);
     fetchHistoryByDay(startDate, endDate);
   }, []);
 
@@ -36,7 +36,7 @@ export default function HistoryPage() {
         where("orderTime", "<=", endDate),
         orderBy("orderTime", "desc")
       );
-      const newOrderHistoryByDay = { today: [] };
+      const newOrderHistoryByDay = { Today: [] };
       const querySnapshot = await getDocs(orders);
       querySnapshot.forEach(async (doc) => {
         const orderData = doc.data();
@@ -54,7 +54,7 @@ export default function HistoryPage() {
         const today = convertToDay(Timestamp.now());
         const date = convertToDay(order.orderTime);
         if (date === today) {
-          newOrderHistoryByDay.today.push(order);
+          newOrderHistoryByDay.Today.push(order);
         } else {
           if (!newOrderHistoryByDay[date]) {
             newOrderHistoryByDay[date] = [];
@@ -105,16 +105,12 @@ export default function HistoryPage() {
   const historyPage = (
     <Grid container rowGap={2} justifyContent="center">
       <Grid container justifyContent="center" rowGap={3}>
-        <Grid item xs={12}>
-          <Divider textAlign="left">
-            <Typography variant="h4">Today</Typography>
-          </Divider>
-        </Grid>
         {isFetching && (
           <Grid container justifyContent="center" rowGap={5}>
             {renderSkeleton(6)}
           </Grid>
         )}
+<<<<<<< HEAD
         <Grid item justifyContent="center">
           {orderHistoryByDay.today ? (
             orderHistoryByDay.today.map((order) => {
@@ -161,6 +157,10 @@ export default function HistoryPage() {
         if (objKey === "today") {
           return null;
         }
+=======
+      </Grid>
+      {Object.keys(orderHistoryByDay).map((objKey, index) => {
+>>>>>>> f9d850b (Refs #45: Feedback Accordion)
         return (
           <Grid container justifyContent="center" key={index} rowGap={3}>
             <Grid item xs={12} key={`grid-${index}`}>
@@ -171,7 +171,15 @@ export default function HistoryPage() {
             <Grid item justifyContent="center">
               {orderHistoryByDay[objKey].map((order) => {
                 return (
+<<<<<<< HEAD
                   <Grid item xs={12} key={`order-${order.id}`}>
+=======
+                  <Grid
+                    container
+                    justifyContent="center"
+                    key={`order-${order.id}`}
+                  >
+>>>>>>> f9d850b (Refs #45: Feedback Accordion)
                     <HistoryAccordion
                       orderId={order.orderId}
                       orderTime={order.orderTime}
