@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Grid, TextField, Button, Alert, Typography } from '@mui/material';
+import { Divider, LinearProgress, Grid, TextField, Button, Alert, Typography } from '@mui/material';
 import GoogleMaps from '../../../components/GoogleMaps';
 import { db } from '../../../../firebase.config';
 import {
@@ -9,9 +9,11 @@ import {
   TopicImageStyled,
 } from './styles';
 import { doc, updateDoc } from 'firebase/firestore';
+import useUploadFile from '../../../hooks/useUploadFile';
 
 export default function CreateRestaurant({ goToNextStep }) {
   const [restaurantData, setRestaurantData] = useState({
+    imageLink: '',
     restaurantName: '',
     restaurantType: '',
     restaurantPhoneNumber: '',
@@ -21,10 +23,21 @@ export default function CreateRestaurant({ goToNextStep }) {
   const [notifications, setNotifications] = useState({});
   const [receivedAdress, setReceivedAddress] = useState(null);
 
+  const {
+    allowUploadImage,
+    allowUploadImageURL,
+    imageFile,
+    imageURL,
+    imageProgress,
+    handleFileInputChange,
+    setImageURL
+  } = useUploadFile('', updateRestaurantImageLink);
+
   const isRestaurantDataValid = () => {
     return (
       restaurantData.restaurantName.trim() !== '' &&
       restaurantData.restaurantType.trim() !== '' &&
+      restaurantData.imageLink.trim() !== '' &&
       /^\d{10}$/.test(restaurantData.restaurantPhoneNumber)
     );
   };
@@ -86,6 +99,10 @@ export default function CreateRestaurant({ goToNextStep }) {
       });
     }
   };
+
+  function updateRestaurantImageLink(url) {
+    handleTextFieldChange('imageLink', url)
+  }
 
   return (
     <GridStyled container columnSpacing={2}>
@@ -154,6 +171,54 @@ export default function CreateRestaurant({ goToNextStep }) {
               <GoogleMaps onDataReceived={handleReceiveAddress} />
             </Grid>
           </Grid>
+          <Grid item xs={12}>
+            <TextField
+              disabled={!allowUploadImageURL}
+              fullWidth
+              variant="outlined"
+              value={imageURL}
+              onChange={(e) => {
+                const newImageURL = e.target.value;
+                setImageURL(newImageURL);
+                handleTextFieldChange("imageLink", newImageURL)
+              }}
+              label="Item's Image URL"
+              placeholder="Enter Item's Image URL..."
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Divider>
+              <Typography>Or</Typography>
+            </Divider>
+          </Grid>
+          <Grid item xs={12}>
+            <input
+              disabled={!allowUploadImage}
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="outlined-button-file"
+              type="file"
+              onChange={handleFileInputChange}
+            />
+            <label htmlFor="outlined-button-file">
+              <Button
+                disabled={!allowUploadImage}
+                fullWidth
+                variant="outlined"
+                component="span"
+              >
+                Upload
+              </Button>
+            </label>
+          </Grid>
+          {imageProgress !== null && (
+            <Grid item xs={12}>
+              <LinearProgress variant="determinate" value={imageProgress} />
+              <Typography fontWeight="bold" textAlign="left">
+                URL: {imageFile}
+              </Typography>
+            </Grid>
+          )}
           <Grid container columnSpacing={3} rowSpacing={3}>
             <Grid item xs={12}>
               <Button

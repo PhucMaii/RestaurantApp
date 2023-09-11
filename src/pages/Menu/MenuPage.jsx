@@ -269,7 +269,7 @@ export default function MenuPage() {
             >
               {menuData.map((section, index) => {
                 if (currentSection.name === section.name) {
-                  if (!section.items) {
+                  if (!section.items || section.items.length === 0) {
                     return (
                       <Grid
                         key={index}
