@@ -63,10 +63,9 @@ export default function SigninPage() {
       const querySnapshot = await getDocs(user);
       querySnapshot.forEach((doc) => {
         userID = doc.id;
-        console.log(doc.id);
         hasRestaurant = doc.data().hasRestaurant;
       });
-      const userCredential = await signInWithEmailAndPassword(
+      await signInWithEmailAndPassword(
         auth,
         email,
         password,
@@ -81,17 +80,16 @@ export default function SigninPage() {
       setIsLoading(false);
       if (error.code === 'auth/user-not-found') {
         setIsLoading(true);
-        const newUser = await createUserWithEmailAndPassword(
+        await createUserWithEmailAndPassword(
           auth,
           email,
           password,
         );
         const data = { ...userData, hasRestaurant: false };
         const docRef = await addDoc(userCollection, data);
-        console.log(docRef.id);
         localStorage.setItem(
           'current-user',
-          JSON.stringify({ ...data, docId: docRef }),
+          JSON.stringify({ ...data, docId: docRef._key.path.segments[1] }),
         );
         navigate('/create-restaurant');
         setIsLoading(false);
@@ -116,7 +114,7 @@ export default function SigninPage() {
         const docRef = await addDoc(userCollection, data);
         localStorage.setItem(
           'current-user',
-          JSON.stringify({ ...data, docId: docRef }),
+          JSON.stringify({ ...data, docId: docRef._key.path.segments[1] }),
         );
         navigate('/create-restaurant');
       } else {
@@ -169,7 +167,7 @@ export default function SigninPage() {
               </Grid>
               {notification.on && (
                 <Grid item xs={12}>
-                  <Alert fullWidth severity={notification.type}>
+                  <Alert severity={notification.type}>
                     {notification.message}
                   </Alert>
                 </Grid>

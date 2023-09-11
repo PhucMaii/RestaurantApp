@@ -3,6 +3,7 @@ import React, { memo, useCallback } from 'react'
 import { useState, useEffect } from 'react';
 import { formatToTwoDecimalPlace } from '../../method/FormatNumber';
 import EditItemModal from '../Modals/EditItem/EditItemModal';
+import PropTypes from 'prop-types';
 import {ButtonStyled, GridStyled} from './style'
 
 function ItemCard({ deleteItem, item, saveChanges, setItem }) {
@@ -43,7 +44,7 @@ function ItemCard({ deleteItem, item, saveChanges, setItem }) {
         </Grid>
         <Grid container>
           <Grid item xs={6}>
-            <ButtonStyled onClick={(e) => handleOpen(true)} variant="contained">
+            <ButtonStyled onClick={() => handleOpen(true)} variant="contained">
               Edit
             </ButtonStyled>
           </Grid>
@@ -61,4 +62,12 @@ function ItemCard({ deleteItem, item, saveChanges, setItem }) {
     </>
   );
 }
+
+ItemCard.propTypes = {
+  deleteItem: PropTypes.func.isRequired,
+  item: PropTypes.object.isRequired,
+  saveChanges: PropTypes.func.isRequired,
+  setItem: PropTypes.func.isRequired,
+}
+
 export default memo(ItemCard)

@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { 
     Modal, 
     ListItem,
@@ -11,9 +13,15 @@ import EmailIcon from '@mui/icons-material/Email';
 import { ListModal } from "./style";
 import { memo } from "react";
 
-function UserInfoModal(props) {
+function UserInfoModal({
+  email,
+  handleClose,
+  name,
+  phoneNumber,
+  open
+}) {
   return (
-    <Modal open={props.open} onClose={props.handleClose}>
+    <Modal open={open} onClose={handleClose}>
       <ListModal
         maxWidth="500px"
         sx={{
@@ -30,7 +38,7 @@ function UserInfoModal(props) {
               <BadgeIcon />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary={props.name} />
+          <ListItemText primary={name} />
         </ListItem>
         <ListItem sx={{ backgroundColor: 'white' }}>
           <ListItemAvatar>
@@ -38,7 +46,7 @@ function UserInfoModal(props) {
               <ContactPhoneIcon />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary={props.phoneNumber} />
+          <ListItemText primary={phoneNumber} />
         </ListItem>
         <ListItem sx={{ backgroundColor: 'white' }}>
           <ListItemAvatar>
@@ -46,10 +54,19 @@ function UserInfoModal(props) {
               <EmailIcon />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary={props.email} />
+          <ListItemText primary={email} />
         </ListItem>
       </ListModal>
     </Modal>
   );
 }
+
+UserInfoModal.propTypes = {
+  email: PropTypes.string.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  name: PropTypes.string.isRequired,
+  phoneNumber: PropTypes.string.isRequired,
+  open: PropTypes.bool.isRequired,
+}
+
 export default memo(UserInfoModal)

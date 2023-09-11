@@ -1,7 +1,7 @@
-import { Grid, Typography, Divider, Fab, Button } from '@mui/material';
+import { Grid, Typography, Divider, Button } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import BasicAccordion from '../../components/OrderDetails/OrderDetails';
+import OrderDetailsAccordion from '../../components/OrderDetails/OrderDetails';
 import { db } from '../../../firebase.config';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { hasRestaurant } from '../../utils/auth';
@@ -12,17 +12,8 @@ export default function HomePage() {
   const [isOwner, _setIsOwner] = useState(hasRestaurant());
   const [readyOrders, setReadyOrders] = useState([]);
   const [preparingOrders, setPreparingOrders] = useState([]);
-  const [preparingTime, setPreparingTime] = useState(600);
   const orderCollection = collection(db, 'orders');
   const navigate = useNavigate();
-
-  const handleIncreasePreparingTime = () => {
-    setPreparingTime((prevTime) => prevTime + 60);
-  };
-
-  const handleDecreasePreparingTime = () => {
-    setPreparingTime((prevTime) => prevTime - 60);
-  };
 
   const navigateToCreateRestaurant = () => {
     navigate('/create-restaurant');
@@ -72,12 +63,11 @@ export default function HomePage() {
           <Grid container justifyContent="center"></Grid>
           {preparingOrders.map((order) => {
             if (!order.items) {
-              console.log('Order has no items:', order.id);
               return null; // Skip rendering this order
             }
             return (
               <Grid key={order.id} container justifyContent="center">
-                <BasicAccordion
+                <OrderDetailsAccordion
                   docId={order.id}
                   orderStatus={order.orderStatus}
                   orderId={order.orderId}
@@ -122,12 +112,11 @@ export default function HomePage() {
         <Grid container justifyContent="center" rowGap={3}>
           {readyOrders.map((order) => {
             if (!order.items) {
-              console.log('Order has no items:', order.id);
               return null; // Skip rendering this order
             }
             return (
               <Grid key={order.id} container justifyContent="center">
-                <BasicAccordion
+                <OrderDetailsAccordion
                   docId={order.id}
                   orderStatus={order.orderStatus}
                   orderId={order.orderId}
@@ -180,7 +169,7 @@ export default function HomePage() {
     >
       <Grid item xs={12} textAlign="center">
         <Typography variant="h3">
-          You haven't created your restaurant yet
+          You haven&apos;t created your restaurant yet
         </Typography>
       </Grid>
       <Grid item xs={12} textAlign="center">

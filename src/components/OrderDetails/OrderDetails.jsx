@@ -1,4 +1,5 @@
 import React, { useState, useEffect, memo } from 'react';
+import PropTypes from 'prop-types';
 import {
   AccordionSummary,
   Typography,
@@ -28,7 +29,7 @@ import {
   reduceNameLength,
 } from '../../utils/utils';
 
-function BasicAccordion({
+function OrderDetailsAccordion({
   docId,
   orderId,
   orderTime,
@@ -132,7 +133,6 @@ function BasicAccordion({
     const updateStatus = async () => {
       try {
         await updateDoc(orderRef, { orderStatus: status });
-        console.log('Updated');
       } catch (error) {
         console.log(error);
       }
@@ -364,4 +364,19 @@ function BasicAccordion({
   );
 }
 
-export default memo(BasicAccordion);
+OrderDetailsAccordion.propTypes = {
+  docId: PropTypes.string.isRequired,
+  orderId: PropTypes.string.isRequired,
+  orderTime: PropTypes.instanceOf(Date).isRequired,
+  customerName: PropTypes.string.isRequired,
+  customerEmail: PropTypes.string.isRequired,
+  customerPhoneNumber: PropTypes.string.isRequired,
+  hasUtensils: PropTypes.bool.isRequired,
+  items: PropTypes.array.isRequired,
+  itemsQuantity: PropTypes.number.isRequired,
+  subTotal: PropTypes.number.isRequired,
+  note: PropTypes.string.isRequired,
+  orderStatus: PropTypes.string.isRequired
+}
+
+export default memo(OrderDetailsAccordion);

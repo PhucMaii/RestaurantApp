@@ -1,6 +1,6 @@
 import { Button, TextField, Modal, Grid } from '@mui/material';
-import React, { memo } from 'react'
-import { formatToTwoDecimalPlace } from '../../../method/FormatNumber';
+import React, { memo } from 'react';
+import PropTypes from 'prop-types';
 import { nonNumericCharacter } from '../../../utils/constant';
 import { GridModal } from '../style';
 
@@ -50,4 +50,12 @@ function EditOptionModal({ handleClose, open, option, setOption }) {
     </Modal>
   );
 }
+
+EditOptionModal.propTypes = {
+  handleClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired, 
+  option: PropTypes.object.isRequired,
+  setOption: PropTypes.func.isRequired
+}
+
 export default memo(EditOptionModal)

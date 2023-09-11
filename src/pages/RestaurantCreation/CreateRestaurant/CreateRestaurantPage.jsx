@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, TextField, Button, Alert } from '@mui/material';
+import PropTypes from 'prop-types';
+import { Grid, TextField, Button, Alert, Typography } from '@mui/material';
 import GoogleMaps from '../../../components/GoogleMaps';
 import { db } from '../../../../firebase.config';
 import {
   GridContainerStyled,
   GridStyled,
-  TitleStyled,
   TopicImageStyled,
 } from './styles';
 import { doc, updateDoc } from 'firebase/firestore';
 
-export default function CreateRestaurant(props) {
+export default function CreateRestaurant({ goToNextStep }) {
   const [restaurantData, setRestaurantData] = useState({
     restaurantName: '',
     restaurantType: '',
@@ -77,7 +77,7 @@ export default function CreateRestaurant(props) {
         message:
           'Congratulations! You Created Your Own Restaurant Successfully',
       });
-      props.goToNextStep();
+      goToNextStep();
     } catch (error) {
       setNotifications({
         on: true,
@@ -90,12 +90,21 @@ export default function CreateRestaurant(props) {
   return (
     <GridStyled container columnSpacing={2}>
       <Grid item xs={6}>
-        <TitleStyled component="div" color="secondary" variant={'h3'}>
-          Account creation successful! Now, let's input your restaurant details.
-        </TitleStyled>
-        {notifications.on && (
-          <Alert severity={notifications.type}>{notifications.message}</Alert>
-        )}
+        <Grid item>
+          <Typography
+            marginBottom={2}
+            color="secondary"
+            fontWeight="bold"
+            textAlign="center"
+            variant="h3"
+          >
+            Account creation successful! Now, let&apos;s input your restaurant
+            details.
+          </Typography>
+          {notifications.on && (
+            <Alert severity={notifications.type}>{notifications.message}</Alert>
+          )}
+        </Grid>
         <GridContainerStyled container rowGap={4}>
           <Grid container columnSpacing={3}>
             <Grid item xs={6}>
@@ -164,4 +173,8 @@ export default function CreateRestaurant(props) {
       </Grid>
     </GridStyled>
   );
+}
+
+CreateRestaurant.propTypes = {
+  goToNextStep: PropTypes.func.isRequired
 }

@@ -3,7 +3,7 @@ import { Outlet, Navigate } from 'react-router-dom';
 import { useState } from 'react';
 import { isAuthenticated } from '../utils/auth';
 
-export default function ProtectedRoutes() {
+export default function UnprotectedRoutes() {
   const [isAuth, _setIsAuth] = useState(isAuthenticated());
-  return isAuth ? <Outlet /> : <Navigate to="/" />;
+  return !isAuth ? <Outlet /> : <Navigate to="/home" />;
 }

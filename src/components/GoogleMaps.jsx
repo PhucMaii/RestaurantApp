@@ -6,6 +6,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import parse from 'autosuggest-highlight/parse';
 import Box from '@mui/material/Box';
+import PropTypes from 'prop-types';
 import { debounce } from '@mui/material/utils';
 
 // This key was created specifically for the demo in mui.com.
@@ -26,7 +27,7 @@ function loadScript(src, position, id) {
 
 const autocompleteService = { current: null };
 
-export default function GoogleMaps(props) {
+function GoogleMaps(props) {
   const [value, setValue] = React.useState(null);
   const [inputValue, setInputValue] = React.useState('');
   const [options, setOptions] = React.useState([]);
@@ -149,3 +150,9 @@ export default function GoogleMaps(props) {
     />
   );
 }
+
+GoogleMaps.propTypes = {
+  onDataReceived: PropTypes.func,
+}
+
+export default React.memo(GoogleMaps);
