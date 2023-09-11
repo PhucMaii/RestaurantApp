@@ -12,6 +12,12 @@ function OrderStatusModal({
   handleStatusButtonClick,
   status,
 }) {
+  const statusEnum = {
+    preparing: 'Preparing',
+    ready: 'Ready',
+    pickedUp: 'Picked Up'
+  }
+
   return (
     <Modal open={open} onClose={handleClose}>
       <ButtonGroupModal
@@ -19,53 +25,53 @@ function OrderStatusModal({
         orientation="vertical"
         variant="contained"
       >
-        {status === 'Preparing' && (
+        {status === statusEnum.preparing && (
           <>
             <Button
               color="inherit"
-              key="Preparing"
+              key={statusEnum.preparing}
               onClick={handleStatusButtonClick}
             >
               Preparing
             </Button>
             <Button
               color="warning"
-              key="Ready"
+              key={statusEnum.ready}
               onClick={handleStatusButtonClick}
             >
               Ready
             </Button>
             <Button
               color="success"
-              key="PickedUp"
+              key={statusEnum.pickedUp}
               onClick={handleStatusButtonClick}
             >
               Picked Up
             </Button>
           </>
         )}
-        {status === 'Ready' && (
+        {status === statusEnum.ready && (
           <>
             <Button
               color="warning"
-              key="Ready"
+              key={statusEnum.ready}
               onClick={handleStatusButtonClick}
             >
               Ready
             </Button>
             <Button
               color="success"
-              key="PickedUp"
+              key={statusEnum.pickedUp}
               onClick={handleStatusButtonClick}
             >
               Picked Up
             </Button>
           </>
         )}
-        {status === 'Picked Up' && (
+        {status === statusEnum.pickedUp && (
           <Button
             color="success"
-            key="PickedUp"
+            key={statusEnum.pickedUp}
             onClick={handleStatusButtonClick}
           >
             Picked Up
