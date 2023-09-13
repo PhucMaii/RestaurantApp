@@ -20,15 +20,15 @@ export default function HistoryPage() {
   const feedbackCollection = collection(db, 'feedback');
 
   useEffect(() => {
-    fetchHistoryByDay();
-  }, []);
-
-  const fetchHistoryByDay = async () => {
-    setIsFetching(true);
     // Get orders since 3 days ago
     const endDate = new Date();
     const startDate = new Date(endDate);
     startDate.setDate(endDate.getDate() - 2);
+    fetchHistoryByDay(startDate, endDate);
+  }, []);
+
+  const fetchHistoryByDay = async (startDate, endDate) => {
+    setIsFetching(true);
     try {
       const orders = query(
         historyCollection,
@@ -103,12 +103,14 @@ export default function HistoryPage() {
   };
 
   const historyPage = (
-    <Grid container rowGap={2} justifyContent="center" mt={3}>
+    <Grid container rowGap={2} justifyContent="center">
+      <Grid container justifyContent="center" rowGap={3}>
         {isFetching && (
           <Grid container justifyContent="center" rowGap={5}>
             {renderSkeleton(6)}
           </Grid>
         )}
+      </Grid>
       {Object.keys(orderHistoryByDay).map((objKey, index) => {
         return (
           <Grid container justifyContent="center" key={index} rowGap={3}>
@@ -118,57 +120,48 @@ export default function HistoryPage() {
               </Divider>
             </Grid>
             <Grid container rowGap={3}>
-              {orderHistoryByDay[objKey].length > 0 ? (
-                orderHistoryByDay[objKey].map((order) => {
-                  return (
-                    <Grid
-                      container
-                      justifyContent="center"
-                      xs={12}
-                      key={`order-${order.id}`}
-                    >
-                      <HistoryAccordion
-                        orderId={order.orderId}
-                        orderTime={order.orderTime.toDate()}
-                        customerName={order.customerName}
-                        customerEmail={order.customerEmail}
-                        customerPhoneNumber={order.customerPhoneNumber}
-                        items={order.items.map((item) => ({
-                          name: item.name,
-                          options: item.options
-                            ? item.options.map((option) => {
-                                return {
-                                  name: option.name,
-                                  price: option.price,
-                                };
-                              })
-                            : [],
-                          price: item.price,
-                          quantity: item.quantity,
-                          totalPrice: item.totalPrice,
-                        }))}
-                        itemsQuantity={order.items.reduce(
-                          (prevQuantity, item) => {
-                            return prevQuantity + item.quantity;
-                          },
-                          0,
-                        )}
-                        subTotal={order.items.reduce((prevPrice, item) => {
-                          return prevPrice + item.totalPrice;
-                        }, 0)}
-                        reviewMsg={order.review.customerReview}
-                        reviewStars={order.review.reviewStars}
-                      />
-                    </Grid>
-                  );
-                })
-              ) : (
-                <Grid container justifyContent="center">
-                  <Typography fontWeight="bold" variant="h6">
-                    No History Order So Far For Today
-                  </Typography>
-                </Grid>
-              )}
+              {orderHistoryByDay[objKey].map((order) => {
+                return (
+                  <Grid
+                    container
+                    justifyContent="center"
+                    key={`order-${order.id}`}
+                  >
+                    <HistoryAccordion
+                      orderId={order.orderId}
+                      orderTime={order.orderTime.toDate()}
+                      customerName={order.customerName}
+                      customerEmail={order.customerEmail}
+                      customerPhoneNumber={order.customerPhoneNumber}
+                      items={order.items.map((item) => ({
+                        name: item.name,
+                        options: item.options
+                          ? item.options.map((option) => {
+                              return {
+                                name: option.name,
+                                price: option.price,
+                              };
+                            })
+                          : [],
+                        price: item.price,
+                        quantity: item.quantity,
+                        totalPrice: item.totalPrice,
+                      }))}
+                      itemsQuantity={order.items.reduce(
+                        (prevQuantity, item) => {
+                          return prevQuantity + item.quantity;
+                        },
+                        0,
+                      )}
+                      subTotal={order.items.reduce((prevPrice, item) => {
+                        return prevPrice + item.totalPrice;
+                      }, 0)}
+                      reviewMsg={order.review.customerReview}
+                      reviewStars={order.review.reviewStars}
+                    />
+                  </Grid>
+                );
+              })}
             </Grid>
           </Grid>
         );
