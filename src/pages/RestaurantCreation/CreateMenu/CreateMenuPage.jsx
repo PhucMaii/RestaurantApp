@@ -47,7 +47,7 @@ export default function CreateMenuPage() {
     imageProgress,
     handleFileInputChange,
     setImageURL
-  } = useUploadFile(image);
+  } = useUploadFile(image, updateRestaurantImageLink);
   const menuCollection = collection(db, 'menu');
   const restaurantRef = JSON.parse(localStorage.getItem('current-user')).docId;
   const menu = query(
@@ -137,6 +137,12 @@ export default function CreateMenuPage() {
       });
     }
   };
+
+  function updateRestaurantImageLink(url) {
+    setItemData((prevData) => {
+      return { ...prevData, itemImageURL: url };
+    });
+  }
 
   useEffect(() => {
     fetchSections();
@@ -284,6 +290,12 @@ export default function CreateMenuPage() {
           <Button
             disabled={!allowUploadImage}
             fullWidth
+            onClick={() =>
+              setItemData((prevData) => ({
+                ...prevData,
+                itemImageURL: imageFile,
+              }))
+            }
             variant="outlined"
             component="span"
           >

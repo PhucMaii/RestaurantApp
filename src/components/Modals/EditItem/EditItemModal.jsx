@@ -41,7 +41,7 @@ function EditItemModal({
     imageProgress,
     handleFileInputChange,
     setImageURL,
-  } = useUploadFile(item.itemImageURL);
+  } = useUploadFile(item.itemImageURL, updateItemImageURL);
 
   const addOption = (option) => {
     const newOptions = [...item.options];
@@ -97,6 +97,10 @@ function EditItemModal({
     const numericValue = e.target.value.replace(nonNumericCharacter, "");
     setItem(item, "itemPrice", numericValue, true);
   };
+
+  function updateItemImageURL(url) {
+    setItem(item, "itemImageURL", url, true);
+  }
 
   return (
     <>
