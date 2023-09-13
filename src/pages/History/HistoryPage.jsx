@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Grid, Divider, Typography, Skeleton } from "@mui/material";
-import HistoryAccordion from "../../components/Accordion/HistoryAccordion/HistoryAccordion";
-import ResponsiveDrawer from "../../components/Sidebar/Sidebar";
+import React, { useState, useEffect } from 'react';
+import { Grid, Divider, Typography, Skeleton } from '@mui/material';
+import HistoryAccordion from '../../components/Accordion/HistoryAccordion/HistoryAccordion';
+import ResponsiveDrawer from '../../components/Sidebar/Sidebar';
 import {
   Timestamp,
   collection,
@@ -9,15 +9,15 @@ import {
   orderBy,
   query,
   where,
-} from "firebase/firestore";
-import { db } from "../../../firebase.config";
-import { convertToDay } from "../../utils/utils";
+} from 'firebase/firestore';
+import { db } from '../../../firebase.config';
+import { convertToDay } from '../../utils/utils';
 
 export default function HistoryPage() {
   const [orderHistoryByDay, setOrderHistoryByDay] = useState({});
   const [isFetching, setIsFetching] = useState(false);
-  const historyCollection = collection(db, "history");
-  const feedbackCollection = collection(db, "feedback");
+  const historyCollection = collection(db, 'history');
+  const feedbackCollection = collection(db, 'feedback');
 
   useEffect(() => {
     // Get orders since 3 days ago
@@ -32,9 +32,9 @@ export default function HistoryPage() {
     try {
       const orders = query(
         historyCollection,
-        where("orderTime", ">=", startDate),
-        where("orderTime", "<=", endDate),
-        orderBy("orderTime", "desc")
+        where('orderTime', '>=', startDate),
+        where('orderTime', '<=', endDate),
+        orderBy('orderTime', 'desc'),
       );
       const newOrderHistoryByDay = { Today: [] };
       const querySnapshot = await getDocs(orders);
@@ -47,12 +47,12 @@ export default function HistoryPage() {
             Object.keys(review).length !== 0
               ? { ...review }
               : {
-                  customerReview: "No Review For This Order Yet",
+                  customerReview: 'No Review For This Order Yet',
                   reviewStars: 5,
                 },
         };
-        const today = convertToDay(Timestamp.now());
-        const date = convertToDay(order.orderTime);
+        const today = convertToDay(Timestamp.now().toDate());
+        const date = convertToDay(order.orderTime.toDate());
         if (date === today) {
           newOrderHistoryByDay.Today.push(order);
         } else {
@@ -73,7 +73,7 @@ export default function HistoryPage() {
   const fetchReviewStars = async (orderId) => {
     const feedbackQuery = query(
       feedbackCollection,
-      where("historyOrderRef", "==", `/history/${orderId}`)
+      where('historyOrderRef', '==', `/history/${orderId}`),
     );
     let review = {};
     try {
@@ -93,8 +93,8 @@ export default function HistoryPage() {
     const gridSkeleton = [];
     for (let i = 0; i < number; i++) {
       const skeleton = (
-        <Grid item xs={12}>
-          <Skeleton variant="rectangular" width={"100%"} height={60} />
+        <Grid item xs={12} key={i}>
+          <Skeleton variant="rectangular" width={'100%'} height={60} />
         </Grid>
       );
       gridSkeleton.push(skeleton);
@@ -110,57 +110,8 @@ export default function HistoryPage() {
             {renderSkeleton(6)}
           </Grid>
         )}
-<<<<<<< HEAD
-        <Grid item justifyContent="center">
-          {orderHistoryByDay.today ? (
-            orderHistoryByDay.today.map((order) => {
-              return (
-                <Grid item xs={12} key={order.id}>
-                  <HistoryAccordion
-                    orderId={order.orderId}
-                    orderTime={order.orderTime}
-                    customerName={order.customerName}
-                    customerEmail={order.customerEmail}
-                    customerPhoneNumber={order.customerPhoneNumber}
-                    items={order.items.map((item) => ({
-                      name: item.name,
-                      options: item.options
-                        ? item.options.map((option) => {
-                            return {
-                              name: option.name,
-                              price: option.price,
-                            };
-                          })
-                        : [],
-                      price: item.price,
-                      quantity: item.quantity,
-                      totalPrice: item.totalPrice,
-                    }))}
-                    itemsQuantity={order.items.reduce((prevQuantity, item) => {
-                      return prevQuantity + item.quantity;
-                    }, 0)}
-                    subTotal={order.items.reduce((prevPrice, item) => {
-                      return prevPrice + item.totalPrice;
-                    }, 0)}
-                    reviewMsg={order.review.customerReview}
-                    reviewStars={order.review.reviewStars}
-                  />
-                </Grid>
-              );
-            })
-          ) : (
-            <Typography>No Order So Far</Typography>
-          )}
-        </Grid>
       </Grid>
       {Object.keys(orderHistoryByDay).map((objKey, index) => {
-        if (objKey === "today") {
-          return null;
-        }
-=======
-      </Grid>
-      {Object.keys(orderHistoryByDay).map((objKey, index) => {
->>>>>>> f9d850b (Refs #45: Feedback Accordion)
         return (
           <Grid container justifyContent="center" key={index} rowGap={3}>
             <Grid item xs={12} key={`grid-${index}`}>
@@ -168,21 +119,17 @@ export default function HistoryPage() {
                 <Typography variant="h4">{objKey}</Typography>
               </Divider>
             </Grid>
-            <Grid item justifyContent="center">
+            <Grid container rowGap={3}>
               {orderHistoryByDay[objKey].map((order) => {
                 return (
-<<<<<<< HEAD
-                  <Grid item xs={12} key={`order-${order.id}`}>
-=======
                   <Grid
                     container
                     justifyContent="center"
                     key={`order-${order.id}`}
                   >
->>>>>>> f9d850b (Refs #45: Feedback Accordion)
                     <HistoryAccordion
                       orderId={order.orderId}
-                      orderTime={order.orderTime}
+                      orderTime={order.orderTime.toDate()}
                       customerName={order.customerName}
                       customerEmail={order.customerEmail}
                       customerPhoneNumber={order.customerPhoneNumber}
@@ -204,7 +151,7 @@ export default function HistoryPage() {
                         (prevQuantity, item) => {
                           return prevQuantity + item.quantity;
                         },
-                        0
+                        0,
                       )}
                       subTotal={order.items.reduce((prevPrice, item) => {
                         return prevPrice + item.totalPrice;

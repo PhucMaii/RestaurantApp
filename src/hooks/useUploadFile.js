@@ -1,10 +1,10 @@
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { useState, useEffect } from "react";
-import { storage } from "../../firebase.config";
-export default function useUploadFile(imageLink) {
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { useState, useEffect } from 'react';
+import { storage } from '../../firebase.config';
+export default function useUploadFile(imageLink, updateImageLink) {
   const [allowUploadImageURL, setAllowUploadImageURL] = useState(true);
   const [allowUploadImage, setAllowUploadImage] = useState(true);
-  const [imageFile, setImageFile] = useState("");
+  const [imageFile, setImageFile] = useState('');
   const [imageURL, setImageURL] = useState(imageLink);
   const [imageProgress, setImageProgress] = useState(null);
 
@@ -15,32 +15,41 @@ export default function useUploadFile(imageLink) {
     const uploadImage = uploadBytesResumable(storageRef, e.target.files[0]);
     // Snapshot will provide how much image is uploaded
     uploadImage.on(
-      "state_changed",
+      'state_changed',
       (snapshot) => {
         const progressOfImageUpload =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setImageProgress(progressOfImageUpload);
       },
       (error) => {
-        console.log("There was error with uploading image", error);
+        alert('There was error with uploading image', error);
       },
       () => {
         getDownloadURL(uploadImage.snapshot.ref).then((url) => {
           setImageFile(url);
+          updateImageLink(url);
         });
-      }
+      },
     );
   };
 
   useEffect(() => {
-    if (imageURL !== "" && imageFile === "") {
+    if (imageURL !== '' && imageFile === '') {
       setAllowUploadImage(false);
-    } else if (imageFile !== "" && imageURL === "") {
+    } else if (imageFile !== '' && imageURL === '') {
       setAllowUploadImageURL(false);
     } else {
       setAllowUploadImage(true);
       setAllowUploadImageURL(true);
     }
   }, [imageFile, imageURL]);
-  return {allowUploadImage, allowUploadImageURL, imageFile, imageURL, imageProgress, handleFileInputChange, setImageURL  };
+  return {
+    allowUploadImage,
+    allowUploadImageURL,
+    imageFile,
+    imageURL,
+    imageProgress,
+    handleFileInputChange,
+    setImageURL,
+  };
 }

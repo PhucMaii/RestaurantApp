@@ -6,11 +6,11 @@ import {
   Fab,
   Button,
   Snackbar,
-} from "@mui/material";
-import React, { useEffect, useState } from "react";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import OrderDetailsAccordion from "../../components/Accordion/OrderDetails/OrderDetails";
-import { db } from "../../../firebase.config";
+} from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import OrderDetailsAccordion from '../../components/Accordion/OrderDetails/OrderDetails';
+import { db } from '../../../firebase.config';
 import {
   addDoc,
   collection,
@@ -19,54 +19,32 @@ import {
   getDoc,
   onSnapshot,
   updateDoc,
-} from "firebase/firestore";
-import { hasRestaurant } from "../../utils/auth";
-import { useNavigate } from "react-router-dom";
-import ResponsiveDrawer from "../../components/Sidebar/Sidebar";
+} from 'firebase/firestore';
+import { hasRestaurant } from '../../utils/auth';
+import { useNavigate } from 'react-router-dom';
+import ResponsiveDrawer from '../../components/Sidebar/Sidebar';
 
 export default function HomePage() {
   const [isOwner, _setIsOwner] = useState(hasRestaurant());
   const [notification, setNotification] = useState({
-    message: "",
+    message: '',
     on: false,
-    type: "error",
+    type: 'error',
   });
   const [readyOrders, setReadyOrders] = useState([]);
   const [preparingOrders, setPreparingOrders] = useState([]);
   const [pickedUpOrders, setPickedUpOrders] = useState([]);
   const [preparingTime, setPreparingTime] = useState(0);
 
-  const historyCollection = collection(db, "history");
-  const orderCollection = collection(db, "orders");
-  const userCollection = collection(db, "users");
-  const userId = JSON.parse(localStorage.getItem("current-user")).docId;
+  const historyCollection = collection(db, 'history');
+  const orderCollection = collection(db, 'orders');
+  const userCollection = collection(db, 'users');
+  const userId = JSON.parse(localStorage.getItem('current-user')).docId;
   const docRef = doc(userCollection, userId);
   const preparingMinutes = Math.floor(preparingTime / 60);
   const preparingSeconds = preparingTime % 60;
 
   const navigate = useNavigate();
-
-  const handleIncreasePreparingTime = () => {
-    setPreparingTime((prevTime) => prevTime + 60);
-  };
-
-  const handleDecreasePreparingTime = () => {
-    setPreparingTime((prevTime) => prevTime - 60);
-  };
-
-  const navigateToCreateRestaurant = () => {
-    navigate('/create-restaurant');
-  };
-
-  const updatePreparingTime = async () => {
-    try {
-      const docSnapshot = await getDoc(docRef);
-      const data = docSnapshot.data();
-      await updateDoc(docRef, { ...data, preparingTime });
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const getPreparingTime = async () => {
     try {
@@ -77,14 +55,26 @@ export default function HomePage() {
         setNotification((prevNoti) => ({ ...prevNoti, on: false }));
       } else {
         setNotification({
-          message: "User does not exist",
+          message: 'User does not exist',
           on: true,
-          type: "error",
+          type: 'error',
         });
       }
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleDecreasePreparingTime = () => {
+    setPreparingTime(prevTime => prevTime - 60);
+  }
+
+  const handleIncreasePreparingTime = () => {
+    setPreparingTime(prevTime => prevTime + 60);
+  }
+
+  const navigateToCreateRestaurant = () => {
+    navigate('/create-restaurant');
   };
 
   const observer = async () => {
@@ -95,19 +85,28 @@ export default function HomePage() {
           return { id: doc.id, ...data };
         });
         const preparingOrders = updatedData.filter(
-          (data) => data !== null && data.orderStatus === "Preparing"
+          (data) => data !== null && data.orderStatus === 'Preparing',
         );
         const newReadyOrders = updatedData.filter(
-          (data) => data !== null && data.orderStatus === "Ready"
+          (data) => data !== null && data.orderStatus === 'Ready',
         );
         const newPickedUpOrders = updatedData.filter(
-          (data) => data !== null && data.orderStatus === "Picked Up"
+          (data) => data !== null && data.orderStatus === 'Picked Up',
         );
         setPreparingOrders(preparingOrders);
         setReadyOrders(newReadyOrders);
         setPickedUpOrders(newPickedUpOrders);
       });
       return () => unsubscribe();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const updatePreparingTime = async () => {
+    try {
+      const docSnapshot = await getDoc(docRef);
+      const data = docSnapshot.data();
+      await updateDoc(docRef, { ...data, preparingTime });
     } catch (error) {
       console.log(error);
     }
@@ -121,20 +120,23 @@ export default function HomePage() {
   useEffect(() => {
     updatePreparingTime();
   }, [preparingTime]);
-  
+
   useEffect(() => {
-    pickedUpOrders.forEach(async(order) => {
+    pickedUpOrders.forEach(async (order) => {
       try {
         // Remove specific fields from the order
-        const {hasUtensils, note, orderStatus, ...orderWithoutFields} = order;
-        await addDoc(historyCollection, orderWithoutFields);
-        const docRef = doc(db, "orders", order.id);
+        delete order.hasUtensils;
+        delete order.note;
+        delete order.orderStatus;
+        console.log(order);
+        await addDoc(historyCollection, order);
+        const docRef = doc(db, 'orders', order.id);
         await deleteDoc(docRef);
-      } catch(error) {
+      } catch (error) {
         console.log(error);
       }
-    })
-  }, [pickedUpOrders])
+    });
+  }, [pickedUpOrders]);
 
   const homePage = (
     <Grid container rowGap={3}>
@@ -151,7 +153,7 @@ export default function HomePage() {
               setNotification((prevNoti) => ({ ...prevNoti, on: false }))
             }
             severity={notification.type}
-            sx={{ width: "100%" }}
+            sx={{ width: '100%' }}
           >
             {notification.message}
           </Alert>
@@ -205,7 +207,7 @@ export default function HomePage() {
                   docId={order.id}
                   orderStatus={order.orderStatus}
                   orderId={order.orderId}
-                  orderTime={order.orderTime}
+                  orderTime={order.orderTime.toDate()}
                   customerName={order.customerName}
                   customerEmail={order.customerEmail}
                   customerPhoneNumber={order.customerPhoneNumber}
@@ -255,7 +257,7 @@ export default function HomePage() {
                   docId={order.id}
                   orderStatus={order.orderStatus}
                   orderId={order.orderId}
-                  orderTime={order.orderTime}
+                  orderTime={order.orderTime.toDate()}
                   customerName={order.customerName}
                   customerEmail={order.customerEmail}
                   customerPhoneNumber={order.customerPhoneNumber}
@@ -305,7 +307,7 @@ export default function HomePage() {
     >
       <Grid item xs={12} textAlign="center">
         <Typography variant="h3">
-          You haven't created your restaurant yet
+          You haven&apos;t created your restaurant yet
         </Typography>
       </Grid>
       <Grid item xs={12} textAlign="center">

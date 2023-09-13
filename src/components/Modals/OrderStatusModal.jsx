@@ -1,66 +1,78 @@
-import React, { memo } from 'react'
+import React, { memo } from 'react';
+import PropTypes from 'prop-types';
 import {
     Modal,
     Button
-} from '@mui/material'
+} from '@mui/material';
 import { ButtonGroupModal } from './style';
 
-function OrderStatusModal(props) {
+function OrderStatusModal({
+  handleClose,
+  open,
+  handleStatusButtonClick,
+  status,
+}) {
+  const statusEnum = {
+    preparing: 'Preparing',
+    ready: 'Ready',
+    pickedUp: 'Picked Up'
+  }
+
   return (
-    <Modal open={props.open} onClose={props.handleClose}>
+    <Modal open={open} onClose={handleClose}>
       <ButtonGroupModal
         maxWidth="500px"
         orientation="vertical"
         variant="contained"
       >
-        {props.status === 'Preparing' && (
+        {status === statusEnum.preparing && (
           <>
             <Button
               color="inherit"
-              key="Preparing"
-              onClick={props.handleStatusButtonClick}
+              key={statusEnum.preparing}
+              onClick={handleStatusButtonClick}
             >
               Preparing
             </Button>
             <Button
               color="warning"
-              key="Ready"
-              onClick={props.handleStatusButtonClick}
+              key={statusEnum.ready}
+              onClick={handleStatusButtonClick}
             >
               Ready
             </Button>
             <Button
               color="success"
-              key="PickedUp"
-              onClick={props.handleStatusButtonClick}
+              key={statusEnum.pickedUp}
+              onClick={handleStatusButtonClick}
             >
               Picked Up
             </Button>
           </>
         )}
-        {props.status === 'Ready' && (
+        {status === statusEnum.ready && (
           <>
             <Button
               color="warning"
-              key="Ready"
-              onClick={props.handleStatusButtonClick}
+              key={statusEnum.ready}
+              onClick={handleStatusButtonClick}
             >
               Ready
             </Button>
             <Button
               color="success"
-              key="PickedUp"
-              onClick={props.handleStatusButtonClick}
+              key={statusEnum.pickedUp}
+              onClick={handleStatusButtonClick}
             >
               Picked Up
             </Button>
           </>
         )}
-        {props.status === 'Picked Up' && (
+        {status === statusEnum.pickedUp && (
           <Button
             color="success"
-            key="PickedUp"
-            onClick={props.handleStatusButtonClick}
+            key={statusEnum.pickedUp}
+            onClick={handleStatusButtonClick}
           >
             Picked Up
           </Button>
@@ -69,4 +81,12 @@ function OrderStatusModal(props) {
     </Modal>
   );
 }
+
+OrderStatusModal.propTypes = {
+  handleClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  handleStatusButtonClick: PropTypes.func.isRequired,
+  status:  PropTypes.string.isRequired,
+}
+
 export default memo(OrderStatusModal)

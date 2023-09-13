@@ -83,7 +83,6 @@ function OrderDetailsAccordion({
     const updateStatus = async () => {
       try {
         await updateDoc(orderRef, { orderStatus: status });
-        console.log('Updated');
       } catch (error) {
         console.log(error);
       }
@@ -297,12 +296,12 @@ function OrderDetailsAccordion({
             </DividerContainerStyled>
             <Grid item xs={12} sm={5} textAlign="center">
               <Grid container justifyContent="center">
-                <Grid item mt={2}>
+                <Grid item xs={12} mt={2}>
                   <Typography fontWeight="bolder" variant="h4">
                     Note
                   </Typography>
                 </Grid>
-                <Grid item textAlign="center" p={3}>
+                <Grid item xs={12} textAlign="center" p={3}>
                   <Typography>{note}</Typography>
                 </Grid>
               </Grid>

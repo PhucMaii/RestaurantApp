@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, TextField, Button, Alert } from '@mui/material';
+import PropTypes from 'prop-types';
+import { Divider, LinearProgress, Grid, TextField, Button, Alert, Typography } from '@mui/material';
 import GoogleMaps from '../../../components/GoogleMaps';
 import { db } from '../../../../firebase.config';
 import {
   GridContainerStyled,
   GridStyled,
-  TitleStyled,
   TopicImageStyled,
 } from './styles';
 import { doc, updateDoc } from 'firebase/firestore';
+import useUploadFile from '../../../hooks/useUploadFile';
 
-export default function CreateRestaurant(props) {
+export default function CreateRestaurant({ goToNextStep }) {
   const [restaurantData, setRestaurantData] = useState({
     restaurantName: "",
     restaurantType: "",
@@ -22,10 +23,21 @@ export default function CreateRestaurant(props) {
   const [notifications, setNotifications] = useState({});
   const [receivedAdress, setReceivedAddress] = useState(null);
 
+  const {
+    allowUploadImage,
+    allowUploadImageURL,
+    imageFile,
+    imageURL,
+    imageProgress,
+    handleFileInputChange,
+    setImageURL
+  } = useUploadFile('', updateRestaurantImageLink);
+
   const isRestaurantDataValid = () => {
     return (
       restaurantData.restaurantName.trim() !== '' &&
       restaurantData.restaurantType.trim() !== '' &&
+      restaurantData.imageLink.trim() !== '' &&
       /^\d{10}$/.test(restaurantData.restaurantPhoneNumber)
     );
   };
@@ -78,7 +90,7 @@ export default function CreateRestaurant(props) {
         message:
           'Congratulations! You Created Your Own Restaurant Successfully',
       });
-      props.goToNextStep();
+      goToNextStep();
     } catch (error) {
       setNotifications({
         on: true,
@@ -88,15 +100,28 @@ export default function CreateRestaurant(props) {
     }
   };
 
+  function updateRestaurantImageLink(url) {
+    handleTextFieldChange('imageLink', url)
+  }
+
   return (
     <GridStyled container columnSpacing={2}>
       <Grid item xs={6}>
-        <TitleStyled component="div" color="secondary" variant={'h3'}>
-          Account creation successful! Now, let's input your restaurant details.
-        </TitleStyled>
-        {notifications.on && (
-          <Alert severity={notifications.type}>{notifications.message}</Alert>
-        )}
+        <Grid item>
+          <Typography
+            marginBottom={2}
+            color="secondary"
+            fontWeight="bold"
+            textAlign="center"
+            variant="h3"
+          >
+            Account creation successful! Now, let&apos;s input your restaurant
+            details.
+          </Typography>
+          {notifications.on && (
+            <Alert severity={notifications.type}>{notifications.message}</Alert>
+          )}
+        </Grid>
         <GridContainerStyled container rowGap={4}>
           <Grid container columnSpacing={3}>
             <Grid item xs={6}>
@@ -146,6 +171,54 @@ export default function CreateRestaurant(props) {
               <GoogleMaps onDataReceived={handleReceiveAddress} />
             </Grid>
           </Grid>
+          <Grid item xs={12}>
+            <TextField
+              disabled={!allowUploadImageURL}
+              fullWidth
+              variant="outlined"
+              value={imageURL}
+              onChange={(e) => {
+                const newImageURL = e.target.value;
+                setImageURL(newImageURL);
+                handleTextFieldChange("imageLink", newImageURL)
+              }}
+              label="Item's Image URL"
+              placeholder="Enter Item's Image URL..."
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Divider>
+              <Typography>Or</Typography>
+            </Divider>
+          </Grid>
+          <Grid item xs={12}>
+            <input
+              disabled={!allowUploadImage}
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="outlined-button-file"
+              type="file"
+              onChange={handleFileInputChange}
+            />
+            <label htmlFor="outlined-button-file">
+              <Button
+                disabled={!allowUploadImage}
+                fullWidth
+                variant="outlined"
+                component="span"
+              >
+                Upload
+              </Button>
+            </label>
+          </Grid>
+          {imageProgress !== null && (
+            <Grid item xs={12}>
+              <LinearProgress variant="determinate" value={imageProgress} />
+              <Typography fontWeight="bold" textAlign="left">
+                URL: {imageFile}
+              </Typography>
+            </Grid>
+          )}
           <Grid container columnSpacing={3} rowSpacing={3}>
             <Grid item xs={12}>
               <Button
@@ -165,4 +238,8 @@ export default function CreateRestaurant(props) {
       </Grid>
     </GridStyled>
   );
+}
+
+CreateRestaurant.propTypes = {
+  goToNextStep: PropTypes.func.isRequired
 }

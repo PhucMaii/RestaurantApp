@@ -35,7 +35,7 @@ export default function MenuPage() {
   const [notification, setNotification] = useState({
     message: "",
     on: false,
-    type: "",
+    type: "info",
   });
   const [openAddSectionModal, setOpenAddSectionModal] = useState(false);
   const [openCreateMenuForm, setOpenCreateMenuForm] = useState(false);
@@ -224,7 +224,7 @@ export default function MenuPage() {
                     return (
                       <Grid item key={index}>
                         <SectionStyled
-                          currentSection={currentSection.name == section.name}
+                          currsection={currentSection.name === section.name ? "true" : "false"}
                           padding={1}
                           onClick={() =>
                             setCurrentSection({ name: section.name, index })
@@ -269,9 +269,10 @@ export default function MenuPage() {
             >
               {menuData.map((section, index) => {
                 if (currentSection.name === section.name) {
-                  if (!section.items) {
+                  if (!section.items || section.items.length === 0) {
                     return (
                       <Grid
+                        key={index}
                         alignItems="center"
                         container
                         justifyContent="center"

@@ -74,7 +74,7 @@ export default function CreateSectionPage() {
       </Grid>
       <Grid container justifyContent="center">
         <Typography textAlign="center" variant="h3" color="secondary">
-          Let's get started with your menu
+          Let&apos;s get started with your menu
         </Typography>
       </Grid>
       <Grid container justifyContent="center">
