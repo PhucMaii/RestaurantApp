@@ -7,6 +7,7 @@ import SigninPage from "./pages/Signin/SigninPage";
 import HomePage from "./pages/HomePage/HomePage";
 import ForgotPasswordPage from "./pages/ForgotPassword/ForgotPasswordPage"
 import HorizontalLinearStepper from "./pages/RestaurantCreation/RestaurantCreationStepper";
+import HistoryPage from "./pages/History/HistoryPage";
 import MenuPage from "./pages/Menu/MenuPage";
 import UnprotectedRoutes from './Routes/UnprotectedRoute';
 
@@ -27,6 +28,7 @@ function App() {
                 element={<HorizontalLinearStepper />}
               />
               <Route path="/menu" element={<MenuPage />} />
+              <Route path="/history" element={<HistoryPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

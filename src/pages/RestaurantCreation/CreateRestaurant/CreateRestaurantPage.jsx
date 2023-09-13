@@ -13,11 +13,11 @@ import useUploadFile from '../../../hooks/useUploadFile';
 
 export default function CreateRestaurant({ goToNextStep }) {
   const [restaurantData, setRestaurantData] = useState({
-    imageLink: '',
-    restaurantName: '',
-    restaurantType: '',
-    restaurantPhoneNumber: '',
-    restaurantAddress: '',
+    restaurantName: "",
+    restaurantType: "",
+    restaurantPhoneNumber: "",
+    restaurantAddress: "",
+    preparingTime: 600
   });
   const [fieldsValid, setFieldsValid] = useState(true);
   const [notifications, setNotifications] = useState({});

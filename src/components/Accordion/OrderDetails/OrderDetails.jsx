@@ -18,83 +18,33 @@ import {
   TypographyStyled,
   ButtonStyled,
   DividerContainerStyled,
-} from './style';
-import OrderStatusModal from '../Modals/OrderStatusModal';
-import UserInfoModal from '../Modals/UserInfoModal';
-import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../../firebase.config';
-import {
-  convertTimestampToDate,
-  formatToTwoDecimalPlace,
-  reduceNameLength,
-} from '../../utils/utils';
+} from "../style";
+import OrderStatusModal from "../../Modals/OrderStatusModal";
+import UserInfoModal from "../../Modals/UserInfoModal";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../../../../firebase.config";
+import { convertTimestampToDate, formatToTwoDecimalPlace, reduceNameLength } from "../../../utils/utils";
 
 function OrderDetailsAccordion({
-  docId,
-  orderId,
-  orderTime,
-  customerName,
   customerEmail,
+  customerName,
   customerPhoneNumber,
+  docId,
   hasUtensils,
   items,
   itemsQuantity,
-  subTotal,
   note,
+  orderId,
+  orderTime,
   orderStatus,
+  preparingTime,
+  subTotal,
 }) {
-  const initialRemainingTime = 600;
-  const [remainingTime, setRemainingTime] = useState(initialRemainingTime);
-  const [status, setStatus] = useState(orderStatus);
   const [openStatusModal, setOpenStatusModal] = useState(false);
   const [openCustomerInfoModal, setOpenCustomerInfoModal] = useState(false);
-
-  const handleOpenStatusModal = (e) => {
-    e.stopPropagation();
-    setOpenStatusModal(true);
-  };
-
-  const handleCloseStatusModal = (e) => {
-    e.stopPropagation();
-    setOpenStatusModal(false);
-  };
-
-  const handleOpenCustomerInfoModal = (e) => {
-    e.stopPropagation();
-    setOpenCustomerInfoModal(true);
-  };
-
-  const handleCloseCustomerInfoModal = (e) => {
-    e.stopPropagation();
-    setOpenCustomerInfoModal(false);
-  };
-
-  const handleStatusButtonClick = (e) => {
-    e.stopPropagation();
-    setStatus(e.currentTarget.textContent);
-    setOpenStatusModal(false);
-  };
-
-  const handleIncreasePrepTime = (e) => {
-    e.stopPropagation();
-    setRemainingTime((prevRemainingTime) => prevRemainingTime + 60);
-    localStorage.setItem(docId, remainingTime + 60);
-  };
-
-  const handleDecreasePrepTime = (e) => {
-    e.stopPropagation();
-    if (remainingTime > 60) {
-      setRemainingTime((prevRemainingTime) => prevRemainingTime - 60);
-      localStorage.setItem(docId, remainingTime - 60);
-    }
-  };
-
-  // Save the remaining time on localStorage
-  const startTimer = () => {
-    localStorage.setItem(docId, initialRemainingTime);
-    setRemainingTime(initialRemainingTime);
-  };
-
+  const [remainingTime, setRemainingTime] = useState(preparingTime);
+  const [status, setStatus] = useState(orderStatus);
+  
   // Get the remaining time if the page is refreshed
   useEffect(() => {
     const localRemainingTime = localStorage.getItem(docId);
@@ -140,20 +90,67 @@ function OrderDetailsAccordion({
     updateStatus();
   }, [status]);
 
+  const handleCloseStatusModal = (e) => {
+    e.stopPropagation();
+    setOpenStatusModal(false);
+  };
+
+  const handleCloseCustomerInfoModal = (e) => {
+    e.stopPropagation();
+    setOpenCustomerInfoModal(false);
+  };
+
+  const handleDecreasePrepTime = (e) => {
+    e.stopPropagation();
+    if (remainingTime > 60) {
+      setRemainingTime((prevRemainingTime) => prevRemainingTime - 60);
+      localStorage.setItem(docId, remainingTime - 60);
+    }
+  };
+
+  const handleIncreasePrepTime = (e) => {
+    e.stopPropagation();
+    setRemainingTime((prevRemainingTime) => prevRemainingTime + 60);
+    localStorage.setItem(docId, remainingTime + 60);
+  };
+
+  const handleOpenCustomerInfoModal = (e) => {
+    e.stopPropagation();
+    setOpenCustomerInfoModal(true);
+  };
+
+  const handleOpenStatusModal = (e) => {
+    e.stopPropagation();
+    setOpenStatusModal(true);
+  };
+
+  const handleStatusButtonClick = (e) => {
+    e.stopPropagation();
+    setStatus(e.currentTarget.textContent);
+    setOpenStatusModal(false);
+  };
+
+  // Save the remaining time on localStorage
+  const startTimer = () => {
+    localStorage.setItem(docId, preparingTime);
+    setRemainingTime(preparingTime);
+  };
+
+
   return (
     <>
       <OrderStatusModal
-        open={openStatusModal}
         handleClose={handleCloseStatusModal}
         handleStatusButtonClick={handleStatusButtonClick}
+        open={openStatusModal}
         status={status}
       />
       <UserInfoModal
-        open={openCustomerInfoModal}
+        email={customerEmail}
         handleClose={handleCloseCustomerInfoModal}
         name={customerName}
+        open={openCustomerInfoModal}
         phoneNumber={customerPhoneNumber}
-        email={customerEmail}
       />
       <AccordionStyled>
         <AccordionSummary aria-controls="panel1a-content" id="panel1a-header">
@@ -299,12 +296,12 @@ function OrderDetailsAccordion({
             </DividerContainerStyled>
             <Grid item xs={12} sm={5} textAlign="center">
               <Grid container justifyContent="center">
-                <Grid item mt={2}>
+                <Grid item xs={12} mt={2}>
                   <Typography fontWeight="bolder" variant="h4">
                     Note
                   </Typography>
                 </Grid>
-                <Grid item textAlign="center" p={3}>
+                <Grid item xs={12} textAlign="center" p={3}>
                   <Typography>{note}</Typography>
                 </Grid>
               </Grid>
@@ -365,18 +362,19 @@ function OrderDetailsAccordion({
 }
 
 OrderDetailsAccordion.propTypes = {
-  docId: PropTypes.string.isRequired,
-  orderId: PropTypes.string.isRequired,
-  orderTime: PropTypes.instanceOf(Date).isRequired,
-  customerName: PropTypes.string.isRequired,
   customerEmail: PropTypes.string.isRequired,
+  customerName: PropTypes.string.isRequired,
   customerPhoneNumber: PropTypes.string.isRequired,
+  docId: PropTypes.string.isRequired,
   hasUtensils: PropTypes.bool.isRequired,
   items: PropTypes.array.isRequired,
   itemsQuantity: PropTypes.number.isRequired,
-  subTotal: PropTypes.number.isRequired,
   note: PropTypes.string.isRequired,
-  orderStatus: PropTypes.string.isRequired
+  orderId: PropTypes.string.isRequired,
+  orderTime: PropTypes.instanceOf(Date).isRequired,
+  orderStatus: PropTypes.string.isRequired,
+  preparingTime: PropTypes.number.isRequired,
+  subTotal: PropTypes.number.isRequired,
 }
 
 export default memo(OrderDetailsAccordion);
