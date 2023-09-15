@@ -23,9 +23,11 @@ import {
 import { hasRestaurant } from '../../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import ResponsiveDrawer from '../../components/Sidebar/Sidebar';
+import { renderSkeleton } from '../../utils/renderUtils';
 
 export default function HomePage() {
   const [isOwner, _setIsOwner] = useState(hasRestaurant());
+  const [isFetching, setIsFetching] = useState(false);
   const [notification, setNotification] = useState({
     message: '',
     on: false,
@@ -47,13 +49,16 @@ export default function HomePage() {
   const navigate = useNavigate();
 
   const getPreparingTime = async () => {
+    setIsFetching(true);
     try {
       const docSnapshot = await getDoc(docRef);
       if (docSnapshot.exists()) {
         const data = docSnapshot.data();
         setPreparingTime(data.preparingTime);
         setNotification((prevNoti) => ({ ...prevNoti, on: false }));
+        setIsFetching(false);
       } else {
+        setIsFetching(false);
         setNotification({
           message: 'User does not exist',
           on: true,
@@ -159,139 +164,157 @@ export default function HomePage() {
           </Alert>
         </Snackbar>
       )}
-      <Grid container rowGap={2}>
-        <Grid container justifyContent="center" rowGap={2}>
-          <Grid item xs={12} textAlign="center">
-            <Typography variant="h4">Preparing Time</Typography>
-          </Grid>
-          <Grid
-            alignItems="center"
-            container
-            columnSpacing={3}
-            justifyContent="center"
-          >
-            <Grid item>
-              <Fab onClick={handleDecreasePreparingTime} size="small">
-                -
-              </Fab>
-            </Grid>
-            <Grid item>
-              <Typography variant="h6" fontWeight="bold">
-                {preparingMinutes < 10
-                  ? `0${preparingMinutes}`
-                  : preparingMinutes}
-                :
-                {preparingSeconds < 10
-                  ? `0${preparingSeconds}`
-                  : preparingSeconds}
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Fab onClick={handleIncreasePreparingTime} size="small">
-                +
-              </Fab>
-            </Grid>
-          </Grid>
+      {isFetching ? (
+        <Grid
+          container
+          columnSpacing={2}
+          justifyContent="center"
+          padding={3}
+          rowGap={3}
+        >
+          {renderSkeleton(3, 'rounded', 100)}
         </Grid>
-        <Grid item xs={12}>
-          <Divider />
-        </Grid>
-        <Grid container justifyContent="center" rowGap={3}>
-          {preparingOrders.map((order) => {
-            if (!order.items) {
-              return null; // Skip rendering this order
-            }
-            return (
-              <Grid key={order.id} container justifyContent="center">
-                <OrderDetailsAccordion
-                  docId={order.id}
-                  orderStatus={order.orderStatus}
-                  orderId={order.orderId}
-                  orderTime={order.orderTime.toDate()}
-                  customerName={order.customerName}
-                  customerEmail={order.customerEmail}
-                  customerPhoneNumber={order.customerPhoneNumber}
-                  hasUtensils={order.hasUtensils}
-                  items={order.items.map((item) => {
-                    return {
-                      name: item.name,
-                      options: item.options
-                        ? item.options.map((option) => {
-                            return {
-                              name: option.name,
-                              price: option.price,
-                            };
-                          })
-                        : [],
-                      price: item.price,
-                      quantity: item.quantity,
-                      totalPrice: item.totalPrice,
-                    };
-                  })}
-                  itemsQuantity={order.items.reduce((prevQuantity, item) => {
-                    return prevQuantity + item.quantity;
-                  }, 0)}
-                  subTotal={order.items.reduce((prevPrice, item) => {
-                    return prevPrice + item.totalPrice;
-                  }, 0)}
-                  note={order.note}
-                  preparingTime={preparingTime}
-                />
+      ) : (
+        <Grid container rowGap={2} mt={3}>
+          <Grid container justifyContent="center" rowGap={2}>
+            <Grid item xs={12} textAlign="center">
+              <Typography variant="h4">Preparing Time</Typography>
+            </Grid>
+            <Grid
+              alignItems="center"
+              container
+              columnSpacing={3}
+              justifyContent="center"
+            >
+              <Grid item>
+                <Fab onClick={handleDecreasePreparingTime} size="small">
+                  -
+                </Fab>
               </Grid>
-            );
-          })}
-        </Grid>
-        <Grid item xs={12}>
-          <Divider textAlign="left">
-            <Typography variant="h4">Ready</Typography>
-          </Divider>
-        </Grid>
-        <Grid container justifyContent="center" rowGap={3}>
-          {readyOrders.map((order) => {
-            if (!order.items) {
-              return null; // Skip rendering this order
-            }
-            return (
-              <Grid key={order.id} container justifyContent="center">
-                <OrderDetailsAccordion
-                  docId={order.id}
-                  orderStatus={order.orderStatus}
-                  orderId={order.orderId}
-                  orderTime={order.orderTime.toDate()}
-                  customerName={order.customerName}
-                  customerEmail={order.customerEmail}
-                  customerPhoneNumber={order.customerPhoneNumber}
-                  hasUtensils={order.hasUtensils}
-                  items={order.items.map((item) => {
-                    return {
-                      name: item.name,
-                      options: item.options
-                        ? item.options.map((option) => {
-                            return {
-                              name: option.name,
-                              price: option.price,
-                            };
-                          })
-                        : [],
-                      price: item.price,
-                      quantity: item.quantity,
-                      totalPrice: item.totalPrice,
-                    };
-                  })}
-                  itemsQuantity={order.items.reduce((prevQuantity, item) => {
-                    return prevQuantity + item.quantity;
-                  }, 0)}
-                  subTotal={order.items.reduce((prevQuantity, item) => {
-                    return prevQuantity + item.totalPrice;
-                  }, 0)}
-                  note={order.note}
-                  preparingTime={preparingTime}
-                />
+              <Grid item>
+                <Typography variant="h6" fontWeight="bold">
+                  {preparingMinutes < 10
+                    ? `0${preparingMinutes}`
+                    : preparingMinutes}
+                  :
+                  {preparingSeconds < 10
+                    ? `0${preparingSeconds}`
+                    : preparingSeconds}
+                </Typography>
               </Grid>
-            );
-          })}
+              <Grid item>
+                <Fab onClick={handleIncreasePreparingTime} size="small">
+                  +
+                </Fab>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <Divider />
+          </Grid>
+          <Grid container justifyContent="center" rowGap={3}>
+            {preparingOrders.length > 0 ? preparingOrders.map((order) => {
+              if (!order.items) {
+                return null; // Skip rendering this order
+              }
+              return (
+                <Grid key={order.id} container justifyContent="center">
+                  <OrderDetailsAccordion
+                    docId={order.id}
+                    orderStatus={order.orderStatus}
+                    orderId={order.orderId}
+                    orderTime={order.orderTime.toDate()}
+                    customerName={order.customerName}
+                    customerEmail={order.customerEmail}
+                    customerPhoneNumber={order.customerPhoneNumber}
+                    hasUtensils={order.hasUtensils}
+                    items={order.items.map((item) => {
+                      return {
+                        name: item.name,
+                        options: item.options
+                          ? item.options.map((option) => {
+                              return {
+                                name: option.name,
+                                price: option.price,
+                              };
+                            })
+                          : [],
+                        price: item.price,
+                        quantity: item.quantity,
+                        totalPrice: item.totalPrice,
+                      };
+                    })}
+                    itemsQuantity={order.items.reduce((prevQuantity, item) => {
+                      return prevQuantity + item.quantity;
+                    }, 0)}
+                    subTotal={order.items.reduce((prevPrice, item) => {
+                      return prevPrice + item.totalPrice;
+                    }, 0)}
+                    note={order.note}
+                    preparingTime={preparingTime}
+                  />
+                </Grid>
+              );
+            }) : (
+              <Grid container justifyContent="center">
+                <Grid item>
+                  <Typography fontWeight="bold" variant="h6">No New Orders At The Moment</Typography>
+                </Grid>
+              </Grid>
+            )}
+          </Grid>
+          <Grid item xs={12}>
+            <Divider textAlign="left">
+              <Typography variant="h4">Ready</Typography>
+            </Divider>
+          </Grid>
+          <Grid container justifyContent="center" rowGap={3}>
+            {readyOrders.map((order) => {
+              if (!order.items) {
+                return null; // Skip rendering this order
+              }
+              return (
+                <Grid key={order.id} container justifyContent="center">
+                  <OrderDetailsAccordion
+                    docId={order.id}
+                    orderStatus={order.orderStatus}
+                    orderId={order.orderId}
+                    orderTime={order.orderTime.toDate()}
+                    customerName={order.customerName}
+                    customerEmail={order.customerEmail}
+                    customerPhoneNumber={order.customerPhoneNumber}
+                    hasUtensils={order.hasUtensils}
+                    items={order.items.map((item) => {
+                      return {
+                        name: item.name,
+                        options: item.options
+                          ? item.options.map((option) => {
+                              return {
+                                name: option.name,
+                                price: option.price,
+                              };
+                            })
+                          : [],
+                        price: item.price,
+                        quantity: item.quantity,
+                        totalPrice: item.totalPrice,
+                      };
+                    })}
+                    itemsQuantity={order.items.reduce((prevQuantity, item) => {
+                      return prevQuantity + item.quantity;
+                    }, 0)}
+                    subTotal={order.items.reduce((prevQuantity, item) => {
+                      return prevQuantity + item.totalPrice;
+                    }, 0)}
+                    note={order.note}
+                    preparingTime={preparingTime}
+                  />
+                </Grid>
+              );
+            })}
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </Grid>
   );
 

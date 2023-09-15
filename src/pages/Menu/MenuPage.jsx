@@ -23,6 +23,7 @@ import {
 import { db } from "../../../firebase.config";
 import { grey } from "@mui/material/colors";
 import AddItemModal from "../../components/Modals/AddItemModal";
+import { renderSkeleton } from "../../utils/renderUtils";
 
 export default function MenuPage() {
   const [docId, setDocId] = useState("");
@@ -133,18 +134,6 @@ export default function MenuPage() {
     }
   };
 
-  const renderSkeleton = () => {
-    const gridItems = [];
-    for (let i = 0; i < 6; i++) {
-      gridItems.push(
-        <Grid key={i} item xs={12} md={5} xl={3} textAlign="center">
-          <Skeleton variant="rounded" height={200}></Skeleton>
-        </Grid>
-      );
-    }
-    return gridItems;
-  };
-
   const saveChanges = useCallback(() => {
     setMenuData(tempMenuData);
   }, [tempMenuData]);
@@ -193,7 +182,7 @@ export default function MenuPage() {
           <Grid item xs={12} textAlign="center">
             <Skeleton variant="rectangle" height={80} />
           </Grid>
-          {renderSkeleton()}
+          {renderSkeleton(6, 'rounded', 200, 5, 3)}
         </Grid>
       ) : (
         <>

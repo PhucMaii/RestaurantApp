@@ -24,6 +24,7 @@ import UserInfoModal from "../../Modals/UserInfoModal";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../../firebase.config";
 import { convertTimestampToDate, formatToTwoDecimalPlace, reduceNameLength } from "../../../utils/utils";
+import { orderStatusEnum } from '../../../utils/constant';
 
 function OrderDetailsAccordion({
   customerEmail,
@@ -69,10 +70,10 @@ function OrderDetailsAccordion({
   }, [remainingTime]);
 
   useEffect(() => {
-    if (remainingTime === 0 && status !== 'Picked Up') {
-      setStatus('Ready');
+    if (remainingTime === 0 && status !== orderStatus.pickedUp) {
+      setStatus(orderStatusEnum.ready);
     }
-    if (status === 'Ready') {
+    if (status === orderStatusEnum.ready) {
       setRemainingTime(0);
       localStorage.setItem(docId, remainingTime);
     }
@@ -177,9 +178,9 @@ function OrderDetailsAccordion({
             <ButtonStyled
               variant="contained"
               color={
-                status === 'Preparing'
+                status === orderStatusEnum.preparing
                   ? 'inherit'
-                  : status === 'Ready'
+                  : status === orderStatusEnum.ready
                   ? 'warning'
                   : 'success'
               }
@@ -187,7 +188,7 @@ function OrderDetailsAccordion({
             >
               {status}
             </ButtonStyled>
-            {status !== 'Picked Up' && (
+            {status !== orderStatusEnum.pickedUp && (
               <TimerFlexBox>
                 <Fab
                   variant="contained"
