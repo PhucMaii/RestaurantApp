@@ -109,7 +109,6 @@ function ResponsiveDrawer({window, tab}) {
     try {
       let busyMode, openMode;
       const querySnapshot = await getDocs(userRef);
-      console.log(querySnapshot)
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         busyMode = data.isBusy;
@@ -126,7 +125,10 @@ function ResponsiveDrawer({window, tab}) {
 
   const toggleOpenSwitch = () => {
     setOpenSwitch((prevSwitch) => !prevSwitch);
-    updateSwitchValue('isOpen', !openSwitch)
+    updateSwitchValue('isOpen', !openSwitch);
+    if(openSwitch) {
+      updateSwitchValue('isBusy', false);
+    }
   };
 
   const toggleBusySwitch = () => {
@@ -146,19 +148,6 @@ function ResponsiveDrawer({window, tab}) {
       console.log(error);
     }
   }
-
-  // const renderSkeleton = (number) => {
-  //   const gridSkeleton = [];
-  //   for (let i = 0; i < number; i++) {
-  //     const skeleton = (
-  //       <Grid item xs={12} key={i}>
-  //         <Skeleton variant="rounded" height={60} />
-  //       </Grid>
-  //     );
-  //     gridSkeleton.push(skeleton);
-  //   }
-  //   return gridSkeleton;
-  // };
 
   useEffect(() => {
     fetchSwitch();

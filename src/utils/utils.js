@@ -13,10 +13,25 @@ export const convertTimestampToDate = (timestamp) => {
   return formattedDate;
 };
 
+export const calculateDifferenceTime = (startTime, endTime) => {
+  const start = startTime.toDate();
+  const end = endTime.toDate();
+  return Math.floor(end - start) / 1000;
+};
+
 export const convertToDay = (timestamp) => {
   const formattedDate = convertTimestampToDate(timestamp);
   const date = formattedDate.split(' at ')[0];
   return date;
+};
+
+export const formatTime = (time) => {
+  const minutes =
+    Math.floor(time / 60) < 10
+      ? `0${Math.floor(time / 60)}`
+      : Math.floor(time / 60);
+  const seconds = time % 60 < 10 ? `0${time % 60}` : time % 60;
+  return `${minutes}:${seconds}`;
 };
 
 export const formatToTwoDecimalPlace = (num) => {

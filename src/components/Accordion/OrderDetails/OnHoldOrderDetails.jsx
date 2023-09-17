@@ -19,14 +19,13 @@ import {
   ButtonStyled,
   DividerContainerStyled,
 } from "../style";
-import OrderStatusModal from "../../Modals/OrderStatusModal";
 import UserInfoModal from "../../Modals/UserInfoModal";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../../firebase.config";
 import { convertTimestampToDate, formatTime, formatToTwoDecimalPlace, reduceNameLength } from "../../../utils/utils";
 import { orderStatusEnum } from '../../../utils/constant';
 
-function OrderDetailsAccordion({
+function OnHoldOrderDetailsAccordion({
   customerEmail,
   customerName,
   customerPhoneNumber,
@@ -38,32 +37,29 @@ function OrderDetailsAccordion({
   orderId,
   orderTime,
   orderStatus,
-  preparingTime,
   subTotal,
 }) {
-  const [isExpanded, setIsExpanded] = useState(orderStatus === orderStatusEnum.onHoldOrders);
-  const [openStatusModal, setOpenStatusModal] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [openCustomerInfoModal, setOpenCustomerInfoModal] = useState(false);
   const [remainingTime, setRemainingTime] = useState(() => {
-    const localData = JSON.parse(localStorage.getItem(docId));
+    const localData = JSON.parse(localStorage.getItem(`${docId}_onHold`));
     if(localData && localData.remainingTime) {
       return localData.remainingTime;
     }
-    return preparingTime;
+    return 120;
   });
   const [status, setStatus] = useState(orderStatus);
   const orderRef = doc(db, 'orders', docId);
-  console.log(remainingTime);
-
+  
   // Get the remaining time if the page is refreshed
   useEffect(() => {
-    if (!JSON.parse(localStorage.getItem(docId))) {
+    if (!JSON.parse(localStorage.getItem(`${docId}_onHold`))) {
       localStorage.setItem(
-        docId,
+        `${docId}_onHold`,
         JSON.stringify({ lastTimeSaveData: Date.now(), remainingTime }),
       );
     } else {
-      const localRemainingTime = JSON.parse(localStorage.getItem(docId));
+      const localRemainingTime = JSON.parse(localStorage.getItem(`${docId}_onHold`));
       const today = Date.now();
       const differenceTime = Math.floor(
         (today - localRemainingTime.lastTimeSaveData) / 2000,
@@ -78,9 +74,9 @@ function OrderDetailsAccordion({
     const timeInterval = setTimeout(() => {
       if (remainingTime > 0) {
         setRemainingTime((prevRemainingTime) => prevRemainingTime - 1);
-        const localData = JSON.parse(localStorage.getItem(docId))
+        const localData = JSON.parse(localStorage.getItem(`${docId}_onHold`))
         const timeData = { ...localData, remainingTime: remainingTime - 1};
-        localStorage.setItem(docId, JSON.stringify(timeData));
+        localStorage.setItem(`${docId}_onHold`, JSON.stringify(timeData));
       } else {
         clearTimeout(timeInterval);
       }
@@ -94,14 +90,14 @@ function OrderDetailsAccordion({
     if (remainingTime === 0) {
       if (status === orderStatusEnum.onHoldOrders) {
         setStatus(orderStatusEnum.preparing);
-        setRemainingTime(preparingTime);
+        setRemainingTime(120);
       } else if (status === orderStatusEnum.preparing) {
         setStatus(orderStatusEnum.ready);
       }
     }
     if (status === orderStatusEnum.ready) {
       setRemainingTime(0);
-      localStorage.removeItem(docId);
+      localStorage.setItem(`${docId}_onHold`, remainingTime);
     }
   }, [remainingTime, status]);
 
@@ -116,32 +112,9 @@ function OrderDetailsAccordion({
     updateStatus();
   }, [status]);
 
-  const handleCloseStatusModal = (e) => {
-    e.stopPropagation();
-    setOpenStatusModal(false);
-  };
-
   const handleCloseCustomerInfoModal = (e) => {
     e.stopPropagation();
     setOpenCustomerInfoModal(false);
-  };
-
-  const handleDecreasePrepTime = (e) => {
-    e.stopPropagation();
-    if (remainingTime > 60) {
-      setRemainingTime((prevRemainingTime) => prevRemainingTime - 60);
-      const localData = JSON.parse(localStorage.getItem(docId))
-      const timeData = { ...localData, remainingTime: remainingTime - 60};
-      localStorage.setItem(docId, JSON.stringify(timeData));
-    }
-  };
-
-  const handleIncreasePrepTime = (e) => {
-    e.stopPropagation();
-    setRemainingTime((prevRemainingTime) => prevRemainingTime + 60);
-    const localData = JSON.parse(localStorage.getItem(docId))
-    const timeData = { ...localData, remainingTime: remainingTime + 60};
-    localStorage.setItem(docId, JSON.stringify(timeData));
   };
 
   const handleOpenCustomerInfoModal = (e) => {
@@ -149,35 +122,15 @@ function OrderDetailsAccordion({
     setOpenCustomerInfoModal(true);
   };
 
-  const handleOpenStatusModal = (e) => {
-    e.stopPropagation();
-    setOpenStatusModal(true);
-  };
-
-  const handleStatusButtonClick = (e) => {
-    e.stopPropagation();
-    setStatus(e.currentTarget.textContent);
-    setOpenStatusModal(false);
-  };
-
   // Save the remaining time on localStorage
   const startTimer = (saveRemainTime) => {
     const lastTimeSaveData = Date.now(); 
     const timeData = JSON.stringify({remainingTime: saveRemainTime, lastTimeSaveData})
-    localStorage.setItem(docId, timeData)
+    localStorage.setItem(`${docId}_onHold`, timeData)
   };
-
 
   return (
     <>
-      {orderStatus !== orderStatusEnum.onHoldOrders && (
-        <OrderStatusModal
-          handleClose={handleCloseStatusModal}
-          handleStatusButtonClick={handleStatusButtonClick}
-          open={openStatusModal}
-          status={status}
-        />
-      )}
       <UserInfoModal
         email={customerEmail}
         handleClose={handleCloseCustomerInfoModal}
@@ -217,7 +170,6 @@ function OrderDetailsAccordion({
                   ? 'warning'
                   : 'success'
               }
-              onClick={handleOpenStatusModal}
             >
               {status}
             </ButtonStyled>
@@ -228,7 +180,6 @@ function OrderDetailsAccordion({
                   variant="contained"
                   size="small"
                   color="primary"
-                  onClick={handleDecreasePrepTime}
                 >
                   -
                 </Fab>
@@ -240,7 +191,6 @@ function OrderDetailsAccordion({
                   variant="contained"
                   size="small"
                   color="primary"
-                  onClick={handleIncreasePrepTime}
                 >
                   +
                 </Fab>
@@ -391,7 +341,7 @@ function OrderDetailsAccordion({
   );
 }
 
-OrderDetailsAccordion.propTypes = {
+OnHoldOrderDetailsAccordion.propTypes = {
   customerEmail: PropTypes.string.isRequired,
   customerName: PropTypes.string.isRequired,
   customerPhoneNumber: PropTypes.string.isRequired,
@@ -403,8 +353,7 @@ OrderDetailsAccordion.propTypes = {
   orderId: PropTypes.string.isRequired,
   orderTime: PropTypes.instanceOf(Date).isRequired,
   orderStatus: PropTypes.string.isRequired,
-  preparingTime: PropTypes.number.isRequired,
   subTotal: PropTypes.number.isRequired,
 }
 
-export default memo(OrderDetailsAccordion);
+export default memo(OnHoldOrderDetailsAccordion);
