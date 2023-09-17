@@ -18,6 +18,7 @@ export default function HistoryPage() {
   const [isFetching, setIsFetching] = useState(false);
   const historyCollection = collection(db, 'history');
   const feedbackCollection = collection(db, 'feedback');
+  const userId = JSON.parse(localStorage.getItem('current-user')).docId;
 
   useEffect(() => {
     // Get orders since 3 days ago
@@ -32,6 +33,7 @@ export default function HistoryPage() {
     try {
       const orders = query(
         historyCollection,
+        where('restaurantId', '==', userId),
         where('orderTime', '>=', startDate),
         where('orderTime', '<=', endDate),
         orderBy('orderTime', 'desc'),
@@ -120,48 +122,56 @@ export default function HistoryPage() {
               </Divider>
             </Grid>
             <Grid container rowGap={3}>
-              {orderHistoryByDay[objKey].map((order) => {
-                return (
-                  <Grid
-                    container
-                    justifyContent="center"
-                    key={`order-${order.id}`}
-                  >
-                    <HistoryAccordion
-                      orderId={order.orderId}
-                      orderTime={order.orderTime.toDate()}
-                      customerName={order.customerName}
-                      customerEmail={order.customerEmail}
-                      customerPhoneNumber={order.customerPhoneNumber}
-                      items={order.items.map((item) => ({
-                        name: item.name,
-                        options: item.options
-                          ? item.options.map((option) => {
-                              return {
-                                name: option.name,
-                                price: option.price,
-                              };
-                            })
-                          : [],
-                        price: item.price,
-                        quantity: item.quantity,
-                        totalPrice: item.totalPrice,
-                      }))}
-                      itemsQuantity={order.items.reduce(
-                        (prevQuantity, item) => {
-                          return prevQuantity + item.quantity;
-                        },
-                        0,
-                      )}
-                      subTotal={order.items.reduce((prevPrice, item) => {
-                        return prevPrice + item.totalPrice;
-                      }, 0)}
-                      reviewMsg={order.review.customerReview}
-                      reviewStars={order.review.reviewStars}
-                    />
-                  </Grid>
-                );
-              })}
+              {orderHistoryByDay[objKey].length > 0 ? (
+                orderHistoryByDay[objKey].map((order) => {
+                  return (
+                    <Grid
+                      container
+                      justifyContent="center"
+                      key={`order-${order.id}`}
+                    >
+                      <HistoryAccordion
+                        orderId={order.orderId}
+                        orderTime={order.orderTime.toDate()}
+                        customerName={order.customerName}
+                        customerEmail={order.customerEmail}
+                        customerPhoneNumber={order.customerPhoneNumber}
+                        items={order.items.map((item) => ({
+                          name: item.name,
+                          options: item.options
+                            ? item.options.map((option) => {
+                                return {
+                                  name: option.name,
+                                  price: option.price,
+                                };
+                              })
+                            : [],
+                          price: item.price,
+                          quantity: item.quantity,
+                          totalPrice: item.totalPrice,
+                        }))}
+                        itemsQuantity={order.items.reduce(
+                          (prevQuantity, item) => {
+                            return prevQuantity + item.quantity;
+                          },
+                          0,
+                        )}
+                        subTotal={order.items.reduce((prevPrice, item) => {
+                          return prevPrice + item.totalPrice;
+                        }, 0)}
+                        reviewMsg={order.review.customerReview}
+                        reviewStars={order.review.reviewStars}
+                      />
+                    </Grid>
+                  );
+                })
+              ) : (
+                <Grid item xs={12} textAlign="center">
+                  <Typography fontWeight="bold" variant="h6">
+                    No Review So Far
+                  </Typography>
+                </Grid>
+              )}
             </Grid>
           </Grid>
         );

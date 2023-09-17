@@ -97,7 +97,7 @@ function HistoryAccordion({
                 Total: ${formatToTwoDecimalPlace(subTotal * 1.12)}
               </Typography>
             </Box>
-            <ButtonStyled variant="contained" color="inherit">
+            <ButtonStyled disabled variant="contained" color="inherit">
               Picked up
             </ButtonStyled>
             <Box display="flex" alignItems="center" gap={2}>

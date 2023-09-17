@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Divider, Grid, Skeleton, Typography } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import ResponsiveDrawer from '../../components/Sidebar/Sidebar';
 import FeedbackAccordion from '../../components/Accordion/FeedbackAccordion/FeedbackAccordion';
 import {
+  onSnapshot,
   query,
   where,
   orderBy,
-  getDocs,
   Timestamp,
   collection,
 } from 'firebase/firestore';
@@ -15,72 +15,52 @@ import { convertToDay } from '../../utils/utils';
 
 export default function FeedbackPage() {
   const feedbackCollection = collection(db, 'feedback');
-  const [isFetching, setIsFetching] = useState(false);
   const [feedbackByDay, setFeedbackByDay] = useState({});
+  const userId = JSON.parse(localStorage.getItem('current-user')).docId;
 
   useEffect(() => {
-    // Get orders since 3 days ago
-    fetchFeedbackByDay();
+    observer();
   }, []);
 
-  const fetchFeedbackByDay = async () => {
-    setIsFetching(true);
-    const endDate = new Date();
-    const startDate = new Date(endDate);
-    startDate.setDate(endDate.getDate() - 2);
+  const observer = () => {
     try {
-      const q = query(
+      const endDate = new Date();
+      const startDate = new Date(endDate);
+      startDate.setDate(endDate.getDate() - 2);
+      const ordersQuery = query(
         feedbackCollection,
+        where('restaurantId', '==', userId),
         where('reviewTime', '>=', startDate),
         where('reviewTime', '<=', endDate),
         orderBy('reviewTime', 'desc'),
       );
-      const newOrderHistoryByDay = { Today: [] };
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        const feedback = doc.data();
-        const docId = doc.id;
-        if (!feedback.restaurantResponse) {
-          const today = convertToDay(Timestamp.now().toDate());
-          const date = convertToDay(feedback.reviewTime.toDate());
-          if (date === today) {
-            newOrderHistoryByDay.Today.push({ ...feedback, docId });
-          } else {
-            if (!newOrderHistoryByDay[date]) {
-              newOrderHistoryByDay[date] = [];
+      const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
+        const newFeedbackOrderByDay = { Today: [] };
+        snapshot.docs.map((doc) => {
+          const feedback = doc.data();
+          const docId = doc.id;
+          if (!feedback.restaurantResponse) {
+            const today = convertToDay(Timestamp.now().toDate());
+            const date = convertToDay(feedback.reviewTime.toDate());
+            if (date === today) {
+              newFeedbackOrderByDay.Today.push({ ...feedback, docId });
+            } else {
+              if (!newFeedbackOrderByDay[date]) {
+                newFeedbackOrderByDay[date] = [];
+              }
+              newFeedbackOrderByDay[date].push({ ...feedback, docId });
             }
-            newOrderHistoryByDay[date].push({ ...feedback, docId });
           }
-        }
+        });
+        setFeedbackByDay(newFeedbackOrderByDay);
       });
-      setFeedbackByDay(newOrderHistoryByDay);
-      setIsFetching(false);
+      return () => unsubscribe();
     } catch (error) {
-      setIsFetching(false);
       console.log(error);
     }
   };
-
-  const renderSkeleton = (number) => {
-    const gridSkeleton = [];
-    for (let i = 0; i < number; i++) {
-      const skeleton = (
-        <Grid item xs={12} key={i}>
-          <Skeleton variant="rectangular" width={'100%'} height={60} />
-        </Grid>
-      );
-      gridSkeleton.push(skeleton);
-    }
-    return gridSkeleton;
-  };
-
   const feedback = (
     <Grid container mt={4} rowGap={5}>
-      {isFetching && (
-        <Grid container rowGap={3}>
-          {renderSkeleton(6)}
-        </Grid>
-      )}
       {Object.keys(feedbackByDay).map((objKey) => {
         return (
           <Grid container rowGap={3} key={objKey}>
@@ -106,7 +86,7 @@ export default function FeedbackPage() {
                             : ''
                         }
                         reviewTime={feedback.reviewTime.toDate()}
-                        fetchFeedback={fetchFeedbackByDay}
+                        fetchFeedback={observer}
                       />
                     </Grid>
                   );
