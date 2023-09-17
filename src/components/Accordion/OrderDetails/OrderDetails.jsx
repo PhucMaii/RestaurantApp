@@ -69,8 +69,12 @@ function OrderDetailsAccordion({
         (today - localRemainingTime.lastTimeSaveData) / 2000,
       );
       const newRemainingTime = localRemainingTime.remainingTime - differenceTime;
-      setRemainingTime(newRemainingTime)
-      startTimer(newRemainingTime);
+      if(newRemainingTime >= 0) {
+        setRemainingTime(newRemainingTime)
+        startTimer(newRemainingTime);
+      } else {
+        setRemainingTime(0);
+      }
     }
   }, []);
 

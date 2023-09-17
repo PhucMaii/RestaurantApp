@@ -8,7 +8,7 @@ function EditOptionModal({ handleClose, open, option, setOption }) {
   const handlePriceChange = (e) => {
     // Remove non-numeric character
     const numericValue = e.target.value.replace(nonNumericCharacter, "");
-    setOption(option, "price", numericValue);
+    setOption(option, "price", +numericValue);
   };
   return (
     <Modal onClose={handleClose} open={open}>

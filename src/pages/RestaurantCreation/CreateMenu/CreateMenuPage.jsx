@@ -211,7 +211,7 @@ export default function CreateMenuPage() {
             value={itemData.itemPrice}
             onChange={(e) => {
               setItemData((prevData) => {
-                return { ...prevData, itemPrice: e.target.value };
+                return { ...prevData, itemPrice: +e.target.value };
               });
             }}
             label="Item's Price"

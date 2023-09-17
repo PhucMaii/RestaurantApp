@@ -95,7 +95,7 @@ function EditItemModal({
   const handlePriceChange = (e) => {
     // Remove non-numeric character
     const numericValue = e.target.value.replace(nonNumericCharacter, "");
-    setItem(item, "itemPrice", numericValue, true);
+    setItem(item, "itemPrice", +numericValue, true);
   };
 
   function updateItemImageURL(url) {

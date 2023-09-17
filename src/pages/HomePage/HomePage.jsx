@@ -105,7 +105,7 @@ export default function HomePage() {
       const unsubscribe = onSnapshot(ordersQuery, (snapshot) => {
         const updatedData = snapshot.docs.map((doc) => {
           const data = doc.data();
-          return { id: doc.id, ...data };
+          return { id: doc.id, ...data, orderId: `#${doc.id.slice(15)}` };
         });
         const onHoldOrders = updatedData.filter(
           (data) => data !== null && data.orderStatus === orderStatusEnum.onHoldOrders,
@@ -158,10 +158,6 @@ export default function HomePage() {
     getPreparingTime();
     observer();
   }, []);
-
-  useEffect(() => {
-    console.log(orders)
-  }, [orders])
 
   useEffect(() => {
     if(preparingTime > 0) {
