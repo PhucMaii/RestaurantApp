@@ -29,8 +29,10 @@ import { renderSkeleton } from '../../utils/renderUtils';
 import { orderStatusEnum } from '../../utils/constant';
 import OnHoldOrderModal from '../../components/Modals/OnHoldOrderModal';
 import { formatTime } from '../../utils/utils';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
 export default function HomePage() {
+  const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
   const [isOwner, _setIsOwner] = useState(hasRestaurant());
   const [isFetching, setIsFetching] = useState(false);
   const [notification, setNotification] = useState({
@@ -49,7 +51,7 @@ export default function HomePage() {
   const historyCollection = collection(db, 'history');
   const orderCollection = collection(db, 'orders');
   const userCollection = collection(db, 'users');
-  const userId = JSON.parse(localStorage.getItem('current-user')).docId;
+  const userId = currUser.docId;
   const docRef = doc(userCollection, userId);
 
   const navigate = useNavigate();
@@ -235,7 +237,7 @@ export default function HomePage() {
             orderId={order.orderId}
             orderTime={order.orderTime.toDate()}
             orderStatus={order.orderStatus}
-            preparingTime={120}
+            preparingTime={preparingTime}
             setOrderStatus={() => updateOrders(order.id) }
             subTotal={order.items.reduce((prevQuantity, item) => {
               return prevQuantity + item.totalPrice;
@@ -348,7 +350,7 @@ export default function HomePage() {
             </Divider>
           </Grid>
           <Grid container justifyContent="center" rowGap={3}>
-            {orders.readyOrders.map((order) => {
+            {orders.readyOrders.length > 0 && orders.readyOrders.map((order) => {
               if (!order.items) {
                 return null; // Skip rendering this order
               }

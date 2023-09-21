@@ -37,10 +37,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../../firebase.config';
 import { renderSkeleton } from '../../utils/renderUtils';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
 const drawerWidth = 250;
 
 function ResponsiveDrawer({window, tab}) {
+  const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
   const [mobileOpen, setMobileOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +50,7 @@ function ResponsiveDrawer({window, tab}) {
   const [openSwitch, setOpenSwitch] = useState(false);
   const [busySwitch, setBusySwitch] = useState(false);
   const [notification, setNotification] = useState({});
-  const docId = JSON.parse(localStorage.getItem('current-user')).docId;
+  const docId = currUser.docId;
   const userCollection = collection(db, 'users');
   const userRef = query(userCollection, where('docId', '==', docId));
   const navigate = useNavigate();
@@ -210,10 +212,10 @@ function ResponsiveDrawer({window, tab}) {
           </Toolbar>
           <Divider />
           <List>
-            {iconList.map((iconObj) => (
+            {iconList.length > 0 && iconList.map((iconObj) => (
               <React.Fragment key={iconObj.text}>
                 <TabStyled
-                  ischoose={iconObj.path === currentPath ? 'true' : 'false'} // React doesn't understand isChoose is a boolean
+                  $ischoose={iconObj.path === currentPath} // using transient-props to avoid error lines
                   onClick={() => {
                     navigate(iconObj.path);
                     if (iconObj.text === 'Account') {

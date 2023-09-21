@@ -4,7 +4,6 @@ import {
   AccordionSummary,
   Typography,
   Box,
-  Fab,
   Grid,
   Divider,
 } from '@mui/material';
@@ -22,7 +21,7 @@ import {
 import UserInfoModal from "../../Modals/UserInfoModal";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../../firebase.config";
-import { convertTimestampToDate, formatTime, formatToTwoDecimalPlace, reduceNameLength } from "../../../utils/utils";
+import { calculateETA, convertTimestampToDate, formatToTwoDecimalPlace, reduceNameLength } from "../../../utils/utils";
 import { orderStatusEnum } from '../../../utils/constant';
 
 function OnHoldOrderDetailsAccordion({
@@ -37,69 +36,13 @@ function OnHoldOrderDetailsAccordion({
   orderId,
   orderTime,
   orderStatus,
+  preparingTime,
   subTotal,
 }) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [openCustomerInfoModal, setOpenCustomerInfoModal] = useState(false);
-  const [remainingTime, setRemainingTime] = useState(() => {
-    const localData = JSON.parse(localStorage.getItem(`${docId}_onHold`));
-    if(localData && localData.remainingTime) {
-      return localData.remainingTime;
-    }
-    return 120;
-  });
-  const [status, setStatus] = useState(orderStatus);
+  const [status, _setStatus] = useState(orderStatus);
   const orderRef = doc(db, 'orders', docId);
-  
-  // Get the remaining time if the page is refreshed
-  useEffect(() => {
-    if (!JSON.parse(localStorage.getItem(`${docId}_onHold`))) {
-      localStorage.setItem(
-        `${docId}_onHold`,
-        JSON.stringify({ lastTimeSaveData: Date.now(), remainingTime }),
-      );
-    } else {
-      const localRemainingTime = JSON.parse(localStorage.getItem(`${docId}_onHold`));
-      const today = Date.now();
-      const differenceTime = Math.floor(
-        (today - localRemainingTime.lastTimeSaveData) / 2000,
-      );
-      const newRemainingTime = localRemainingTime.remainingTime - differenceTime;
-      setRemainingTime(newRemainingTime)
-      startTimer(newRemainingTime);
-    }
-  }, []);
-
-  useEffect(() => {
-    const timeInterval = setTimeout(() => {
-      if (remainingTime > 0) {
-        setRemainingTime((prevRemainingTime) => prevRemainingTime - 1);
-        const localData = JSON.parse(localStorage.getItem(`${docId}_onHold`))
-        const timeData = { ...localData, remainingTime: remainingTime - 1};
-        localStorage.setItem(`${docId}_onHold`, JSON.stringify(timeData));
-      } else {
-        clearTimeout(timeInterval);
-      }
-    }, 1000);
-    return () => {
-      clearTimeout(timeInterval);
-    };
-  }, [remainingTime]);
-
-  useEffect(() => {
-    if (remainingTime === 0) {
-      if (status === orderStatusEnum.onHoldOrders) {
-        setStatus(orderStatusEnum.preparing);
-        setRemainingTime(120);
-      } else if (status === orderStatusEnum.preparing) {
-        setStatus(orderStatusEnum.ready);
-      }
-    }
-    if (status === orderStatusEnum.ready) {
-      setRemainingTime(0);
-      localStorage.setItem(`${docId}_onHold`, remainingTime);
-    }
-  }, [remainingTime, status]);
 
   useEffect(() => {
     const updateStatus = async () => {
@@ -120,13 +63,6 @@ function OnHoldOrderDetailsAccordion({
   const handleOpenCustomerInfoModal = (e) => {
     e.stopPropagation();
     setOpenCustomerInfoModal(true);
-  };
-
-  // Save the remaining time on localStorage
-  const startTimer = (saveRemainTime) => {
-    const lastTimeSaveData = Date.now(); 
-    const timeData = JSON.stringify({remainingTime: saveRemainTime, lastTimeSaveData})
-    localStorage.setItem(`${docId}_onHold`, timeData)
   };
 
   return (
@@ -175,25 +111,9 @@ function OnHoldOrderDetailsAccordion({
             </ButtonStyled>
             {status !== orderStatusEnum.pickedUp && (
               <TimerFlexBox>
-                <Fab
-                  disabled={status === orderStatusEnum.onHoldOrders}
-                  variant="contained"
-                  size="small"
-                  color="primary"
-                >
-                  -
-                </Fab>
-                <Typography variant="subtitle1">
-                  {formatTime(remainingTime)}
+                <Typography variant="subtitle1" fontWeight="bold">
+                  ETA: {calculateETA(orderTime, preparingTime )}
                 </Typography>
-                <Fab
-                  disabled={status === orderStatusEnum.onHoldOrders}
-                  variant="contained"
-                  size="small"
-                  color="primary"
-                >
-                  +
-                </Fab>
               </TimerFlexBox>
             )}
             <Box direction="column">
@@ -212,7 +132,7 @@ function OnHoldOrderDetailsAccordion({
               <Typography fontWeight="bold" variant="h4">
                 Order
               </Typography>
-              {items.map((item, index) => {
+              {items.length > 0 && items.map((item, index) => {
                 return (
                   <Grid key={index} container rowGap={3} mt={3}>
                     <Grid container rowGap={2}>
@@ -233,7 +153,7 @@ function OnHoldOrderDetailsAccordion({
                         <Divider />
                       </Grid>
                     </Grid>
-                    {item.options.map((option, index) => {
+                    {items.options.length > 0 && item.options.map((option, index) => {
                       return (
                         <Grid key={index} container rowGap={2}>
                           <Grid textAlign="center" item xs={2}>
@@ -353,6 +273,7 @@ OnHoldOrderDetailsAccordion.propTypes = {
   orderId: PropTypes.string.isRequired,
   orderTime: PropTypes.instanceOf(Date).isRequired,
   orderStatus: PropTypes.string.isRequired,
+  preparingTime: PropTypes.number.isRequired,
   subTotal: PropTypes.number.isRequired,
 }
 

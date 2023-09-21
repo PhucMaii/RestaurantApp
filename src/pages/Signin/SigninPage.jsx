@@ -33,14 +33,15 @@ import {
   TopicImageGrid,
 } from './styles';
 import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
 export default function SigninPage() {
-  // Hooks
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [notification, setNotification] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [_currUser, setCurrUser] = useLocalStorage('current-user', {});
   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.up('sm'));
   const navigate = useNavigate();
   const userCollection = collection(db, 'users');
@@ -65,10 +66,7 @@ export default function SigninPage() {
         hasRestaurant = doc.data().hasRestaurant;
       });
       await signInWithEmailAndPassword(auth, email, password);
-      localStorage.setItem(
-        'current-user',
-        JSON.stringify({ ...userData, hasRestaurant, docId: userID }),
-      );
+      setCurrUser({ ...userData, hasRestaurant, docId: userID });
       // Wait for 1 second to load the page
       await new Promise((resolve) => setTimeout(resolve, 2000));
       navigate('/home');
@@ -81,14 +79,9 @@ export default function SigninPage() {
         const data = {
           ...userData,
           hasRestaurant: false,
-          isOpen: false,
-          isBusy: false,
         };
         const docRef = await addDoc(userCollection, data);
-        localStorage.setItem(
-          'current-user',
-          JSON.stringify({ ...data, docId: docRef._key.path.segments[1] }),
-        );
+        setCurrUser({ ...data, docId: docRef._key.path.segments[1] });
         // Wait for 1 second to load the page
         await new Promise((resolve) => setTimeout(resolve, 1000));
         navigate('/create-restaurant');
@@ -112,15 +105,10 @@ export default function SigninPage() {
       if (getAdditionalUserInfo(userCredential).isNewUser) {
         const data = {
           ...userData,
-          hasRestaurant: false,
-          isOpen: false,
-          isBusy: false,
+          hasRestaurant: false
         };
         const docRef = await addDoc(userCollection, data);
-        localStorage.setItem(
-          'current-user',
-          JSON.stringify({ ...data, docId: docRef._key.path.segments[1] }),
-        );
+        setCurrUser({ ...data, docId: docRef._key.path.segments[1] });
         navigate('/create-restaurant');
       } else {
         let userID, hasRestaurant;
@@ -133,10 +121,7 @@ export default function SigninPage() {
           userID = doc.id;
           hasRestaurant = doc.data().hasRestaurant;
         });
-        localStorage.setItem(
-          'current-user',
-          JSON.stringify({ ...userData, hasRestaurant, docId: userID }),
-        );
+        setCurrUser({ ...userData, hasRestaurant, docId: userID });
         navigate('/home');
       }
       // Wait for 1 second to load the page

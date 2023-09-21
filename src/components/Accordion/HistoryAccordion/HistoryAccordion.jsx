@@ -116,7 +116,7 @@ function HistoryAccordion({
               <Typography fontWeight="bold" variant="h4">
                 Order
               </Typography>
-              {items.map((item, index) => {
+              {items.length > 0 && items.map((item, index) => {
                 return (
                   <Grid key={index} container rowGap={3} mt={3}>
                     <Grid container rowGap={2}>

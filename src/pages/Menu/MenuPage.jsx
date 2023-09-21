@@ -26,8 +26,10 @@ import { db } from "../../../firebase.config";
 import { grey } from "@mui/material/colors";
 import AddItemModal from "../../components/Modals/AddItemModal";
 import { renderSkeleton } from "../../utils/renderUtils";
+import useLocalStorage from "../../hooks/useLocalStorage";
 
 export default function MenuPage() {
+  const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
   const [docId, setDocId] = useState("");
   const [menuData, setMenuData] = useState([]);
   // use for any changes inside EditItemModal, avoid updating action by action to firestore
@@ -45,7 +47,7 @@ export default function MenuPage() {
   const [sections, setSections] = useState([]);
   // Get Menu Doc Ref
   const menuCollection = collection(db, "menu");
-  const restaurantRef = JSON.parse(localStorage.getItem("current-user")).docId;
+  const restaurantRef = currUser.docId;
   const menuRef = query(
     menuCollection,
     where("restaurantRef", "==", `/users/${restaurantRef}`)
@@ -119,14 +121,12 @@ export default function MenuPage() {
       const querySnapshot = await getDocs(menuRef);
       if(querySnapshot.size > 0) {
         const newMenu = [];
-        const newSections = [];
+        // Get the menu document belong to current user
         querySnapshot.forEach((doc) => {
           setDocId(doc.id);
           newMenu.push(...doc.data().sections);
-          doc.data().sections.map((section) => {
-            newSections.push(section.name);
-          });
         });
+        const newSections = newMenu.map((section) => section.name);
         setMenuData(newMenu);
         setCurrentSection({ name: newMenu[0].name, index: 0 });
         setSections(newSections);
@@ -156,11 +156,7 @@ export default function MenuPage() {
         await updateDoc(docRef, { sections: menuData });
       } catch (error) {
         console.log(error);
-        const restaurantRef = JSON.parse(
-          localStorage.getItem('current-user'),
-        ).docId;
         // Convert sections array to be an array of objects with the name is the section item
-        console.log(sections);
         const sectionNameList = sections.map((section) => {
           return { name: section };
         });
@@ -258,7 +254,7 @@ export default function MenuPage() {
             >
               <Grid item xs={12} md={9}>
                 <Grid container columnSpacing={5}>
-                  {menuData.map((section, index) => {
+                  {menuData.length > 0 && menuData.map((section, index) => {
                     return (
                       <Grid item key={index}>
                         <SectionStyled
@@ -309,7 +305,7 @@ export default function MenuPage() {
               padding={2}
               rowGap={2}
             >
-              {menuData.map((section, index) => {
+              {menuData.length > 0 && menuData.map((section, index) => {
                 if (currentSection.name === section.name) {
                   if (!section.items || section.items.length === 0) {
                     return (

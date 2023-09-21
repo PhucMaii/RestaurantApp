@@ -17,6 +17,7 @@ function OnHoldOrderModal({
   orderId,
   orderTime,
   orderStatus,
+  preparingTime,
   setOrderStatus,
   subTotal,
 }) {
@@ -43,7 +44,7 @@ function OnHoldOrderModal({
         padding={2}
         rowGap={2}
       >
-        <Grid contianer justifyContent="center">
+        <Grid container justifyContent="center">
           <Grid item xs={12}>
             <OnHoldOrderDetailsAccordion
               customerEmail={customerEmail}
@@ -57,6 +58,7 @@ function OnHoldOrderModal({
               orderId={orderId}
               orderTime={orderTime}
               orderStatus={orderStatus}
+              preparingTime={preparingTime}
               subTotal={subTotal}
             />
           </Grid>
@@ -98,6 +100,7 @@ OnHoldOrderModal.propTypes = {
     orderTime: PropTypes.instanceOf(Date).isRequired,
     orderStatus: PropTypes.string.isRequired,
     setOrderStatus: PropTypes.func.isRequired,
+    preparingTime: PropTypes.number.isRequired,
     subTotal: PropTypes.number.isRequired,
   }
   

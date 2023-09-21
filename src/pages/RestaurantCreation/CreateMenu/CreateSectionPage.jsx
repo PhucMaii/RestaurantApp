@@ -8,11 +8,13 @@ import {
   addDoc,
   collection,
 } from 'firebase/firestore';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 
 export default function CreateSectionPage({ goToNextStep }) {
   const [currSection, setCurrSection] = useState('');
   const [sections, setSections] = useState([]);
   const [notification, setNotification] = useState({});
+  const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
 
   const handleAddSections = async () => {
     if(sections.length === 0) {
@@ -25,9 +27,7 @@ export default function CreateSectionPage({ goToNextStep }) {
     }
     try {
       const menuCollection = collection(db, 'menu');
-      const restaurantRef = JSON.parse(
-        localStorage.getItem('current-user'),
-      ).docId;
+      const restaurantRef = currUser.docId;
       // Convert sections array to be an array of objects with the name is the section item
       const sectionNameList = sections.map((section) => {
         return { name: section };

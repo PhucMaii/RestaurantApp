@@ -12,11 +12,13 @@ import {
 } from 'firebase/firestore';
 import { db } from '../../../firebase.config';
 import { convertToDay } from '../../utils/utils';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
 export default function FeedbackPage() {
+  const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
   const feedbackCollection = collection(db, 'feedback');
   const [feedbackByDay, setFeedbackByDay] = useState({});
-  const userId = JSON.parse(localStorage.getItem('current-user')).docId;
+  const userId = currUser.docId;
 
   useEffect(() => {
     observer();
@@ -61,7 +63,7 @@ export default function FeedbackPage() {
   };
   const feedback = (
     <Grid container mt={4} rowGap={5}>
-      {Object.keys(feedbackByDay).map((objKey) => {
+      {Object.keys(feedbackByDay).length > 0 && Object.keys(feedbackByDay).map((objKey) => {
         return (
           <Grid container rowGap={3} key={objKey}>
             <Grid item xs={12} key={objKey}>

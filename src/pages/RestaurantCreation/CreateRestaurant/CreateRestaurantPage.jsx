@@ -11,6 +11,7 @@ import {
 } from './styles';
 import { doc, updateDoc } from 'firebase/firestore';
 import useUploadFile from '../../../hooks/useUploadFile';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 
 export default function CreateRestaurant({ goToNextStep }) {
   const [restaurantData, setRestaurantData] = useState({
@@ -24,6 +25,7 @@ export default function CreateRestaurant({ goToNextStep }) {
   const [fieldsValid, setFieldsValid] = useState(true);
   const [notifications, setNotifications] = useState({});
   const [receivedAdress, setReceivedAddress] = useState(null);
+  const [currUser, setCurrUser] = useLocalStorage('current-user', {});
 
   const {
     allowUploadImage,
@@ -80,12 +82,10 @@ export default function CreateRestaurant({ goToNextStep }) {
       return;
     }
     try {
-      const userAuthData = JSON.parse(localStorage.getItem('current-user'));
-      userAuthData.hasRestaurant = true;
-      const documentRef = doc(db, 'users', userAuthData.docId);
-      const data = { ...userAuthData, ...restaurantData };
+      setCurrUser({...currUser, hasRestaurant: true })
+      const documentRef = doc(db, 'users', currUser.docId);
+      const data = { ...currUser, ...restaurantData };
       await updateDoc(documentRef, data);
-      localStorage.setItem('current-user', JSON.stringify(userAuthData));
       setNotifications({
         on: true,
         type: 'success',
@@ -184,8 +184,8 @@ export default function CreateRestaurant({ goToNextStep }) {
                 setImageURL(newImageURL);
                 handleTextFieldChange("imageLink", newImageURL)
               }}
-              label="Item's Image URL"
-              placeholder="Enter Item's Image URL..."
+              label="Restaurant's Image URL"
+              placeholder="Enter Restaurant's Image URL..."
             />
           </Grid>
           <Grid item xs={12}>

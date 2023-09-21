@@ -3,23 +3,25 @@ import { Grid, Divider, Typography, Skeleton } from '@mui/material';
 import HistoryAccordion from '../../components/Accordion/HistoryAccordion/HistoryAccordion';
 import ResponsiveDrawer from '../../components/Sidebar/Sidebar';
 import {
-  Timestamp,
   collection,
   getDocs,
   orderBy,
   query,
+  Timestamp,
   where,
 } from 'firebase/firestore';
 import { db } from '../../../firebase.config';
 import { convertToDay } from '../../utils/utils';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
 export default function HistoryPage() {
+  const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
   const [orderHistoryByDay, setOrderHistoryByDay] = useState({});
   const [isFetching, setIsFetching] = useState(false);
   const historyCollection = collection(db, 'history');
   const feedbackCollection = collection(db, 'feedback');
-  const userId = JSON.parse(localStorage.getItem('current-user')).docId;
-
+  const userId = currUser.docId;
+  
   useEffect(() => {
     // Get orders since 3 days ago
     const endDate = new Date();
@@ -63,8 +65,10 @@ export default function HistoryPage() {
           }
           newOrderHistoryByDay[date].push(order);
         }
-        setOrderHistoryByDay(newOrderHistoryByDay);
       });
+      setOrderHistoryByDay(newOrderHistoryByDay);
+      // Wait for updated state
+      await new Promise((resolve) => setTimeout(resolve, 400));
       setIsFetching(false);
     } catch (error) {
       setIsFetching(false);
@@ -105,15 +109,13 @@ export default function HistoryPage() {
   };
 
   const historyPage = (
-    <Grid container rowGap={2} justifyContent="center">
-      <Grid container justifyContent="center" rowGap={3}>
-        {isFetching && (
-          <Grid container justifyContent="center" rowGap={5}>
-            {renderSkeleton(6)}
-          </Grid>
-        )}
-      </Grid>
-      {Object.keys(orderHistoryByDay).map((objKey, index) => {
+    <Grid container rowGap={2} justifyContent="center" mt={3}>
+      {isFetching ? (
+        <Grid container justifyContent="center" rowGap={5}>
+          {renderSkeleton(6)}
+        </Grid>
+      ) : 
+      (Object.keys(orderHistoryByDay).map((objKey, index) => {
         return (
           <Grid container justifyContent="center" key={index} rowGap={3}>
             <Grid item xs={12} key={`grid-${index}`}>
@@ -175,7 +177,8 @@ export default function HistoryPage() {
             </Grid>
           </Grid>
         );
-      })}
+      })
+      )}
     </Grid>
   );
   return <ResponsiveDrawer tab={historyPage} />;

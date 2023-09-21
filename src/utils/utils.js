@@ -1,3 +1,13 @@
+export const calculateETA = (timestamp, preparingTime) => {
+  if (!timestamp) {
+    return 'N/A';
+  }
+  const timestampToMiliSeconds = timestamp.getTime();
+  const etaTimeInMiliSeconds = timestampToMiliSeconds + preparingTime * 1000;
+  const etaTime = new Date(etaTimeInMiliSeconds);
+  return convertTimestampToDate(etaTime);
+};
+
 export const convertTimestampToDate = (timestamp) => {
   if (!timestamp) {
     return 'N/A';

@@ -4,7 +4,6 @@ import {
   AccordionSummary,
   Typography,
   Box,
-  Fab,
   Grid,
   Divider,
 } from '@mui/material';
@@ -23,7 +22,7 @@ import OrderStatusModal from "../../Modals/OrderStatusModal";
 import UserInfoModal from "../../Modals/UserInfoModal";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../../firebase.config";
-import { convertTimestampToDate, formatTime, formatToTwoDecimalPlace, reduceNameLength } from "../../../utils/utils";
+import { calculateETA, convertTimestampToDate, formatToTwoDecimalPlace, reduceNameLength } from "../../../utils/utils";
 import { orderStatusEnum } from '../../../utils/constant';
 
 function OrderDetailsAccordion({
@@ -44,71 +43,8 @@ function OrderDetailsAccordion({
   const [isExpanded, setIsExpanded] = useState(orderStatus === orderStatusEnum.onHoldOrders);
   const [openStatusModal, setOpenStatusModal] = useState(false);
   const [openCustomerInfoModal, setOpenCustomerInfoModal] = useState(false);
-  const [remainingTime, setRemainingTime] = useState(() => {
-    const localData = JSON.parse(localStorage.getItem(docId));
-    if(localData && localData.remainingTime) {
-      return localData.remainingTime;
-    }
-    return preparingTime;
-  });
   const [status, setStatus] = useState(orderStatus);
   const orderRef = doc(db, 'orders', docId);
-  console.log(remainingTime);
-
-  // Get the remaining time if the page is refreshed
-  useEffect(() => {
-    if (!JSON.parse(localStorage.getItem(docId))) {
-      localStorage.setItem(
-        docId,
-        JSON.stringify({ lastTimeSaveData: Date.now(), remainingTime }),
-      );
-    } else {
-      const localRemainingTime = JSON.parse(localStorage.getItem(docId));
-      const today = Date.now();
-      const differenceTime = Math.floor(
-        (today - localRemainingTime.lastTimeSaveData) / 2000,
-      );
-      const newRemainingTime = localRemainingTime.remainingTime - differenceTime;
-      if(newRemainingTime >= 0) {
-        setRemainingTime(newRemainingTime)
-        startTimer(newRemainingTime);
-      } else {
-        setRemainingTime(0);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    const timeInterval = setTimeout(() => {
-      if (remainingTime > 0) {
-        setRemainingTime((prevRemainingTime) => prevRemainingTime - 1);
-        const localData = JSON.parse(localStorage.getItem(docId))
-        const timeData = { ...localData, remainingTime: remainingTime - 1};
-        localStorage.setItem(docId, JSON.stringify(timeData));
-      } else {
-        clearTimeout(timeInterval);
-      }
-    }, 1000);
-    return () => {
-      clearTimeout(timeInterval);
-    };
-  }, [remainingTime]);
-
-  useEffect(() => {
-    if (remainingTime === 0) {
-      if (status === orderStatusEnum.onHoldOrders) {
-        setStatus(orderStatusEnum.preparing);
-        setRemainingTime(preparingTime);
-      } else if (status === orderStatusEnum.preparing) {
-        setStatus(orderStatusEnum.ready);
-      }
-    }
-    if (status === orderStatusEnum.ready) {
-      setRemainingTime(0);
-      localStorage.removeItem(docId);
-    }
-  }, [remainingTime, status]);
-
   useEffect(() => {
     const updateStatus = async () => {
       try {
@@ -130,24 +66,6 @@ function OrderDetailsAccordion({
     setOpenCustomerInfoModal(false);
   };
 
-  const handleDecreasePrepTime = (e) => {
-    e.stopPropagation();
-    if (remainingTime > 60) {
-      setRemainingTime((prevRemainingTime) => prevRemainingTime - 60);
-      const localData = JSON.parse(localStorage.getItem(docId))
-      const timeData = { ...localData, remainingTime: remainingTime - 60};
-      localStorage.setItem(docId, JSON.stringify(timeData));
-    }
-  };
-
-  const handleIncreasePrepTime = (e) => {
-    e.stopPropagation();
-    setRemainingTime((prevRemainingTime) => prevRemainingTime + 60);
-    const localData = JSON.parse(localStorage.getItem(docId))
-    const timeData = { ...localData, remainingTime: remainingTime + 60};
-    localStorage.setItem(docId, JSON.stringify(timeData));
-  };
-
   const handleOpenCustomerInfoModal = (e) => {
     e.stopPropagation();
     setOpenCustomerInfoModal(true);
@@ -163,14 +81,6 @@ function OrderDetailsAccordion({
     setStatus(e.currentTarget.textContent);
     setOpenStatusModal(false);
   };
-
-  // Save the remaining time on localStorage
-  const startTimer = (saveRemainTime) => {
-    const lastTimeSaveData = Date.now(); 
-    const timeData = JSON.stringify({remainingTime: saveRemainTime, lastTimeSaveData})
-    localStorage.setItem(docId, timeData)
-  };
-
 
   return (
     <>
@@ -227,27 +137,9 @@ function OrderDetailsAccordion({
             </ButtonStyled>
             {status !== orderStatusEnum.pickedUp && (
               <TimerFlexBox>
-                <Fab
-                  disabled={status === orderStatusEnum.onHoldOrders}
-                  variant="contained"
-                  size="small"
-                  color="primary"
-                  onClick={handleDecreasePrepTime}
-                >
-                  -
-                </Fab>
-                <Typography variant="subtitle1">
-                  {formatTime(remainingTime)}
+                <Typography variant="subtitle1" fontWeight="bold">
+                  ETA: {calculateETA(orderTime, preparingTime)}
                 </Typography>
-                <Fab
-                  disabled={status === orderStatusEnum.onHoldOrders}
-                  variant="contained"
-                  size="small"
-                  color="primary"
-                  onClick={handleIncreasePrepTime}
-                >
-                  +
-                </Fab>
               </TimerFlexBox>
             )}
             <Box direction="column">
@@ -266,7 +158,7 @@ function OrderDetailsAccordion({
               <Typography fontWeight="bold" variant="h4">
                 Order
               </Typography>
-              {items.map((item, index) => {
+              {items.length > 0 && items.map((item, index) => {
                 return (
                   <Grid key={index} container rowGap={3} mt={3}>
                     <Grid container rowGap={2}>
@@ -287,7 +179,7 @@ function OrderDetailsAccordion({
                         <Divider />
                       </Grid>
                     </Grid>
-                    {item.options.map((option, index) => {
+                    {items.options.length > 0 && item.options.map((option, index) => {
                       return (
                         <Grid key={index} container rowGap={2}>
                           <Grid textAlign="center" item xs={2}>

@@ -181,7 +181,7 @@ function EditItemModal({
               />
             </Grid>
           </Grid>
-          {item.options.map((option, index) => (
+          {item.options.length > 0 && item.options.map((option, index) => (
             <React.Fragment key={index}>
               <EditOptionModal
                 handleClose={handleCloseEditOptionModal}
