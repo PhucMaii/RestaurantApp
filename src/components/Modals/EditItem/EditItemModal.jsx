@@ -15,7 +15,7 @@ import React, { memo, useState } from "react";
 import PropTypes from 'prop-types';
 import EditItemNameModal from "./EditItemNameModal";
 import EditOptionModal from "./EditOptionModal";
-import { formatToTwoDecimalPlace } from "../../../utils/utils";
+import { formatToTwoDecimalPlace } from "../../../utils/number";
 import AddOptionModal from "./AddOptionModal";
 import { nonNumericCharacter } from "../../../utils/constant";
 import { GridModal } from "../style";

@@ -11,7 +11,7 @@ import {
   collection,
 } from 'firebase/firestore';
 import { db } from '../../../firebase.config';
-import { convertToDay } from '../../utils/utils';
+import { convertToDay } from '../../utils/time';
 import useLocalStorage from '../../hooks/useLocalStorage';
 
 export default function FeedbackPage() {

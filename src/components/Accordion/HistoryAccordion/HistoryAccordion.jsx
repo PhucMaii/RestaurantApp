@@ -17,7 +17,9 @@ import {
 } from "../style";
 import StarIcon from '@mui/icons-material/Star';
 import StarOutlineOutlinedIcon from '@mui/icons-material/StarOutlineOutlined';
-import { convertTimestampToDate, formatToTwoDecimalPlace, reduceNameLength } from "../../../utils/utils";
+import { convertTimestampToDate } from "../../../utils/time";
+import { formatToTwoDecimalPlace } from "../../../utils/number";
+import { reduceNameLength } from "../../../utils/string";
 import UserInfoModal from "../../Modals/UserInfoModal";
 import { yellow } from "@mui/material/colors";
 

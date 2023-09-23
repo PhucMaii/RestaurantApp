@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Divider, Typography, Skeleton } from '@mui/material';
+import { Grid, Divider, Typography } from '@mui/material';
 import HistoryAccordion from '../../components/Accordion/HistoryAccordion/HistoryAccordion';
 import ResponsiveDrawer from '../../components/Sidebar/Sidebar';
 import {
@@ -11,7 +11,8 @@ import {
   where,
 } from 'firebase/firestore';
 import { db } from '../../../firebase.config';
-import { convertToDay } from '../../utils/utils';
+import { renderSkeleton } from '../../utils/renderUtils';
+import { convertToDay } from '../../utils/time';
 import useLocalStorage from '../../hooks/useLocalStorage';
 
 export default function HistoryPage() {
@@ -95,24 +96,11 @@ export default function HistoryPage() {
     }
   };
 
-  const renderSkeleton = (number) => {
-    const gridSkeleton = [];
-    for (let i = 0; i < number; i++) {
-      const skeleton = (
-        <Grid item xs={12} key={i}>
-          <Skeleton variant="rectangular" width={'100%'} height={60} />
-        </Grid>
-      );
-      gridSkeleton.push(skeleton);
-    }
-    return gridSkeleton;
-  };
-
   const historyPage = (
     <Grid container rowGap={2} justifyContent="center" mt={3}>
       {isFetching ? (
         <Grid container justifyContent="center" rowGap={5}>
-          {renderSkeleton(6)}
+          {renderSkeleton(6, "rounded", 100)}
         </Grid>
       ) : 
       (Object.keys(orderHistoryByDay).map((objKey, index) => {

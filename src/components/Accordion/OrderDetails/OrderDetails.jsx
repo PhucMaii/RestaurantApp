@@ -22,7 +22,9 @@ import OrderStatusModal from "../../Modals/OrderStatusModal";
 import UserInfoModal from "../../Modals/UserInfoModal";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../../firebase.config";
-import { calculateETA, convertTimestampToDate, formatToTwoDecimalPlace, reduceNameLength } from "../../../utils/utils";
+import { calculateETA, convertTimestampToDate } from '../../../utils/time';
+import { formatToTwoDecimalPlace } from '../../../utils/number';
+import { reduceNameLength } from '../../../utils/string';
 import { orderStatusEnum } from '../../../utils/constant';
 
 function OrderDetailsAccordion({
@@ -179,7 +181,7 @@ function OrderDetailsAccordion({
                         <Divider />
                       </Grid>
                     </Grid>
-                    {items.options.length > 0 && item.options.map((option, index) => {
+                    {item.options.length > 0 && item.options.map((option, index) => {
                       return (
                         <Grid key={index} container rowGap={2}>
                           <Grid textAlign="center" item xs={2}>

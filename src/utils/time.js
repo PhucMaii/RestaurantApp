@@ -23,11 +23,11 @@ export const convertTimestampToDate = (timestamp) => {
   return formattedDate;
 };
 
-export const calculateDifferenceTime = (startTime, endTime) => {
-  const start = startTime.toDate();
-  const end = endTime.toDate();
-  return Math.floor(end - start) / 1000;
-};
+// export const calculateDifferenceTime = (startTime, endTime) => {
+//   const start = startTime.toDate();
+//   const end = endTime.toDate();
+//   return Math.floor(end - start) / 1000;
+// };
 
 export const convertToDay = (timestamp) => {
   const formattedDate = convertTimestampToDate(timestamp);
@@ -42,25 +42,4 @@ export const formatTime = (time) => {
       : Math.floor(time / 60);
   const seconds = time % 60 < 10 ? `0${time % 60}` : time % 60;
   return `${minutes}:${seconds}`;
-};
-
-export const formatToTwoDecimalPlace = (num) => {
-  if (typeof num === 'number') {
-    return num.toFixed(2);
-  }
-  return 'N/A';
-};
-
-export const reduceNameLength = (fullName) => {
-  const names = fullName.split(' ');
-  // Check if there are at least first name and last name
-  if (names.length < 2) {
-    return fullName;
-  }
-
-  const firstInitial = names[0][0].toUpperCase() + '.';
-  const lastName = names[names.length - 1];
-  const reducedName = firstInitial + lastName;
-
-  return reducedName;
 };
