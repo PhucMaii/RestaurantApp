@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Grid, Typography, Button, Alert } from '@mui/material';
 import { MenuImage, HelperTextStyled } from './styles';
 import MultipleValueTextField from '../../../components/MultipleValueTextField';
@@ -8,22 +9,34 @@ import {
   collection,
   getDocs,
   query,
-  where,
   updateDoc,
-  arrayUnion,
+  where,
 } from 'firebase/firestore';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 
-export default function CreateSectionPage() {
+export default function CreateSectionPage({ goToNextStep }) {
   const [currSection, setCurrSection] = useState('');
   const [sections, setSections] = useState([]);
   const [notification, setNotification] = useState({});
+  const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
+  const restaurantRef = currUser.docId; 
+  const menuCollection = collection(db, 'menu');
+  const menu = query(
+    menuCollection,
+    where('restaurantRef', '==', `/users/${restaurantRef}`),
+  );
 
   const handleAddSections = async () => {
+    if(sections.length === 0) {
+      setNotification({
+        on: true,
+        severity: 'error',
+        message: 'You need to add at least 1 section'
+      });
+      return;
+    }
     try {
-      const menuCollection = collection(db, 'menu');
-      const restaurantRef = JSON.parse(
-        localStorage.getItem('current-user'),
-      ).docId;
+      const querySnapshot = await getDocs(menu);
       // Convert sections array to be an array of objects with the name is the section item
       const sectionNameList = sections.map((section) => {
         return { name: section };
@@ -32,33 +45,17 @@ export default function CreateSectionPage() {
         sections: sectionNameList,
         restaurantRef: `/users/${restaurantRef}`,
       };
-      const menu = query(
-        menuCollection,
-        where('restaurantRef', '==', `/users/${restaurantRef}`),
-      );
-      const querySnapshot = await getDocs(menu);
-
-      // if the menu hasn't created yet, then create one and add data
-      // otherwise update it
-      if (querySnapshot.empty) {
+      // Check if the restaurant has menu yet
+      if(querySnapshot.empty) {
         await addDoc(menuCollection, data);
       } else {
         querySnapshot.forEach(async (doc) => {
-          const menuDocRef = doc.ref;
-          await updateDoc(menuDocRef, {
-            // arrayUnion helps to merge new data into the firestore
-            sections: arrayUnion(...sectionNameList),
-          });
-        });
+          const docRef = doc.ref;
+          const menuData = doc.data();
+          await updateDoc(docRef, {sections: [...menuData.sections, ...sectionNameList]}) 
+        })
       }
-      setNotification({
-        on: true,
-        severity: 'success',
-        message: `You added ${
-          sections.length > 2 ? sections.slice(0, 2) + '...' : sections
-        } successfully. Press Next if you are done with creating sections`,
-      });
-      setSections([]);
+      goToNextStep();
     } catch (error) {
       setNotification({
         on: true,
@@ -67,6 +64,7 @@ export default function CreateSectionPage() {
       });
     }
   };
+
   return (
     <Grid container justifyContent="center" rowGap={5}>
       <Grid container justifyContent="center">
@@ -85,7 +83,7 @@ export default function CreateSectionPage() {
         </HelperTextStyled>
       </Grid>
       {notification.on && (
-        <Alert severity={notification.type}>{notification.message}</Alert>
+        <Alert severity={notification.severity}>{notification.message}</Alert>
       )}
       <MultipleValueTextField
         currValue={currSection}
@@ -106,4 +104,8 @@ export default function CreateSectionPage() {
       </Button>
     </Grid>
   );
+}
+
+CreateSectionPage.propTypes = {
+  goToNextStep: PropTypes.func.isRequired
 }

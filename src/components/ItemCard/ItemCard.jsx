@@ -1,7 +1,7 @@
 import { Divider, Grid, Typography } from '@mui/material'
 import React, { memo, useCallback } from 'react'
 import { useState, useEffect } from 'react';
-import { formatToTwoDecimalPlace } from '../../method/FormatNumber';
+import { formatToTwoDecimalPlace } from '../../utils/number';
 import EditItemModal from '../Modals/EditItem/EditItemModal';
 import PropTypes from 'prop-types';
 import {ButtonStyled, GridStyled} from './style'

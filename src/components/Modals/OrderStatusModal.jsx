@@ -5,6 +5,7 @@ import {
     Button
 } from '@mui/material';
 import { ButtonGroupModal } from './style';
+import { orderStatusEnum } from '../../utils/constant';
 
 function OrderStatusModal({
   handleClose,
@@ -12,11 +13,6 @@ function OrderStatusModal({
   handleStatusButtonClick,
   status,
 }) {
-  const statusEnum = {
-    preparing: 'Preparing',
-    ready: 'Ready',
-    pickedUp: 'Picked Up'
-  }
 
   return (
     <Modal open={open} onClose={handleClose}>
@@ -25,53 +21,53 @@ function OrderStatusModal({
         orientation="vertical"
         variant="contained"
       >
-        {status === statusEnum.preparing && (
+        {status === orderStatusEnum.preparing && (
           <>
             <Button
               color="inherit"
-              key={statusEnum.preparing}
+              key={orderStatusEnum.preparing}
               onClick={handleStatusButtonClick}
             >
               Preparing
             </Button>
             <Button
               color="warning"
-              key={statusEnum.ready}
+              key={orderStatusEnum.ready}
               onClick={handleStatusButtonClick}
             >
               Ready
             </Button>
             <Button
               color="success"
-              key={statusEnum.pickedUp}
+              key={orderStatusEnum.pickedUp}
               onClick={handleStatusButtonClick}
             >
               Picked Up
             </Button>
           </>
         )}
-        {status === statusEnum.ready && (
+        {status === orderStatusEnum.ready && (
           <>
             <Button
               color="warning"
-              key={statusEnum.ready}
+              key={orderStatusEnum.ready}
               onClick={handleStatusButtonClick}
             >
               Ready
             </Button>
             <Button
               color="success"
-              key={statusEnum.pickedUp}
+              key={orderStatusEnum.pickedUp}
               onClick={handleStatusButtonClick}
             >
               Picked Up
             </Button>
           </>
         )}
-        {status === statusEnum.pickedUp && (
+        {status === orderStatusEnum.pickedUp && (
           <Button
             color="success"
-            key={statusEnum.pickedUp}
+            key={orderStatusEnum.pickedUp}
             onClick={handleStatusButtonClick}
           >
             Picked Up

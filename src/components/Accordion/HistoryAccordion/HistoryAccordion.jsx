@@ -17,7 +17,9 @@ import {
 } from "../style";
 import StarIcon from '@mui/icons-material/Star';
 import StarOutlineOutlinedIcon from '@mui/icons-material/StarOutlineOutlined';
-import { convertTimestampToDate, formatToTwoDecimalPlace, reduceNameLength } from "../../../utils/utils";
+import { convertTimestampToDate } from "../../../utils/time";
+import { formatToTwoDecimalPlace } from "../../../utils/number";
+import { reduceNameLength } from "../../../utils/string";
 import UserInfoModal from "../../Modals/UserInfoModal";
 import { yellow } from "@mui/material/colors";
 
@@ -97,7 +99,7 @@ function HistoryAccordion({
                 Total: ${formatToTwoDecimalPlace(subTotal * 1.12)}
               </Typography>
             </Box>
-            <ButtonStyled variant="contained" color="inherit">
+            <ButtonStyled disabled variant="contained" color="inherit">
               Picked up
             </ButtonStyled>
             <Box display="flex" alignItems="center" gap={2}>
@@ -116,7 +118,7 @@ function HistoryAccordion({
               <Typography fontWeight="bold" variant="h4">
                 Order
               </Typography>
-              {items.map((item, index) => {
+              {items.length > 0 && items.map((item, index) => {
                 return (
                   <Grid key={index} container rowGap={3} mt={3}>
                     <Grid container rowGap={2}>

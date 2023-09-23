@@ -19,6 +19,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../../../../firebase.config';
 import useUploadFile from '../../../hooks/useUploadFile';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 
 export default function CreateMenuPage() {
   const [sections, setSections] = useState([]);
@@ -39,6 +40,7 @@ export default function CreateMenuPage() {
   });
   const [image, setImage] = useState('');
   const [currOption, setCurrOption] = useState('');
+  const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
   const {
     allowUploadImage,
     allowUploadImageURL,
@@ -49,7 +51,7 @@ export default function CreateMenuPage() {
     setImageURL
   } = useUploadFile(image, updateRestaurantImageLink);
   const menuCollection = collection(db, 'menu');
-  const restaurantRef = JSON.parse(localStorage.getItem('current-user')).docId;
+  const restaurantRef = currUser.docId;
   const menu = query(
     menuCollection,
     where('restaurantRef', '==', `/users/${restaurantRef}`),
@@ -122,6 +124,7 @@ export default function CreateMenuPage() {
         setImage('');
         setOptions([]);
         setItemData({
+          availability: true,
           itemName: '',
           options,
           itemDescription: '',
@@ -211,7 +214,7 @@ export default function CreateMenuPage() {
             value={itemData.itemPrice}
             onChange={(e) => {
               setItemData((prevData) => {
-                return { ...prevData, itemPrice: e.target.value };
+                return { ...prevData, itemPrice: +e.target.value };
               });
             }}
             label="Item's Price"

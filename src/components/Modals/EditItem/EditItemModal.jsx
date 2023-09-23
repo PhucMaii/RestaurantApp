@@ -15,7 +15,7 @@ import React, { memo, useState } from "react";
 import PropTypes from 'prop-types';
 import EditItemNameModal from "./EditItemNameModal";
 import EditOptionModal from "./EditOptionModal";
-import { formatToTwoDecimalPlace } from "../../../method/FormatNumber";
+import { formatToTwoDecimalPlace } from "../../../utils/number";
 import AddOptionModal from "./AddOptionModal";
 import { nonNumericCharacter } from "../../../utils/constant";
 import { GridModal } from "../style";
@@ -95,7 +95,7 @@ function EditItemModal({
   const handlePriceChange = (e) => {
     // Remove non-numeric character
     const numericValue = e.target.value.replace(nonNumericCharacter, "");
-    setItem(item, "itemPrice", numericValue, true);
+    setItem(item, "itemPrice", +numericValue, true);
   };
 
   function updateItemImageURL(url) {
@@ -181,7 +181,7 @@ function EditItemModal({
               />
             </Grid>
           </Grid>
-          {item.options.map((option, index) => (
+          {item.options.length > 0 && item.options.map((option, index) => (
             <React.Fragment key={index}>
               <EditOptionModal
                 handleClose={handleCloseEditOptionModal}

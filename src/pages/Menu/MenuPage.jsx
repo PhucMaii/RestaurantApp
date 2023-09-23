@@ -11,8 +11,10 @@ import ItemCard from "../../components/ItemCard/ItemCard";
 import AddSectionModal from "../../components/Modals/AddSectionModal";
 import ResponsiveDrawer from "../../components/Sidebar/Sidebar";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
+import ReportIcon from '@mui/icons-material/Report';
 import { SectionStyled } from "./style";
 import {
+  addDoc,
   collection,
   doc,
   getDocs,
@@ -23,8 +25,11 @@ import {
 import { db } from "../../../firebase.config";
 import { grey } from "@mui/material/colors";
 import AddItemModal from "../../components/Modals/AddItemModal";
+import { renderSkeleton } from "../../utils/renderUtils";
+import useLocalStorage from "../../hooks/useLocalStorage";
 
 export default function MenuPage() {
+  const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
   const [docId, setDocId] = useState("");
   const [menuData, setMenuData] = useState([]);
   // use for any changes inside EditItemModal, avoid updating action by action to firestore
@@ -42,7 +47,7 @@ export default function MenuPage() {
   const [sections, setSections] = useState([]);
   // Get Menu Doc Ref
   const menuCollection = collection(db, "menu");
-  const restaurantRef = JSON.parse(localStorage.getItem("current-user")).docId;
+  const restaurantRef = currUser.docId;
   const menuRef = query(
     menuCollection,
     where("restaurantRef", "==", `/users/${restaurantRef}`)
@@ -94,7 +99,7 @@ export default function MenuPage() {
         setMenuData(menu);
       }
     },
-    [tempMenuData, menuData]
+    [tempMenuData, menuData, currentSection]
   );
 
   const closeAddSectionModal = useCallback(() => {
@@ -114,35 +119,23 @@ export default function MenuPage() {
     try {
       setIsFetching(true);
       const querySnapshot = await getDocs(menuRef);
-      const newMenu = [];
-      const newSections = [];
-      querySnapshot.forEach((doc) => {
-        setDocId(doc.id);
-        newMenu.push(...doc.data().sections);
-        doc.data().sections.map((section) => {
-          newSections.push(section.name);
+      if(querySnapshot.size > 0) {
+        const newMenu = [];
+        // Get the menu document belong to current user
+        querySnapshot.forEach((doc) => {
+          setDocId(doc.id);
+          newMenu.push(...doc.data().sections);
         });
-      });
-      setMenuData(newMenu);
-      setCurrentSection({ name: newMenu[0].name, index: 0 });
-      setSections(newSections);
+        const newSections = newMenu.map((section) => section.name);
+        setMenuData(newMenu);
+        setCurrentSection({ name: newMenu[0].name, index: 0 });
+        setSections(newSections);
+      }
       setIsFetching(false);
     } catch (error) {
       setIsFetching(false);
       console.log(error);
     }
-  };
-
-  const renderSkeleton = () => {
-    const gridItems = [];
-    for (let i = 0; i < 6; i++) {
-      gridItems.push(
-        <Grid key={i} item xs={12} md={5} xl={3} textAlign="center">
-          <Skeleton variant="rounded" height={200}></Skeleton>
-        </Grid>
-      );
-    }
-    return gridItems;
   };
 
   const saveChanges = useCallback(() => {
@@ -162,9 +155,21 @@ export default function MenuPage() {
         const docRef = doc(db, "menu", docId);
         await updateDoc(docRef, { sections: menuData });
       } catch (error) {
-        console.log(error);
+        if (error) {
+          // Convert sections array to be an array of objects with the name is the section item
+          const sectionNameList = sections.map((section) => {
+            return { name: section };
+          });
+          const data = {
+            sections: sectionNameList,
+            restaurantRef: `/users/${restaurantRef}`,
+          };
+          const id = await addDoc(menuCollection, data);
+          setDocId(id);
+          window.location.reload();
+        }
       }
-    };
+    }
     handleChangeDocument();
     setTempMenuData(menuData);
   }, [menuData]);
@@ -193,7 +198,38 @@ export default function MenuPage() {
           <Grid item xs={12} textAlign="center">
             <Skeleton variant="rectangle" height={80} />
           </Grid>
-          {renderSkeleton()}
+          {renderSkeleton(6, 'rounded', 200, 5, 3)}
+        </Grid>
+      ) : menuData.length === 0 ? (
+        <Grid
+          container
+          columnSpacing={2}
+          justifyContent="center"
+          padding={3}
+          rowGap={3}
+        >
+          <Grid item xs={12} textAlign="center">
+            <ReportIcon fontSize="large" color="error" />
+          </Grid>
+          <Grid item xs={12} textAlign="center">
+            <Typography fontWeight="bold" variant="h6">
+              You Haven&apos;t Had A Menu Yet !!!
+            </Typography>
+          </Grid>
+          <Grid item xs={12} textAlign="center">
+            <Typography fontWeight="bold" variant="h6">
+              Let&apos;s Start With Creating Sections!
+            </Typography>
+          </Grid>
+          <Grid item xs={12} textAlign="center">
+            <Fab
+              color="primary"
+              size="medium"
+              onClick={() => setOpenAddSectionModal(true)}
+            >
+              +
+            </Fab>
+          </Grid>
         </Grid>
       ) : (
         <>
@@ -205,7 +241,7 @@ export default function MenuPage() {
             <Alert
               onClose={handleCloseNotification}
               severity={notification.type}
-              sx={{ width: "100%" }}
+              sx={{ width: '100%' }}
             >
               {notification.message}
             </Alert>
@@ -216,19 +252,23 @@ export default function MenuPage() {
               alignItems="center"
               container
               padding={1}
-              sx={{ border: "2px solid black" }}
+              sx={{ border: '2px solid black' }}
             >
               <Grid item xs={12} md={9}>
                 <Grid container columnSpacing={5}>
-                  {menuData.map((section, index) => {
+                  {menuData.length > 0 && menuData.map((section, index) => {
                     return (
                       <Grid item key={index}>
                         <SectionStyled
-                          currsection={currentSection.name === section.name ? "true" : "false"}
-                          padding={1}
-                          onClick={() =>
-                            setCurrentSection({ name: section.name, index })
+                          currsection={
+                            currentSection.name === section.name
+                              ? 'true'
+                              : 'false'
                           }
+                          padding={1}
+                          onClick={() => {
+                            setCurrentSection({ name: section.name, index });
+                          }}
                           variant="h5"
                         >
                           {section.name}
@@ -267,7 +307,7 @@ export default function MenuPage() {
               padding={2}
               rowGap={2}
             >
-              {menuData.map((section, index) => {
+              {menuData.length > 0 && menuData.map((section, index) => {
                 if (currentSection.name === section.name) {
                   if (!section.items || section.items.length === 0) {
                     return (
@@ -311,7 +351,7 @@ export default function MenuPage() {
               })}
             </Grid>
             <Grid container justifyContent="flex-end" padding={2}>
-              <Grid item sx={{ position: "fixed", bottom: 10 }}>
+              <Grid item sx={{ position: 'fixed', bottom: 10 }}>
                 <Fab
                   color="primary"
                   onClick={() => setOpenCreateMenuForm(true)}

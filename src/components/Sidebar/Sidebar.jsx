@@ -3,6 +3,7 @@ import {
   AppBar,
   Box,
   CssBaseline,
+  CircularProgress,
   Divider,
   Drawer,
   IconButton,
@@ -16,6 +17,7 @@ import {
   FormGroup,
   FormControlLabel,
   Collapse,
+  Grid,
 } from "@mui/material";
 import PropTypes from "prop-types";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -32,16 +34,25 @@ import { grey, green, red, yellow } from "@mui/material/colors";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { TabStyled } from "./style";
 import { useNavigate, useLocation } from "react-router-dom";
+import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import { db } from '../../../firebase.config';
+import { renderSkeleton } from '../../utils/renderUtils';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
 const drawerWidth = 250;
 
 function ResponsiveDrawer({window, tab}) {
+  const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
   const [mobileOpen, setMobileOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [openDropDown, setOpenDropDown] = useState(false);
-  const [openSwitch, setOpenSwitch] = useState(true);
-  const [busySwitch, setBusySwitch] = useState(true);
+  const [openSwitch, setOpenSwitch] = useState(false);
+  const [busySwitch, setBusySwitch] = useState(false);
   const [notification, setNotification] = useState({});
+  const docId = currUser.docId;
+  const userCollection = collection(db, 'users');
+  const userRef = query(userCollection, where('docId', '==', docId));
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -95,8 +106,31 @@ function ResponsiveDrawer({window, tab}) {
     localStorage.clear();
   };
 
+  const fetchSwitch = async () => {
+    setIsLoading(true)
+    try {
+      let busyMode, openMode;
+      const querySnapshot = await getDocs(userRef);
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        busyMode = data.isBusy;
+        openMode = data.isOpen;
+      })
+      setBusySwitch(busyMode);
+      setOpenSwitch(openMode);
+      setIsLoading(false)
+    } catch (error) {
+      setIsLoading(false)
+      console.log(error);
+    }
+  }
+
   const toggleOpenSwitch = () => {
     setOpenSwitch((prevSwitch) => !prevSwitch);
+    updateSwitchValue('isOpen', !openSwitch);
+    if(openSwitch) {
+      updateSwitchValue('isBusy', false);
+    }
   };
 
   const toggleBusySwitch = () => {
@@ -105,7 +139,21 @@ function ResponsiveDrawer({window, tab}) {
     } else {
       setBusySwitch((prevSwitch) => !prevSwitch);
     }
+    updateSwitchValue('isBusy', !busySwitch)
   };
+
+  const updateSwitchValue = async (switchField, boolValue) => {
+    try {
+      const docRef = doc(db, 'users', docId);
+      await updateDoc(docRef, { [switchField]: boolValue });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchSwitch();
+  }, [])
 
   useEffect(() => {
     setCurrentPath(location.pathname);
@@ -136,77 +184,89 @@ function ResponsiveDrawer({window, tab}) {
 
   const drawer = (
     <div>
-      <Toolbar>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Switch checked={openSwitch} onChange={toggleOpenSwitch} />
-            }
-            label="Open"
-          />
-          <FormControlLabel
-            control={
-              <Switch checked={busySwitch} onChange={toggleBusySwitch} />
-            }
-            label="Busy"
-          />
-        </FormGroup>
-      </Toolbar>
-      <Divider />
-      <List>
-        {iconList.map((iconObj) => (
-          <React.Fragment key={iconObj.text}>
-            <TabStyled
-              ischoose={iconObj.path === currentPath ? "true" : "false"} // React doesn't understand isChoose is a boolean
-              onClick={() => {
-                navigate(iconObj.path)
-                if (iconObj.text === "Account") {
-                  handleOpenDropDown();
+      {isLoading ? (
+        <Grid container justifyContent="center" alignItems="center" rowGap={3} p={3}>
+          {renderSkeleton(2, 'rounded', 60)}
+          <Grid item textAlign="center" xs={12}>
+            <Divider />
+          </Grid>
+          {renderSkeleton(7, 'rounded', 60)}
+        </Grid>
+      ) : (
+        <>
+          <Toolbar>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Switch checked={openSwitch} onChange={toggleOpenSwitch} />
                 }
-                if(iconObj.text === "Sign out") {
-                  handleSignout();
+                label="Open"
+              />
+              <FormControlLabel
+                control={
+                  <Switch checked={busySwitch} onChange={toggleBusySwitch} />
                 }
-              }}
-            >
-              <ListItemButton>
-                <ListItemIcon>{iconObj.icon}</ListItemIcon>
-                <ListItemText primary={iconObj.text} />
-                {iconObj.text === 'Account' ? (
-                  openDropDown ? (
-                    <ExpandLess />
-                  ) : (
-                    <ExpandMore />
-                  )
-                ) : null}
-              </ListItemButton>
-            </TabStyled>
-            {iconObj.text === 'Account' && (
-              <Collapse in={openDropDown}>
-                <List>
-                  <ListItem>
-                    <ListItemButton>
-                      <ListItemIcon></ListItemIcon>
-                      <ListItemText primary="Revenue" />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemButton>
-                      <ListItemIcon></ListItemIcon>
-                      <ListItemText primary="Report" />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemButton>
-                      <ListItemIcon></ListItemIcon>
-                      <ListItemText primary="Loyal Customer" />
-                    </ListItemButton>
-                  </ListItem>
-                </List>
-              </Collapse>
-            )}
-          </React.Fragment>
-        ))}
-      </List>
+                label="Busy"
+              />
+            </FormGroup>
+          </Toolbar>
+          <Divider />
+          <List>
+            {iconList.length > 0 && iconList.map((iconObj) => (
+              <React.Fragment key={iconObj.text}>
+                <TabStyled
+                  $ischoose={iconObj.path === currentPath} // using transient-props to avoid error lines
+                  onClick={() => {
+                    navigate(iconObj.path);
+                    if (iconObj.text === 'Account') {
+                      handleOpenDropDown();
+                    }
+                    if (iconObj.text === 'Sign out') {
+                      handleSignout();
+                    }
+                  }}
+                >
+                  <ListItemButton>
+                    <ListItemIcon>{iconObj.icon}</ListItemIcon>
+                    <ListItemText primary={iconObj.text} />
+                    {iconObj.text === 'Account' ? (
+                      openDropDown ? (
+                        <ExpandLess />
+                      ) : (
+                        <ExpandMore />
+                      )
+                    ) : null}
+                  </ListItemButton>
+                </TabStyled>
+                {iconObj.text === 'Account' && (
+                  <Collapse in={openDropDown}>
+                    <List>
+                      <ListItem>
+                        <ListItemButton>
+                          <ListItemIcon></ListItemIcon>
+                          <ListItemText primary="Revenue" />
+                        </ListItemButton>
+                      </ListItem>
+                      <ListItem>
+                        <ListItemButton>
+                          <ListItemIcon></ListItemIcon>
+                          <ListItemText primary="Report" />
+                        </ListItemButton>
+                      </ListItem>
+                      <ListItem>
+                        <ListItemButton>
+                          <ListItemIcon></ListItemIcon>
+                          <ListItemText primary="Loyal Customer" />
+                        </ListItemButton>
+                      </ListItem>
+                    </List>
+                  </Collapse>
+                )}
+              </React.Fragment>
+            ))}
+          </List>
+        </>
+      )}
     </div>
   );
 
@@ -233,10 +293,19 @@ function ResponsiveDrawer({window, tab}) {
           >
             <MenuIcon />
           </IconButton>
-          <ListItem>
-            <ListItemIcon>{notification.icon}</ListItemIcon>
-            <ListItemText primary={notification.message} />
-          </ListItem>
+          {isLoading ? (
+            <ListItem>
+              <ListItemIcon>
+                <CircularProgress />
+              </ListItemIcon>
+              <ListItemText primary="Loading..." />
+            </ListItem>
+          ) : (
+            <ListItem>
+              <ListItemIcon>{notification.icon}</ListItemIcon>
+              <ListItemText primary={notification.message} />
+            </ListItem>
+          )}
         </Toolbar>
       </AppBar>
       <Box

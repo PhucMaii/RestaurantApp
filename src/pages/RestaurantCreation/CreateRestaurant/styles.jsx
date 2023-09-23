@@ -15,7 +15,10 @@ const GridStyled = styled(Grid)`
   }
 `;
 const TopicImageStyled = styled.img`
+  border-radius: 20px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   width: 100%;
+  
 `;
 const TopicImageGrid = styled(Grid)`
   @media only screen and (max-width: 900px) {

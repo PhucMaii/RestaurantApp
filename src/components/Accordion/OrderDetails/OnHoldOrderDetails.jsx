@@ -18,7 +18,6 @@ import {
   ButtonStyled,
   DividerContainerStyled,
 } from "../style";
-import OrderStatusModal from "../../Modals/OrderStatusModal";
 import UserInfoModal from "../../Modals/UserInfoModal";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../../firebase.config";
@@ -27,7 +26,7 @@ import { formatToTwoDecimalPlace } from '../../../utils/number';
 import { reduceNameLength } from '../../../utils/string';
 import { orderStatusEnum } from '../../../utils/constant';
 
-function OrderDetailsAccordion({
+function OnHoldOrderDetailsAccordion({
   customerEmail,
   customerName,
   customerPhoneNumber,
@@ -42,11 +41,11 @@ function OrderDetailsAccordion({
   preparingTime,
   subTotal,
 }) {
-  const [isExpanded, setIsExpanded] = useState(orderStatus === orderStatusEnum.onHoldOrders);
-  const [openStatusModal, setOpenStatusModal] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [openCustomerInfoModal, setOpenCustomerInfoModal] = useState(false);
-  const [status, setStatus] = useState(orderStatus);
+  const [status, _setStatus] = useState(orderStatus);
   const orderRef = doc(db, 'orders', docId);
+
   useEffect(() => {
     const updateStatus = async () => {
       try {
@@ -58,11 +57,6 @@ function OrderDetailsAccordion({
     updateStatus();
   }, [status]);
 
-  const handleCloseStatusModal = (e) => {
-    e.stopPropagation();
-    setOpenStatusModal(false);
-  };
-
   const handleCloseCustomerInfoModal = (e) => {
     e.stopPropagation();
     setOpenCustomerInfoModal(false);
@@ -73,27 +67,8 @@ function OrderDetailsAccordion({
     setOpenCustomerInfoModal(true);
   };
 
-  const handleOpenStatusModal = (e) => {
-    e.stopPropagation();
-    setOpenStatusModal(true);
-  };
-
-  const handleStatusButtonClick = (e) => {
-    e.stopPropagation();
-    setStatus(e.currentTarget.textContent);
-    setOpenStatusModal(false);
-  };
-
   return (
     <>
-      {orderStatus !== orderStatusEnum.onHoldOrders && (
-        <OrderStatusModal
-          handleClose={handleCloseStatusModal}
-          handleStatusButtonClick={handleStatusButtonClick}
-          open={openStatusModal}
-          status={status}
-        />
-      )}
       <UserInfoModal
         email={customerEmail}
         handleClose={handleCloseCustomerInfoModal}
@@ -133,14 +108,13 @@ function OrderDetailsAccordion({
                   ? 'warning'
                   : 'success'
               }
-              onClick={handleOpenStatusModal}
             >
               {status}
             </ButtonStyled>
             {status !== orderStatusEnum.pickedUp && (
               <TimerFlexBox>
                 <Typography variant="subtitle1" fontWeight="bold">
-                  ETA: {calculateETA(orderTime, preparingTime)}
+                  ETA: {calculateETA(orderTime, preparingTime )}
                 </Typography>
               </TimerFlexBox>
             )}
@@ -181,7 +155,7 @@ function OrderDetailsAccordion({
                         <Divider />
                       </Grid>
                     </Grid>
-                    {item.options.length > 0 && item.options.map((option, index) => {
+                    {items.options.length > 0 && item.options.map((option, index) => {
                       return (
                         <Grid key={index} container rowGap={2}>
                           <Grid textAlign="center" item xs={2}>
@@ -289,7 +263,7 @@ function OrderDetailsAccordion({
   );
 }
 
-OrderDetailsAccordion.propTypes = {
+OnHoldOrderDetailsAccordion.propTypes = {
   customerEmail: PropTypes.string.isRequired,
   customerName: PropTypes.string.isRequired,
   customerPhoneNumber: PropTypes.string.isRequired,
@@ -305,4 +279,4 @@ OrderDetailsAccordion.propTypes = {
   subTotal: PropTypes.number.isRequired,
 }
 
-export default memo(OrderDetailsAccordion);
+export default memo(OnHoldOrderDetailsAccordion);

@@ -40,10 +40,6 @@ export default function HorizontalLinearStepper() {
     setSkipped(newSkipped);
   };
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
   useEffect(() => {
     if (activeStep === steps.length) {
       navigate('/home');
@@ -79,23 +75,15 @@ export default function HorizontalLinearStepper() {
             {activeStep === 0 ? (
               <CreateRestaurantPage goToNextStep={handleNext} />
             ) : activeStep === 1 ? (
-              <CreateSectionPage />
+              <CreateSectionPage goToNextStep={handleNext} />
             ) : (
               <CreateMenuPage />
             )}
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-            <Button
-              color="inherit"
-              disabled={activeStep === 0 || activeStep === 1}
-              onClick={handleBack}
-              sx={{ mr: 1 }}
-            >
-              Back
-            </Button>
             <Box sx={{ flex: '1 1 auto' }} />
-            <Button onClick={handleNext} disabled={activeStep === 0}>
-              {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+            <Button onClick={handleNext} disabled={activeStep === 1}>
+              Finish
             </Button>
           </Box>
         </>

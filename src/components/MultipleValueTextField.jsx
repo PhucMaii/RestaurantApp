@@ -44,7 +44,7 @@ export default function MultipleValueTextField({
         />
       </Grid>
       <Grid item xs={chipWidth} textAlign="left">
-        {values.map((item, index) => {
+        {values.length > 0 && values.map((item, index) => {
           return (
             <Chip
               key={index}

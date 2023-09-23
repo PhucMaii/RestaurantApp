@@ -41,7 +41,7 @@ function AddOptionModal({ handleClose, open, addOption }) {
                 fullWidth 
                 label="Enter New Option Price"
                 placeholder="Enter Option Price..."
-                onChange={(e) => setOption({...option, price: e.target.value.replace(nonNumericCharacter, "")})}
+                onChange={(e) => setOption({...option, price: +e.target.value.replace(nonNumericCharacter, "")})}
                 value={option.price}
                 variant="filled"
             />

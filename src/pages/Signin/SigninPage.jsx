@@ -33,15 +33,15 @@ import {
   TopicImageGrid,
 } from './styles';
 import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
 export default function SigninPage() {
-  // Hooks
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [notification, setNotification] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const isXLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('xl'));
+  const [_currUser, setCurrUser] = useLocalStorage('current-user', {});
   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.up('sm'));
   const navigate = useNavigate();
   const userCollection = collection(db, 'users');
@@ -65,32 +65,25 @@ export default function SigninPage() {
         userID = doc.id;
         hasRestaurant = doc.data().hasRestaurant;
       });
-      await signInWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
-      localStorage.setItem(
-        'current-user',
-        JSON.stringify({ ...userData, hasRestaurant, docId: userID }),
-      );
+      await signInWithEmailAndPassword(auth, email, password);
+      setCurrUser({ ...userData, hasRestaurant, docId: userID });
+      // Wait for 1 second to load the page
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       navigate('/home');
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
       if (error.code === 'auth/user-not-found') {
         setIsLoading(true);
-        await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password,
-        );
-        const data = { ...userData, hasRestaurant: false };
+        await createUserWithEmailAndPassword(auth, email, password);
+        const data = {
+          ...userData,
+          hasRestaurant: false,
+        };
         const docRef = await addDoc(userCollection, data);
-        localStorage.setItem(
-          'current-user',
-          JSON.stringify({ ...data, docId: docRef._key.path.segments[1] }),
-        );
+        setCurrUser({ ...data, docId: docRef._key.path.segments[1] });
+        // Wait for 1 second to load the page
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         navigate('/create-restaurant');
         setIsLoading(false);
       } else {
@@ -110,12 +103,12 @@ export default function SigninPage() {
       const user = userCredential.user;
       const userData = { email: user.email, provider: 'Google Provider' };
       if (getAdditionalUserInfo(userCredential).isNewUser) {
-        const data = { ...userData, hasRestaurant: false };
+        const data = {
+          ...userData,
+          hasRestaurant: false
+        };
         const docRef = await addDoc(userCollection, data);
-        localStorage.setItem(
-          'current-user',
-          JSON.stringify({ ...data, docId: docRef._key.path.segments[1] }),
-        );
+        setCurrUser({ ...data, docId: docRef._key.path.segments[1] });
         navigate('/create-restaurant');
       } else {
         let userID, hasRestaurant;
@@ -128,12 +121,11 @@ export default function SigninPage() {
           userID = doc.id;
           hasRestaurant = doc.data().hasRestaurant;
         });
-        localStorage.setItem(
-          'current-user',
-          JSON.stringify({ ...userData, hasRestaurant, docId: userID }),
-        );
+        setCurrUser({ ...userData, hasRestaurant, docId: userID });
         navigate('/home');
       }
+      // Wait for 1 second to load the page
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
@@ -152,7 +144,14 @@ export default function SigninPage() {
   return (
     <GridStyled container columnSpacing={5}>
       {isLoading ? (
-        <CircularProgress />
+        <Grid container justifyContent="center" alignItems="center" rowGap={3}>
+          <Grid item textAlign="center" xs={12}>
+            <CircularProgress />
+          </Grid>
+          <Grid item textAlign="center" xs={12}>
+            <Typography variant="h4">Loading...</Typography>
+          </Grid>
+        </Grid>
       ) : (
         <>
           <Grid item xs={12} sm={6}>

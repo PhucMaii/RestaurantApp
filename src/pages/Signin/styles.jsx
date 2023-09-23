@@ -30,7 +30,7 @@ const TopicImageStyled = styled.img`
   width: 100%;
 `;
 const TopicImageGrid = styled(Grid)`
-  @media only screen and (max-width: 700px) {
+  @media only screen and (max-width: 600px) {
     display: none;
   }
 `;

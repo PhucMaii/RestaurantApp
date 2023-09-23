@@ -7,12 +7,15 @@ import {
   GridContainerStyled,
   GridStyled,
   TopicImageStyled,
+  TopicImageGrid
 } from './styles';
 import { doc, updateDoc } from 'firebase/firestore';
 import useUploadFile from '../../../hooks/useUploadFile';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 
 export default function CreateRestaurant({ goToNextStep }) {
   const [restaurantData, setRestaurantData] = useState({
+    imageLink: "",
     restaurantName: "",
     restaurantType: "",
     restaurantPhoneNumber: "",
@@ -22,6 +25,7 @@ export default function CreateRestaurant({ goToNextStep }) {
   const [fieldsValid, setFieldsValid] = useState(true);
   const [notifications, setNotifications] = useState({});
   const [receivedAdress, setReceivedAddress] = useState(null);
+  const [currUser, setCurrUser] = useLocalStorage('current-user', {});
 
   const {
     allowUploadImage,
@@ -78,12 +82,11 @@ export default function CreateRestaurant({ goToNextStep }) {
       return;
     }
     try {
-      const userAuthData = JSON.parse(localStorage.getItem('current-user'));
-      userAuthData.hasRestaurant = true;
-      const documentRef = doc(db, 'users', userAuthData.docId);
-      const data = { ...userAuthData, ...restaurantData };
+      const currUserData = {...currUser, hasRestaurant: true}
+      setCurrUser(currUserData)
+      const documentRef = doc(db, 'users', currUser.docId);
+      const data = { ...currUserData, ...restaurantData };
       await updateDoc(documentRef, data);
-      localStorage.setItem('current-user', JSON.stringify(userAuthData));
       setNotifications({
         on: true,
         type: 'success',
@@ -106,7 +109,7 @@ export default function CreateRestaurant({ goToNextStep }) {
 
   return (
     <GridStyled container columnSpacing={2}>
-      <Grid item xs={6}>
+      <Grid item xs={12} sm={6}>
         <Grid item>
           <Typography
             marginBottom={2}
@@ -182,8 +185,8 @@ export default function CreateRestaurant({ goToNextStep }) {
                 setImageURL(newImageURL);
                 handleTextFieldChange("imageLink", newImageURL)
               }}
-              label="Item's Image URL"
-              placeholder="Enter Item's Image URL..."
+              label="Restaurant's Image URL"
+              placeholder="Enter Restaurant's Image URL..."
             />
           </Grid>
           <Grid item xs={12}>
@@ -233,9 +236,9 @@ export default function CreateRestaurant({ goToNextStep }) {
           </Grid>
         </GridContainerStyled>
       </Grid>
-      <Grid item xs={6}>
-        <TopicImageStyled src="https://i.pinimg.com/564x/e8/03/16/e80316d006e91ff02f3b49e61a0051c0.jpg" />
-      </Grid>
+      <TopicImageGrid item sm={6}>
+        <TopicImageStyled src="https://images.unsplash.com/photo-1623123095585-bfa830e3f8a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80" />
+      </TopicImageGrid>
     </GridStyled>
   );
 }
