@@ -16,7 +16,6 @@ import {
   Toolbar,
   FormGroup,
   FormControlLabel,
-  Collapse,
   Grid,
 } from "@mui/material";
 import PropTypes from "prop-types";
@@ -31,7 +30,6 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 import TimerIcon from "@mui/icons-material/Timer";
 import { grey, green, red, yellow } from "@mui/material/colors";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { TabStyled } from "./style";
 import { useNavigate, useLocation } from "react-router-dom";
 import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
@@ -46,7 +44,6 @@ function ResponsiveDrawer({window, tab}) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [openDropDown, setOpenDropDown] = useState(false);
   const [openSwitch, setOpenSwitch] = useState(false);
   const [busySwitch, setBusySwitch] = useState(false);
   const [notification, setNotification] = useState({});
@@ -98,10 +95,6 @@ function ResponsiveDrawer({window, tab}) {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleOpenDropDown = () => {
-    setOpenDropDown(!openDropDown);
-  };
-
   const handleSignout = () => {
     localStorage.clear();
   };
@@ -125,19 +118,19 @@ function ResponsiveDrawer({window, tab}) {
     }
   }
 
-  const toggleOpenSwitch = () => {
-    setOpenSwitch((prevSwitch) => !prevSwitch);
+  const toggleOpenSwitch = (e) => {
+    setOpenSwitch(e.target.checked);
     updateSwitchValue('isOpen', !openSwitch);
     if(openSwitch) {
       updateSwitchValue('isBusy', false);
     }
   };
 
-  const toggleBusySwitch = () => {
+  const toggleBusySwitch = (e) => {
     if (!openSwitch) {
       setBusySwitch(false);
     } else {
-      setBusySwitch((prevSwitch) => !prevSwitch);
+      setBusySwitch(e.target.checked);
     }
     updateSwitchValue('isBusy', !busySwitch)
   };
@@ -218,9 +211,6 @@ function ResponsiveDrawer({window, tab}) {
                   $ischoose={iconObj.path === currentPath} // using transient-props to avoid error lines
                   onClick={() => {
                     navigate(iconObj.path);
-                    if (iconObj.text === 'Account') {
-                      handleOpenDropDown();
-                    }
                     if (iconObj.text === 'Sign out') {
                       handleSignout();
                     }
@@ -229,39 +219,8 @@ function ResponsiveDrawer({window, tab}) {
                   <ListItemButton>
                     <ListItemIcon>{iconObj.icon}</ListItemIcon>
                     <ListItemText primary={iconObj.text} />
-                    {iconObj.text === 'Account' ? (
-                      openDropDown ? (
-                        <ExpandLess />
-                      ) : (
-                        <ExpandMore />
-                      )
-                    ) : null}
                   </ListItemButton>
                 </TabStyled>
-                {iconObj.text === 'Account' && (
-                  <Collapse in={openDropDown}>
-                    <List>
-                      <ListItem>
-                        <ListItemButton>
-                          <ListItemIcon></ListItemIcon>
-                          <ListItemText primary="Revenue" />
-                        </ListItemButton>
-                      </ListItem>
-                      <ListItem>
-                        <ListItemButton>
-                          <ListItemIcon></ListItemIcon>
-                          <ListItemText primary="Report" />
-                        </ListItemButton>
-                      </ListItem>
-                      <ListItem>
-                        <ListItemButton>
-                          <ListItemIcon></ListItemIcon>
-                          <ListItemText primary="Loyal Customer" />
-                        </ListItemButton>
-                      </ListItem>
-                    </List>
-                  </Collapse>
-                )}
               </React.Fragment>
             ))}
           </List>

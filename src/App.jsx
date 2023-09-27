@@ -11,6 +11,7 @@ import HistoryPage from "./pages/History/HistoryPage";
 import MenuPage from "./pages/Menu/MenuPage";
 import UnprotectedRoutes from './Routes/UnprotectedRoute';
 import FeedbackPage from "./pages/Feedback/FeedbackPage";
+import AccountPage from './pages/Account/AccountPage';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
               <Route path="/menu" element={<MenuPage />} />
               <Route path="/history" element={<HistoryPage />} />
               <Route path="/feedback" element={<FeedbackPage />} />
+              <Route path="/account" element={<AccountPage />} />
             </Route>
           </Routes>
         </BrowserRouter>
