@@ -1,8 +1,8 @@
 import { Button, Grid, Modal, TextField } from '@mui/material'
-import React, { memo } from 'react';
+import React, { memo, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { GridModal } from './style';
-
+import { ThemeContext } from '../../Provider/ThemeContext';
 function AddSectionModal({
   addSection,
   sectionName,
@@ -10,6 +10,7 @@ function AddSectionModal({
   open,
   setSectionName,
 }) {
+  const {isDarkTheme} = useContext(ThemeContext);
   return (
     <Modal open={open} onClose={handleClose}>
       <GridModal
@@ -18,6 +19,7 @@ function AddSectionModal({
         columnSpacing={2}
         container
         padding={3}
+        $isDarkTheme={isDarkTheme}
       >
         <Grid item xs={8}>
           <TextField

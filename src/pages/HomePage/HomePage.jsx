@@ -7,7 +7,7 @@ import {
   Button,
   Snackbar,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import OrderDetailsAccordion from '../../components/Accordion/OrderDetails/OrderDetails';
 import { db } from '../../../firebase.config';
@@ -30,6 +30,7 @@ import { orderStatusEnum } from '../../utils/constant';
 import OnHoldOrderModal from '../../components/Modals/OnHoldOrderModal';
 import { formatTime } from '../../utils/time';
 import useLocalStorage from '../../hooks/useLocalStorage';
+import { ThemeContext } from '../../Provider/ThemeContext';
 
 export default function HomePage() {
   const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
@@ -47,6 +48,7 @@ export default function HomePage() {
     pickedUpOrders: []
   });
   const [preparingTime, setPreparingTime] = useState(0);
+  const {isDarkTheme} = useContext(ThemeContext)
 
   const historyCollection = collection(db, 'history');
   const orderCollection = collection(db, 'orders');
@@ -258,7 +260,7 @@ export default function HomePage() {
         <Grid container rowGap={2} mt={3}>
           <Grid container justifyContent="center" rowGap={2}>
             <Grid item xs={12} textAlign="center">
-              <Typography variant="h4">Preparing Time</Typography>
+              <Typography color={isDarkTheme ? 'secondary' : ''} variant="h4">Preparing Time</Typography>
             </Grid>
             <Grid
               alignItems="center"
@@ -272,7 +274,7 @@ export default function HomePage() {
                 </Fab>
               </Grid>
               <Grid item>
-                <Typography variant="h6" fontWeight="bold">
+                <Typography color={isDarkTheme ? 'secondary' : ''} variant="h6" fontWeight="bold">
                   {formatTime(preparingTime)}
                 </Typography>
               </Grid>
@@ -337,7 +339,7 @@ export default function HomePage() {
             ) : (
               <Grid container justifyContent="center">
                 <Grid item>
-                  <Typography fontWeight="bold" variant="h6">
+                  <Typography color={isDarkTheme ? 'secondary' : ''} fontWeight="bold" variant="h6">
                     No New Orders At The Moment
                   </Typography>
                 </Grid>
@@ -346,7 +348,7 @@ export default function HomePage() {
           </Grid>
           <Grid item xs={12}>
             <Divider textAlign="left">
-              <Typography variant="h4">Ready</Typography>
+              <Typography color={isDarkTheme ? 'secondary' : ''} variant="h4">Ready</Typography>
             </Divider>
           </Grid>
           <Grid container justifyContent="center" rowGap={3}>

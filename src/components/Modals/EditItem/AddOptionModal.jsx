@@ -1,8 +1,9 @@
 import { Button, TextField, Modal, Grid } from '@mui/material';
-import React, { memo, useState } from "react";
+import React, { memo, useContext, useState } from "react";
 import PropTypes from 'prop-types';
 import { nonNumericCharacter } from '../../../utils/constant';
 import { GridModal } from '../style';
+import { ThemeContext } from '../../../Provider/ThemeContext';
 
 function AddOptionModal({ handleClose, open, addOption }) {
     const [option, setOption] = useState({
@@ -10,6 +11,7 @@ function AddOptionModal({ handleClose, open, addOption }) {
         name: "",
         price: 0
     })
+    const {isDarkTheme} = useContext(ThemeContext);
     const resetField = () => {
       setOption({
         availability: true,
@@ -17,6 +19,7 @@ function AddOptionModal({ handleClose, open, addOption }) {
         price: 0,
       });
     };
+
   return (
     <Modal onClose={handleClose} open={open}>
       <GridModal
@@ -25,6 +28,7 @@ function AddOptionModal({ handleClose, open, addOption }) {
         padding={2}
         rowGap={2}
         maxWidth="500px"
+        $isDarkTheme={isDarkTheme}
       >
         <Grid item xs={12}>
             <TextField

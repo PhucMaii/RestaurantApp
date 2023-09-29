@@ -3,7 +3,6 @@ import {
   Divider,
   Fab,
   Grid,
-  Modal,
   Typography,
   TextField,
   Switch,
@@ -11,15 +10,16 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import React, { memo, useState } from "react";
+import React, { memo, useContext, useState } from "react";
 import PropTypes from 'prop-types';
 import EditItemNameModal from "./EditItemNameModal";
 import EditOptionModal from "./EditOptionModal";
 import { formatToTwoDecimalPlace } from "../../../utils/number";
 import AddOptionModal from "./AddOptionModal";
 import { nonNumericCharacter } from "../../../utils/constant";
-import { GridModal } from "../style";
+import { GridModal, ModalStyled } from "../style";
 import useUploadFile from "../../../hooks/useUploadFile";
+import { ThemeContext } from "../../../Provider/ThemeContext";
 
 function EditItemModal({
   deleteItem,
@@ -33,6 +33,7 @@ function EditItemModal({
   const [openEditNameModal, setOpenEditNameModal] = useState(false);
   const [openEditOptionModal, setOpenEditOptionModal] = useState(false);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(null);
+  const { isDarkTheme } = useContext(ThemeContext);
 
   const {
     allowUploadImage,
@@ -115,13 +116,14 @@ function EditItemModal({
         open={openEditNameModal}
         setItem={setItem}
       />
-      <Modal open={open} onClose={handleClose}>
+      <ModalStyled open={open} onClose={handleClose}>
         <GridModal
           maxWidth="800px"
           alignItems="center"
           container
           padding={2}
           rowGap={2}
+          $isDarkTheme={isDarkTheme}
         >
           <Grid item xs={6}>
             <Grid alignItems="center" container columnSpacing={2}>
@@ -177,7 +179,7 @@ function EditItemModal({
                 label="Price"
                 onChange={handlePriceChange}
                 value={`$${item.itemPrice}`}
-                variant="standard"
+                variant={isDarkTheme ? "outlined" : "standard"}
               />
             </Grid>
           </Grid>
@@ -315,7 +317,7 @@ function EditItemModal({
             </Grid>
           )}
         </GridModal>
-      </Modal>
+      </ModalStyled>
     </>
   );
 }

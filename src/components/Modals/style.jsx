@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import { ButtonGroup, Grid, List } from "@mui/material";
+import { ButtonGroup, Grid, List, Modal } from "@mui/material";
+import { grey } from "@mui/material/colors";
 
 const ButtonGroupModal = styled(ButtonGroup)`
   position: absolute;
@@ -7,7 +8,7 @@ const ButtonGroupModal = styled(ButtonGroup)`
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: ${(props) => props.maxWidth};
-  background-color: white;
+  background-color: ${props => props.$isDarkTheme ? grey[700] : "white"};
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 `;
@@ -17,7 +18,7 @@ const GridModal = styled(Grid)`
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: ${(props) => props.maxWidth};
-  background-color: white;
+  background-color: ${props => props.$isDarkTheme ? grey[700] : "white"};
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 `;
@@ -27,9 +28,12 @@ const ListModal = styled(List)`
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: ${(props) => props.maxWidth};
-  background-color: white;
+  background-color: ${props => props.$isDarkTheme ? grey[700] : "white"};
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 `;
+const ModalStyled = styled(Modal)`
+  color: ${props => props.$isDarkTheme ? grey[200] : ""}
+`
 
-export { ButtonGroupModal, GridModal, ListModal };
+export { ButtonGroupModal, GridModal, ListModal, ModalStyled };

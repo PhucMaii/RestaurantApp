@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   Grid,
   TextField,
@@ -20,6 +20,7 @@ import {
 import { db } from '../../../../firebase.config';
 import useUploadFile from '../../../hooks/useUploadFile';
 import useLocalStorage from '../../../hooks/useLocalStorage';
+import { ThemeContext } from '../../../Provider/ThemeContext';
 
 export default function CreateMenuPage() {
   const [sections, setSections] = useState([]);
@@ -50,6 +51,7 @@ export default function CreateMenuPage() {
     handleFileInputChange,
     setImageURL
   } = useUploadFile(image, updateRestaurantImageLink);
+  const {isDarkTheme} = useContext(ThemeContext);
   const menuCollection = collection(db, 'menu');
   const restaurantRef = currUser.docId;
   const menu = query(
@@ -167,7 +169,7 @@ export default function CreateMenuPage() {
         </Typography>
       </Grid>
       <Grid container justifyContent="center">
-        <Typography varitant="subtitle1">
+        <Typography color={isDarkTheme ? "secondary" : ""} varitant="subtitle1">
           Pick a section to add items
         </Typography>
       </Grid>
@@ -186,7 +188,7 @@ export default function CreateMenuPage() {
       </Grid>
       <Grid item xs={12}>
         <Divider>
-          <Typography>Item Info</Typography>
+          <Typography color={isDarkTheme ? "secondary" : ""}>Item Info</Typography>
         </Divider>
       </Grid>
       <Grid container columnSpacing={2}>
@@ -224,7 +226,7 @@ export default function CreateMenuPage() {
       </Grid>
       <Grid container justifyContent="center">
         <Grid item xs={12}>
-          <Typography variant="subtitle1">
+          <Typography color={isDarkTheme ? "secondary" : ""} variant="subtitle1">
             Item&apos;s Option (Optional). Press Enter To Add Each Option
           </Typography>
         </Grid>
@@ -277,7 +279,7 @@ export default function CreateMenuPage() {
       </Grid>
       <Grid item xs={12}>
         <Divider>
-          <Typography>Or</Typography>
+          <Typography color={isDarkTheme ? "secondary" : ""}>Or</Typography>
         </Divider>
       </Grid>
       <Grid item xs={12}>
