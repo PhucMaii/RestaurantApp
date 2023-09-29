@@ -30,7 +30,7 @@ function ItemCard({ deleteItem, item, saveChanges, setItem }) {
         saveChanges={saveChanges}
         setItem={setItem}
       />
-      <GridStyled container padding={3} rowGap={3}>
+      <GridStyled $isDarkTheme={isDarkTheme} container padding={3} rowGap={3}>
         <Grid container>
           <Grid item xs={6}>
             <Typography variant="h6" color={isDarkTheme ? 'secondary' : ''}>{item.itemName}</Typography>

@@ -1,4 +1,4 @@
-import React, { useState, memo } from 'react';
+import React, { useState, memo, useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   AccordionSummary,
@@ -21,6 +21,7 @@ import { reduceNameLength } from '../../../utils/string';
 import { yellow } from '@mui/material/colors';
 import { db } from '../../../../firebase.config';
 import { doc, updateDoc } from 'firebase/firestore';
+import { ThemeContext } from '../../../Provider/ThemeContext';
 
 function FeedbackAccordion({
   customerName,
@@ -34,6 +35,7 @@ function FeedbackAccordion({
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [responseMsg, setResponseMsg] = useState('');
+  const {isDarkTheme} = useContext(ThemeContext);
   const docRef = doc(db, 'feedback', docId);
 
   const handleAccordionChange = () => {
@@ -101,7 +103,10 @@ function FeedbackAccordion({
 
   return (
     <>
-      <AccordionStyled expanded={isExpanded} onChange={handleAccordionChange}>
+      <AccordionStyled 
+        $isDarkTheme={isDarkTheme} 
+        expanded={isExpanded} 
+        onChange={handleAccordionChange}>
         <AccordionSummary aria-controls="panel1a-content" id="panel1a-header">
           <AccordionSummaryFlexBox>
             <Box display="flex" flexDirection="column" gap={2}>
@@ -138,7 +143,7 @@ function FeedbackAccordion({
             )}
           </AccordionSummaryFlexBox>
         </AccordionSummary>
-        <AccordionDetailsStyled>
+        <AccordionDetailsStyled $isDarkTheme={isDarkTheme}>
           <Grid container columnSpacing={2} mt={5}>
             <Grid item xs={12} sm={6} textAlign="center">
               <Grid container justifyContent="center" rowGap={2}>

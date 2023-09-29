@@ -30,14 +30,15 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 import TimerIcon from "@mui/icons-material/Timer";
-import { grey, green, red, yellow } from "@mui/material/colors";
-import { TabStyled } from "./style";
+import { green, red, yellow } from "@mui/material/colors";
+import { ListItemTextStyled, TabStyled } from "./style";
 import { useNavigate, useLocation } from "react-router-dom";
 import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../../firebase.config';
 import { renderSkeleton } from '../../utils/renderUtils';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { ThemeContext } from '../../Provider/ThemeContext';
+import { useTheme } from '@mui/material/styles';
 
 const drawerWidth = 250;
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -103,6 +104,7 @@ function ResponsiveDrawer({window, tab}) {
   const userRef = query(userCollection, where('docId', '==', docId));
   const navigate = useNavigate();
   const location = useLocation();
+  const theme = useTheme();
 
   const iconList = [
     {
@@ -242,13 +244,6 @@ function ResponsiveDrawer({window, tab}) {
           <Toolbar>
             <FormGroup>
               <FormControlLabel
-
-                control={
-                  <MaterialUISwitch checked={isDarkTheme} onChange={(e) => toggleDarkTheme(e.target.checked)} />
-                }
-                label={isDarkTheme ? "Light Mode" : "Dark Mode"}
-              />
-              <FormControlLabel
                 control={
                   <Switch checked={openSwitch} onChange={toggleOpenSwitch} />
                 }
@@ -268,6 +263,7 @@ function ResponsiveDrawer({window, tab}) {
               <React.Fragment key={iconObj.text}>
                 <TabStyled
                   $ischoose={iconObj.path === currentPath} // using transient-props to avoid error lines
+                  $isDarkTheme={isDarkTheme}
                   onClick={() => {
                     navigate(iconObj.path);
                     if (iconObj.text === 'Sign out') {
@@ -321,9 +317,14 @@ function ResponsiveDrawer({window, tab}) {
           ) : (
             <ListItem>
               <ListItemIcon>{notification.icon}</ListItemIcon>
-              <ListItemText primary={notification.message} />
+              <ListItemTextStyled primary={notification.message} />
             </ListItem>
           )}
+          <FormControlLabel
+            control={
+              <MaterialUISwitch checked={isDarkTheme} onChange={(e) => toggleDarkTheme(e.target.checked)} />
+            }
+          />
         </Toolbar>
       </AppBar>
       <Box
@@ -356,7 +357,7 @@ function ResponsiveDrawer({window, tab}) {
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',
               width: drawerWidth,
-              backgroundColor:grey[500],
+              backgroundColor: theme.palette.background.paper,
             },
           }}
           open

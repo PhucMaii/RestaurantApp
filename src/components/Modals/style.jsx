@@ -8,7 +8,7 @@ const ButtonGroupModal = styled(ButtonGroup)`
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: ${(props) => props.maxWidth};
-  background-color: ${props => props.$isDarkTheme ? grey[700] : "white"};
+  background-color: ${props => props.$isDarkTheme ? grey[800] : "white"};
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 `;
@@ -18,7 +18,7 @@ const GridModal = styled(Grid)`
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: ${(props) => props.maxWidth};
-  background-color: ${props => props.$isDarkTheme ? grey[700] : "white"};
+  background-color: ${props => props.$isDarkTheme ? grey[900] : "white"};
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 `;
@@ -28,7 +28,7 @@ const ListModal = styled(List)`
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: ${(props) => props.maxWidth};
-  background-color: ${props => props.$isDarkTheme ? grey[700] : "white"};
+  background-color: ${props => props.$isDarkTheme ? grey[800] : "white"};
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 `;

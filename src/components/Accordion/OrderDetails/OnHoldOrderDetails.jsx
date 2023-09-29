@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo, useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   AccordionSummary,
@@ -25,6 +25,7 @@ import { calculateETA, convertTimestampToDate } from '../../../utils/time';
 import { formatToTwoDecimalPlace } from '../../../utils/number';
 import { reduceNameLength } from '../../../utils/string';
 import { orderStatusEnum } from '../../../utils/constant';
+import { ThemeContext } from '../../../Provider/ThemeContext';
 
 function OnHoldOrderDetailsAccordion({
   customerEmail,
@@ -44,6 +45,7 @@ function OnHoldOrderDetailsAccordion({
   const [isExpanded, setIsExpanded] = useState(true);
   const [openCustomerInfoModal, setOpenCustomerInfoModal] = useState(false);
   const [status, _setStatus] = useState(orderStatus);
+  const {isDarkTheme} = useContext(ThemeContext);
   const orderRef = doc(db, 'orders', docId);
 
   useEffect(() => {
@@ -76,7 +78,11 @@ function OnHoldOrderDetailsAccordion({
         open={openCustomerInfoModal}
         phoneNumber={customerPhoneNumber}
       />
-      <AccordionStyled expanded={isExpanded} onChange={() => setIsExpanded((prevExpanded) => !prevExpanded)}>
+      <AccordionStyled 
+        $isDarkTheme={isDarkTheme}
+        expanded={isExpanded} 
+        onChange={() => setIsExpanded((prevExpanded) => !prevExpanded)}
+      >
         <AccordionSummary aria-controls="panel1a-content" id="panel1a-header">
           <AccordionSummaryFlexBox>
             <Box direction="column">
@@ -128,7 +134,7 @@ function OnHoldOrderDetailsAccordion({
             </Box>
           </AccordionSummaryFlexBox>
         </AccordionSummary>
-        <AccordionDetailsStyled>
+        <AccordionDetailsStyled $isDarkTheme={isDarkTheme}>
           <Grid container>
             <Grid item xs={12} sm={6} textAlign="center">
               <Typography fontWeight="bold" variant="h4">

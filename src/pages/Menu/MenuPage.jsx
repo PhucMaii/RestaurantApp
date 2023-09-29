@@ -12,7 +12,7 @@ import AddSectionModal from "../../components/Modals/AddSectionModal";
 import ResponsiveDrawer from "../../components/Sidebar/Sidebar";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import ReportIcon from '@mui/icons-material/Report';
-import { SectionStyled } from "./style";
+import { SectionContainer, SectionStyled } from "./style";
 import {
   addDoc,
   collection,
@@ -250,11 +250,10 @@ export default function MenuPage() {
           </Snackbar>
 
           <Grid container rowGap={2}>
-            <Grid
+            <SectionContainer
               alignItems="center"
               container
               padding={1}
-              sx={{ border: '2px solid black' }}
             >
               <Grid item xs={12} md={9}>
                 <Grid container columnSpacing={5}>
@@ -298,7 +297,7 @@ export default function MenuPage() {
                   </Grid>
                 </Grid>
               </Grid>
-            </Grid>
+            </SectionContainer>
             <Grid
               container
               columnSpacing={2}

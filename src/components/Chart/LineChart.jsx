@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import ReactApexChart from 'react-apexcharts';
 import { convertToDay } from '../../utils/time';
@@ -7,6 +7,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { ThemeContext } from '../../Provider/ThemeContext';
+import { blue, blueGrey, grey } from '@mui/material/colors';
 
 export default function LineChart({
     comparedDate,
@@ -14,6 +16,7 @@ export default function LineChart({
     handleDateChange,
     todayOrders,
 }) {
+    const {isDarkTheme} = useContext(ThemeContext);
     const getCategories = () => {
         const categories = [];
         for (let i = 1; i <= 24; i++) {
@@ -74,7 +77,7 @@ export default function LineChart({
                 show: false
             }
         },
-        colors: ['#77B6EA', '#545454'],
+        colors: isDarkTheme ? [blue[700], blueGrey[500]] : ['#77B6EA', '#545454'],
         dataLabels: {
             enabled: true,
         },
@@ -83,12 +86,12 @@ export default function LineChart({
         },
         title: {
             text: 'Today Sales vs Last Week Sales',
-            align: 'left'
+            align: 'left',
         },
         grid: {
             borderColor: '#e7e7e7',
             row: {
-                colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                colors: isDarkTheme ? [grey[700], grey[200]] : ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
                 opacity: 0.5
             },
         },
