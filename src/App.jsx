@@ -1,18 +1,18 @@
 import React, { useContext } from 'react';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
-import { lightTheme, darkTheme } from "./Provider/ThemeProvider";
-import ProtectedRoutes from "./Routes/ProtectedRoute";
-import SigninPage from "./pages/Signin/SigninPage";
-import HomePage from "./pages/HomePage/HomePage";
-import ForgotPasswordPage from "./pages/ForgotPassword/ForgotPasswordPage"
-import HorizontalLinearStepper from "./pages/RestaurantCreation/RestaurantCreationStepper";
-import HistoryPage from "./pages/History/HistoryPage";
-import MenuPage from "./pages/Menu/MenuPage";
-import UnprotectedRoutes from './Routes/UnprotectedRoute';
-import FeedbackPage from "./pages/Feedback/FeedbackPage";
-import AccountPage from './pages/Account/AccountPage';
-import { ThemeContext } from './Provider/ThemeContext';
+import { darkTheme, lightTheme } from "./restaurantSide/Provider/ThemeProvider";
+import ProtectedRoutes from "./restaurantSide/Routes/ProtectedRoute";
+import SigninPage from "./restaurantSide/pages/Signin/SigninPage";
+import HomePage from "./restaurantSide/pages/HomePage/HomePage";
+import ForgotPasswordPage from "./restaurantSide/pages/ForgotPassword/ForgotPasswordPage"
+import HorizontalLinearStepper from "./restaurantSide/pages/RestaurantCreation/RestaurantCreationStepper";
+import HistoryPage from "./restaurantSide/pages/History/HistoryPage";
+import MenuPage from "./restaurantSide/pages/Menu/MenuPage";
+import UnprotectedRoutes from './restaurantSide/Routes/UnprotectedRoute';
+import FeedbackPage from "./restaurantSide/pages/Feedback/FeedbackPage";
+import { ThemeContext } from './restaurantSide/Provider/ThemeContext';
+import AccountPage from './restaurantSide/pages/Account/AccountPage';
 
 function App() {
   const { isDarkTheme } = useContext(ThemeContext);
