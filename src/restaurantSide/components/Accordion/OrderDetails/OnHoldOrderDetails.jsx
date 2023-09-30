@@ -20,7 +20,7 @@ import {
 } from "../style";
 import UserInfoModal from "../../Modals/UserInfoModal";
 import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../../../../firebase.config";
+import { db } from "../../../../../firebase.config";
 import { calculateETA, convertTimestampToDate } from '../../../utils/time';
 import { formatToTwoDecimalPlace } from '../../../utils/number';
 import { reduceNameLength } from '../../../utils/string';

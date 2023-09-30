@@ -22,7 +22,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
 } from 'firebase/auth';
-import { auth, db, googleProvider } from '../../../firebase.config';
+import { auth, db, googleProvider } from '../../../../firebase.config';
 import {
   GridStyled,
   LogoStyled,

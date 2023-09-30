@@ -10,7 +10,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import OrderDetailsAccordion from '../../components/Accordion/OrderDetails/OrderDetails';
-import { db } from '../../../firebase.config';
+import { db } from '../../../../firebase.config';
 import {
   addDoc,
   collection,

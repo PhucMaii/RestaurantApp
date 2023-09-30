@@ -17,7 +17,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { db } from '../../../../firebase.config';
+import { db } from '../../../../../firebase.config';
 import useUploadFile from '../../../hooks/useUploadFile';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 

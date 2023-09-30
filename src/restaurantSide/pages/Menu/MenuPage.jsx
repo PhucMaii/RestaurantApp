@@ -22,7 +22,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { db } from "../../../firebase.config";
+import { db } from "../../../../firebase.config";
 import { grey } from "@mui/material/colors";
 import AddItemModal from "../../components/Modals/AddItemModal";
 import { renderSkeleton } from "../../utils/renderUtils";
