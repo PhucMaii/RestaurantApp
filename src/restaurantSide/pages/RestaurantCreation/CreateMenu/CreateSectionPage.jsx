@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Grid, Typography, Button, Alert } from '@mui/material';
 import { MenuImage, HelperTextStyled } from './styles';
 import MultipleValueTextField from '../../../components/MultipleValueTextField';
-import { db } from '../../../../firebase.config';
+import { db } from '../../../../../firebase.config';
 import {
   addDoc,
   collection,

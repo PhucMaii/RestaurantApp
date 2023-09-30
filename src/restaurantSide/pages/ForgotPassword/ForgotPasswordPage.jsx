@@ -3,7 +3,7 @@ import { grey } from '@mui/material/colors';
 import React, { useState } from 'react';
 import { GridContainerStyled } from './styles';
 import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '../../../firebase.config';
+import { auth } from '../../../../firebase.config';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');

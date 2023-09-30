@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Divider, LinearProgress, Grid, TextField, Button, Alert, Typography } from '@mui/material';
 import GoogleMaps from '../../../components/GoogleMaps';
-import { db } from '../../../../firebase.config';
+import { db } from '../../../../../firebase.config';
 import {
   GridContainerStyled,
   GridStyled,

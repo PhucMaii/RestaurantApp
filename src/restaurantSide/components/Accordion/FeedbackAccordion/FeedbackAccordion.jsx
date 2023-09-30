@@ -19,7 +19,7 @@ import StarOutlineOutlinedIcon from '@mui/icons-material/StarOutlineOutlined';
 import { convertTimestampToDate } from '../../../utils/time';
 import { reduceNameLength } from '../../../utils/string';
 import { yellow } from '@mui/material/colors';
-import { db } from '../../../../firebase.config';
+import { db } from '../../../../../firebase.config';
 import { doc, updateDoc } from 'firebase/firestore';
 
 function FeedbackAccordion({

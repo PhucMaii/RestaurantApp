@@ -10,7 +10,7 @@ import {
   Timestamp,
   collection,
 } from 'firebase/firestore';
-import { db } from '../../../firebase.config';
+import { db } from '../../../../firebase.config';
 import { convertToDay } from '../../utils/time';
 import useLocalStorage from '../../hooks/useLocalStorage';
 

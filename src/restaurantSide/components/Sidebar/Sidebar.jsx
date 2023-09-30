@@ -35,7 +35,7 @@ import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { TabStyled } from "./style";
 import { useNavigate, useLocation } from "react-router-dom";
 import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
-import { db } from '../../../firebase.config';
+import { db } from '../../../../firebase.config';
 import { renderSkeleton } from '../../utils/renderUtils';
 import useLocalStorage from '../../hooks/useLocalStorage';
 
