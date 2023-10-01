@@ -33,7 +33,7 @@ import {
   TopicImageGrid,
 } from './styles';
 import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
-import useLocalStorage from '../../hooks/useLocalStorage';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 import { ThemeContext } from '../../Provider/ThemeContext';
 
 export default function SigninPage() {

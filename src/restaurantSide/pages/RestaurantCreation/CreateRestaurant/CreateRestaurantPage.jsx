@@ -10,8 +10,8 @@ import {
   TopicImageGrid
 } from './styles';
 import { doc, updateDoc } from 'firebase/firestore';
-import useUploadFile from '../../../hooks/useUploadFile';
-import useLocalStorage from '../../../hooks/useLocalStorage';
+import useUploadFile from '../../../../hooks/useUploadFile';
+import useLocalStorage from '../../../../hooks/useLocalStorage';
 
 export default function CreateRestaurant({ goToNextStep }) {
   const [restaurantData, setRestaurantData] = useState({

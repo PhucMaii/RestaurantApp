@@ -12,7 +12,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import useLocalStorage from '../../../hooks/useLocalStorage';
+import useLocalStorage from '../../../../hooks/useLocalStorage';
 
 export default function CreateSectionPage({ goToNextStep }) {
   const [currSection, setCurrSection] = useState('');

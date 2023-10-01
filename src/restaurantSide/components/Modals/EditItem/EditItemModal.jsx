@@ -18,7 +18,7 @@ import { formatToTwoDecimalPlace } from "../../../utils/number";
 import AddOptionModal from "./AddOptionModal";
 import { nonNumericCharacter } from "../../../utils/constant";
 import { GridModal, ModalStyled } from "../style";
-import useUploadFile from "../../../hooks/useUploadFile";
+import useUploadFile from "../../../../hooks/useUploadFile";
 import { ThemeContext } from "../../../Provider/ThemeContext";
 
 function EditItemModal({

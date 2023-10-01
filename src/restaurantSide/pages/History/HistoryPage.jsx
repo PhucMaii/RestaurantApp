@@ -13,7 +13,7 @@ import {
 import { db } from '../../../../firebase.config';
 import { renderSkeleton } from '../../utils/renderUtils';
 import { convertToDay } from '../../utils/time';
-import useLocalStorage from '../../hooks/useLocalStorage';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 import { ThemeContext } from '../../Provider/ThemeContext';
 
 export default function HistoryPage() {

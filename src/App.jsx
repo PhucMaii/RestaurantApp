@@ -13,6 +13,10 @@ import UnprotectedRoutes from './restaurantSide/Routes/UnprotectedRoute';
 import FeedbackPage from "./restaurantSide/pages/Feedback/FeedbackPage";
 import { ThemeContext } from './restaurantSide/Provider/ThemeContext';
 import AccountPage from './restaurantSide/pages/Account/AccountPage';
+import CustomerSignup from './customerSide/pages/AuthPages/Signup/CustomerSignup';
+import CustomerInfo from './customerSide/pages/AuthPages/Signup/CustomerInfo'
+import CustomerProtectedRoutes from './customerSide/Routes/CustomerProtectedRoutes';
+import CustomerUnprotectedRoutes from './customerSide/Routes/CustomerUnProtectedRoutes';
 
 function App() {
   const { isDarkTheme } = useContext(ThemeContext);
@@ -36,6 +40,12 @@ function App() {
               <Route path="/history" element={<HistoryPage />} />
               <Route path="/feedback" element={<FeedbackPage />} />
               <Route path="/account" element={<AccountPage />} />
+            </Route>
+            <Route element={<CustomerProtectedRoutes />}>
+              <Route path="/customer/auth/signup/address" element={<CustomerInfo />} />
+            </Route>
+            <Route element={<CustomerUnprotectedRoutes />}>
+              <Route path="/customer/auth/signup" element={<CustomerSignup />} />
             </Route>
           </Routes>
         </BrowserRouter>

@@ -30,7 +30,7 @@ import { renderSkeleton } from '../../utils/renderUtils';
 import { orderStatusEnum } from '../../utils/constant';
 import OnHoldOrderModal from '../../components/Modals/OnHoldOrderModal';
 import { formatTime } from '../../utils/time';
-import useLocalStorage from '../../hooks/useLocalStorage';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 import { ThemeContext } from '../../Provider/ThemeContext';
 
 export default function HomePage() {

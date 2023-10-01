@@ -18,8 +18,8 @@ import {
   where,
 } from 'firebase/firestore';
 import { db } from '../../../../../firebase.config';
-import useUploadFile from '../../../hooks/useUploadFile';
-import useLocalStorage from '../../../hooks/useLocalStorage';
+import useUploadFile from '../../../../hooks/useUploadFile';
+import useLocalStorage from '../../../../hooks/useLocalStorage';
 import { ThemeContext } from '../../../Provider/ThemeContext';
 
 export default function CreateMenuPage() {
