@@ -11,6 +11,7 @@ import HistoryPage from "./restaurantSide/pages/History/HistoryPage";
 import MenuPage from "./restaurantSide/pages/Menu/MenuPage";
 import UnprotectedRoutes from './restaurantSide/Routes/UnprotectedRoute';
 import FeedbackPage from "./restaurantSide/pages/Feedback/FeedbackPage";
+import CustomerSigninPage from './customerSide/pages/AuthPages/Signin/CustomerSigninPage';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route element={<UnprotectedRoutes />}>
               <Route path="/" element={<SigninPage />} />
               <Route path="forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/customer/auth/signin" element={<CustomerSigninPage />} />
             </Route>
             <Route element={<ProtectedRoutes />}>
               <Route path="/home" element={<HomePage />} />
