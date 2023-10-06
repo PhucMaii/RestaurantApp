@@ -1,9 +1,12 @@
 import { Button, Grid, Modal, TextField } from '@mui/material'
-import React, { memo } from 'react';
+import React, { memo, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { GridModal } from '../style';
+import { ThemeContext } from '../../../Provider/ThemeContext';
 
 function EditItemNameModal({ item, handleClose, open, setItem }) {
+  const {isDarkTheme} = useContext(ThemeContext);
+  
   const handleChangeName = (e) => {
     setItem(item, "itemName", e.target.value, true);
   };
@@ -16,6 +19,7 @@ function EditItemNameModal({ item, handleClose, open, setItem }) {
         columnSpacing={2}
         container
         padding={3}
+        $isDarkTheme={isDarkTheme}
       >
         <Grid item xs={8}>
           <TextField

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Divider, Grid, Typography } from '@mui/material';
 import ResponsiveDrawer from '../../components/Sidebar/Sidebar';
 import FeedbackAccordion from '../../components/Accordion/FeedbackAccordion/FeedbackAccordion';
@@ -13,11 +13,13 @@ import {
 import { db } from '../../../../firebase.config';
 import { convertToDay } from '../../utils/time';
 import useLocalStorage from '../../hooks/useLocalStorage';
+import { ThemeContext } from '../../Provider/ThemeContext';
 
 export default function FeedbackPage() {
+  const [feedbackByDay, setFeedbackByDay] = useState({});
+  const {isDarkTheme} = useContext(ThemeContext);
   const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
   const feedbackCollection = collection(db, 'feedback');
-  const [feedbackByDay, setFeedbackByDay] = useState({});
   const userId = currUser.docId;
 
   useEffect(() => {
@@ -68,7 +70,7 @@ export default function FeedbackPage() {
           <Grid container rowGap={3} key={objKey}>
             <Grid item xs={12} key={objKey}>
               <Divider textAlign="left">
-                <Typography variant="h4">{objKey}</Typography>
+                <Typography color={isDarkTheme ? "secondary" : ""} variant="h4">{objKey}</Typography>
               </Divider>
             </Grid>
             <Grid container rowGap={3}>
@@ -95,7 +97,7 @@ export default function FeedbackPage() {
                 })
               ) : (
                 <Grid item xs={12} textAlign="center">
-                  <Typography fontWeight="bold" variant="h6">
+                  <Typography color={isDarkTheme ? "secondary" : ""} fontWeight="bold" variant="h6">
                     No Review So Far
                   </Typography>
                 </Grid>

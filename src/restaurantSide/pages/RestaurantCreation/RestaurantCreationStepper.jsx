@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -9,6 +9,7 @@ import CreateMenuPage from './CreateMenu/CreateMenuPage';
 import CreateRestaurantPage from './CreateRestaurant/CreateRestaurantPage';
 import CreateSectionPage from './CreateMenu/CreateSectionPage';
 import { useNavigate } from 'react-router-dom';
+import { ThemeContext } from '../../Provider/ThemeContext';
 
 const steps = [
   'Restaurant Details',
@@ -19,6 +20,7 @@ const steps = [
 export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set());
+  const { toggleDarkTheme } = useContext(ThemeContext);
   const navigate = useNavigate();
 
   const isStepOptional = (step) => {
@@ -45,6 +47,10 @@ export default function HorizontalLinearStepper() {
       navigate('/home');
     }
   }, [activeStep]);
+
+  useEffect(() => {
+    toggleDarkTheme(false);
+  }, [])
 
   return (
     <Box sx={{ width: '100%' }}>

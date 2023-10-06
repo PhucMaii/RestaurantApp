@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   InputAdornment,
@@ -34,6 +34,7 @@ import {
 } from './styles';
 import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import useLocalStorage from '../../hooks/useLocalStorage';
+import { ThemeContext } from '../../Provider/ThemeContext';
 
 export default function SigninPage() {
   const [email, setEmail] = useState('');
@@ -41,10 +42,16 @@ export default function SigninPage() {
   const [notification, setNotification] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { toggleDarkTheme } = useContext(ThemeContext);
   const [_currUser, setCurrUser] = useLocalStorage('current-user', {});
   const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.up('sm'));
   const navigate = useNavigate();
   const userCollection = collection(db, 'users');
+
+  // Reset the theme
+  useEffect(() => {
+    toggleDarkTheme(false);
+  }, [])
 
   const handleEmailAndPasswordLogin = async () => {
     if (password.length < 6) {

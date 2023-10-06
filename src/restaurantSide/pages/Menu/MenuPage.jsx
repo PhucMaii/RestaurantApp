@@ -6,13 +6,13 @@ import {
   Snackbar,
   Skeleton,
 } from "@mui/material";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import ItemCard from "../../components/ItemCard/ItemCard";
 import AddSectionModal from "../../components/Modals/AddSectionModal";
 import ResponsiveDrawer from "../../components/Sidebar/Sidebar";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import ReportIcon from '@mui/icons-material/Report';
-import { SectionStyled } from "./style";
+import { SectionContainer, SectionStyled } from "./style";
 import {
   addDoc,
   collection,
@@ -27,6 +27,7 @@ import { grey } from "@mui/material/colors";
 import AddItemModal from "../../components/Modals/AddItemModal";
 import { renderSkeleton } from "../../utils/renderUtils";
 import useLocalStorage from "../../hooks/useLocalStorage";
+import { ThemeContext } from "../../Provider/ThemeContext";
 
 export default function MenuPage() {
   const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
@@ -45,6 +46,7 @@ export default function MenuPage() {
   const [openAddSectionModal, setOpenAddSectionModal] = useState(false);
   const [openCreateMenuForm, setOpenCreateMenuForm] = useState(false);
   const [sections, setSections] = useState([]);
+  const {isDarkTheme} = useContext(ThemeContext);
   // Get Menu Doc Ref
   const menuCollection = collection(db, "menu");
   const restaurantRef = currUser.docId;
@@ -212,12 +214,12 @@ export default function MenuPage() {
             <ReportIcon fontSize="large" color="error" />
           </Grid>
           <Grid item xs={12} textAlign="center">
-            <Typography fontWeight="bold" variant="h6">
+            <Typography color={isDarkTheme ? 'secondary' : ''} fontWeight="bold" variant="h6">
               You Haven&apos;t Had A Menu Yet !!!
             </Typography>
           </Grid>
           <Grid item xs={12} textAlign="center">
-            <Typography fontWeight="bold" variant="h6">
+            <Typography color={isDarkTheme ? 'secondary' : ''} fontWeight="bold" variant="h6">
               Let&apos;s Start With Creating Sections!
             </Typography>
           </Grid>
@@ -248,11 +250,10 @@ export default function MenuPage() {
           </Snackbar>
 
           <Grid container rowGap={2}>
-            <Grid
+            <SectionContainer
               alignItems="center"
               container
               padding={1}
-              sx={{ border: '2px solid black' }}
             >
               <Grid item xs={12} md={9}>
                 <Grid container columnSpacing={5}>
@@ -260,11 +261,8 @@ export default function MenuPage() {
                     return (
                       <Grid item key={index}>
                         <SectionStyled
-                          currsection={
-                            currentSection.name === section.name
-                              ? 'true'
-                              : 'false'
-                          }
+                          $currsection={currentSection.name === section.name}
+                          $isDarkTheme={isDarkTheme}
                           padding={1}
                           onClick={() => {
                             setCurrentSection({ name: section.name, index });
@@ -286,7 +284,7 @@ export default function MenuPage() {
                   columnSpacing={2}
                 >
                   <Grid item>
-                    <Typography>Add Section</Typography>
+                    <Typography color={isDarkTheme ? 'secondary' : ''}>Add Section</Typography>
                   </Grid>
                   <Grid item>
                     <Fab
@@ -299,7 +297,7 @@ export default function MenuPage() {
                   </Grid>
                 </Grid>
               </Grid>
-            </Grid>
+            </SectionContainer>
             <Grid
               container
               columnSpacing={2}
@@ -328,7 +326,7 @@ export default function MenuPage() {
                           <Typography
                             fontWeight="bold"
                             variant="h4"
-                            sx={{ color: grey[500] }}
+                            color={isDarkTheme ? 'secondary' : grey[500]}
                           >
                             THIS SECTION IS EMPTY. LETS ADD SOME ITEMS INTO IT
                           </Typography>

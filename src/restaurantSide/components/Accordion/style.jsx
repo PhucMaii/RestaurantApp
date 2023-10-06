@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { green, grey, red } from '@mui/material/colors';
 
+
 const GreenText = styled(Typography)`
   color: ${green[700]};
 `;
@@ -17,8 +18,9 @@ const RedText = styled(Typography)`
 `;
 const AccordionStyled = styled(Accordion)`
   width: 1100px;
-  border: 2px solid black;
+  border: 1px solid ${(props) => props.$isDarkTheme ? grey[800] : grey[300]};
   border-radius: 15px !important;
+  box-shadow: rgba(${props => props.$isDarkTheme ? '0 0 0 / 20%' : '100, 100, 111, 0.2'}) 0px 7px 29px 0px !important;
   @media only screen and (max-width: 800px) {
     width: 100%;
   }
@@ -47,7 +49,7 @@ const AccordionSummaryFlexBox = styled(Box)`
   }
 `;
 const AccordionDetailsStyled = styled(AccordionDetails)`
-  background-color: ${grey[300]};
+  background-color: ${(props) => props.$isDarkTheme ? grey[800] : grey[300]};
   border-bottom-right-radius: 15px;
   border-bottom-left-radius: 15px;
 `;

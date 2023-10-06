@@ -23,15 +23,15 @@ export const convertTimestampToDate = (timestamp) => {
   return formattedDate;
 };
 
-// export const calculateDifferenceTime = (startTime, endTime) => {
-//   const start = startTime.toDate();
-//   const end = endTime.toDate();
-//   return Math.floor(end - start) / 1000;
-// };
-
 export const convertToDay = (timestamp) => {
   const formattedDate = convertTimestampToDate(timestamp);
   const date = formattedDate.split(' at ')[0];
+  return date;
+};
+
+export const convertToHours = (timestamp) => {
+  const formattedDate = convertTimestampToDate(timestamp);
+  const date = formattedDate.split(' at ')[1];
   return date;
 };
 
