@@ -35,6 +35,7 @@ import {
 import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { ThemeContext } from '../../Provider/ThemeContext';
+// import { isLargeScreen } from '../../utils/responsive';
 
 export default function SigninPage() {
   const [email, setEmail] = useState('');
@@ -44,9 +45,10 @@ export default function SigninPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { toggleDarkTheme } = useContext(ThemeContext);
   const [_currUser, setCurrUser] = useLocalStorage('current-user', {});
-  const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.up('sm'));
   const navigate = useNavigate();
   const userCollection = collection(db, 'users');
+  const isLargeScreen = useMediaQuery("(min-width: 1500px)");
+  console.log(isLargeScreen)
 
   // Reset the theme
   useEffect(() => {
@@ -161,12 +163,13 @@ export default function SigninPage() {
         </Grid>
       ) : (
         <>
-          <Grid item xs={12} sm={6}>
-            <InputGrid container rowGap={3}>
+          <Grid item xs={12} sm={6} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <InputGrid alignItems="center" container rowGap={3} p={isLargeScreen ? 20 : 10}>
               <Grid item xs={12}>
                 <TitleStyled
-                  variant={isSmallScreen ? 'h4' : 'h3'}
+                  variant="h3"
                   color="secondary"
+                  fontWeight="bold"
                 >
                   Welcome Back
                 </TitleStyled>

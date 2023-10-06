@@ -16,10 +16,11 @@ import AccountPage from './restaurantSide/pages/Account/AccountPage';
 
 function App() {
   const { isDarkTheme } = useContext(ThemeContext);
+  const theme =  isDarkTheme ? darkTheme : lightTheme
 
   return (
     <>
-      <ThemeProvider theme={isDarkTheme ? darkTheme : lightTheme}>
+      <ThemeProvider theme={theme}>
         <BrowserRouter>
           <Routes>
             <Route element={<UnprotectedRoutes />}>
