@@ -33,7 +33,9 @@ function GoogleMaps(props) {
   const [options, setOptions] = React.useState([]);
   const loaded = React.useRef(false);
 
-  props.onDataReceived(value);
+  React.useEffect(() => {
+    props.onDataReceived(value);
+  }, [value, props]);
 
   if (typeof window !== 'undefined' && !loaded.current) {
     if (!document.querySelector('#google-maps')) {

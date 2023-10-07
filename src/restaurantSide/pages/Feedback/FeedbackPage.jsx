@@ -12,7 +12,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../../../../firebase.config';
 import { convertToDay } from '../../utils/time';
-import useLocalStorage from '../../hooks/useLocalStorage';
+import useLocalStorage from '../../../hooks/useLocalStorage';
 import { ThemeContext } from '../../Provider/ThemeContext';
 
 export default function FeedbackPage() {
