@@ -13,17 +13,18 @@ import UnprotectedRoutes from './restaurantSide/Routes/UnprotectedRoute';
 import FeedbackPage from "./restaurantSide/pages/Feedback/FeedbackPage";
 import { ThemeContext } from './restaurantSide/Provider/ThemeContext';
 import AccountPage from './restaurantSide/pages/Account/AccountPage';
-import CustomerSignup from './customerSide/pages/AuthPages/Signup/CustomerSignup';
+import CustomerSignup from './customerSide/pages/AuthPages/Signup/CustomerSignUp';
 import CustomerInfo from './customerSide/pages/AuthPages/Signup/CustomerInfo'
 import CustomerProtectedRoutes from './customerSide/Routes/CustomerProtectedRoutes';
 import CustomerUnprotectedRoutes from './customerSide/Routes/CustomerUnProtectedRoutes';
 
 function App() {
   const { isDarkTheme } = useContext(ThemeContext);
+  const theme =  isDarkTheme ? darkTheme : lightTheme
 
   return (
     <>
-      <ThemeProvider theme={isDarkTheme ? darkTheme : lightTheme}>
+      <ThemeProvider theme={theme}>
         <BrowserRouter>
           <Routes>
             <Route element={<UnprotectedRoutes />}>

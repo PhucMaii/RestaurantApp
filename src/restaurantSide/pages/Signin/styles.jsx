@@ -2,17 +2,15 @@ import { FormControl, Grid, Typography } from '@mui/material';
 import styled from 'styled-components';
 
 const GridStyled = styled(Grid)`
-  width: 100%;
-  height: 100%;
+  width: 100vw;
 
-  @media only screen and (min-width: 701px) {
-    padding: 10%;
-    align-items: center;
-    justify-content: center;
-  }
+  // @media only screen and (min-width: 701px) {
+  //   padding: 10%;
+  //   align-items: center;
+  //   justify-content: center;
+  // }
 `;
 const TitleStyled = styled(Typography)`
-  font-weight: bold;
   margin-bottom: 50px;
   text-align: center;
 `;
@@ -28,6 +26,7 @@ const TopicImageStyled = styled.img`
   border-radius: 20px;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   width: 100%;
+  height: 100vh;
 `;
 const TopicImageGrid = styled(Grid)`
   @media only screen and (max-width: 600px) {
@@ -35,9 +34,7 @@ const TopicImageGrid = styled(Grid)`
   }
 `;
 const InputGrid = styled(Grid)`
-  @media only screen and (max-width: 700px) {
-    margin-top: 25%;
-  }
+  // height: 100vh;
 `;
 
 export {

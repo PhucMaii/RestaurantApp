@@ -13,7 +13,7 @@ import {
   TextField, 
   Typography 
 } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { ContainerGridStyled, LogoStyled } from '../styles'
 import { createUserWithEmailAndPassword, getAdditionalUserInfo, sendEmailVerification, signInWithPopup } from 'firebase/auth';
 import { auth, db, googleProvider } from '../../../../../firebase.config';
@@ -21,6 +21,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { addDoc, collection } from 'firebase/firestore';
 import useLocalStorage from '../../../../hooks/useLocalStorage';
+import { ThemeContext } from '../../../../restaurantSide/Provider/ThemeContext';
 
 export default function CustomerSignup() {
   const [customerData, setCustomerData] = useState({email: '', password: ''});
@@ -35,8 +36,13 @@ export default function CustomerSignup() {
   })
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const {toggleDarkTheme} = useContext(ThemeContext);
   const navigate = useNavigate();
   const customerCollection = collection(db, 'customers');
+
+  useEffect(() => {
+    toggleDarkTheme(false);
+  }, [])
 
   useEffect(() => {
     setIsFieldsValid(checkAllFieldsValid());
