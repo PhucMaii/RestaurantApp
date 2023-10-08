@@ -29,7 +29,6 @@ import {
   OutlinedInputStyled,
   TitleStyled,
   TopicImageStyled,
-  InputGrid,
   TopicImageGrid,
 } from './styles';
 import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
@@ -164,7 +163,7 @@ export default function SigninPage() {
       ) : (
         <>
           <Grid item xs={12} sm={6} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <InputGrid alignItems="center" container rowGap={3} p={isLargeScreen ? 20 : 10}>
+            <Grid alignItems="center" container rowGap={3} p={isLargeScreen ? 20 : 10}>
               <Grid item xs={12}>
                 <TitleStyled
                   variant="h3"
@@ -245,7 +244,7 @@ export default function SigninPage() {
                   Continue With Google
                 </Button>
               </Grid>
-            </InputGrid>
+            </Grid>
           </Grid>
           <TopicImageGrid item xs={12} sm={6}>
             <TopicImageStyled src="https://images.unsplash.com/photo-1623123095585-bfa830e3f8a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1287&q=80" />

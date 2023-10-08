@@ -5,6 +5,7 @@ import GoogleMaps from '../../../../restaurantSide/components/GoogleMaps'
 import useLocalStorage from '../../../../hooks/useLocalStorage';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../../../firebase.config';
+import { useNavigate } from 'react-router';
 
 export default function CustomerInfo() {
   const [customerData, setCustomerData] = useState({
@@ -20,6 +21,7 @@ export default function CustomerInfo() {
   });
   const [receivedAddress, setReceivedAddress] = useState(null);
   const [currentCustomer, setCurrentCustomer] = useLocalStorage('current-customer', {});
+  const navigate = useNavigate();
   const customerDocRef = doc(db, 'customers', currentCustomer.id);
 
   useEffect(() => {
@@ -53,11 +55,7 @@ export default function CustomerInfo() {
       await updateDoc(customerDocRef, customerData);
       setCurrentCustomer({...currentCustomer, ...customerData});
       // Navigate to Sign in Page, instead of this notification
-      setNotification({
-        on: true,
-        type: 'success',
-        message: 'Sign up Successfully'
-      })
+      navigate('/customer/auth/signin');
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setIsLoading(false);
     } catch(error) {

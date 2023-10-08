@@ -8,12 +8,13 @@ import {
   IconButton, 
   InputAdornment, 
   InputLabel, 
+  Link, 
   OutlinedInput, 
   Snackbar, 
   TextField, 
   Typography 
 } from '@mui/material'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ContainerGridStyled, LogoStyled } from '../styles'
 import { createUserWithEmailAndPassword, getAdditionalUserInfo, sendEmailVerification, signInWithPopup } from 'firebase/auth';
 import { auth, db, googleProvider } from '../../../../../firebase.config';
@@ -21,9 +22,8 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { addDoc, collection } from 'firebase/firestore';
 import useLocalStorage from '../../../../hooks/useLocalStorage';
-import { ThemeContext } from '../../../../restaurantSide/Provider/ThemeContext';
 
-export default function CustomerSignup() {
+export default function CustomerRegister() {
   const [customerData, setCustomerData] = useState({email: '', password: ''});
   const [_currentCustomer, setCurrentCustomer] = useLocalStorage('current-customer', {});
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -36,13 +36,8 @@ export default function CustomerSignup() {
   })
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const {toggleDarkTheme} = useContext(ThemeContext);
   const navigate = useNavigate();
   const customerCollection = collection(db, 'customers');
-
-  useEffect(() => {
-    toggleDarkTheme(false);
-  }, [])
 
   useEffect(() => {
     setIsFieldsValid(checkAllFieldsValid());
@@ -124,12 +119,7 @@ export default function CustomerSignup() {
         setCurrentCustomer({ ...userData, id: docRef._key.path.segments[1] });
         navigate("/customer/auth/signup/address");
       } else {
-        // Navigate to sign in page instead of this notification
-        setNotification({
-          on: true,
-          type: 'warning',
-          message: 'Email Existed'
-        })
+        navigate('/customer/auth/signin');
       }
       // Wait for 1 second to load the page
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -269,6 +259,11 @@ export default function CustomerSignup() {
                 <LogoStyled src="https://static-00.iconduck.com/assets.00/google-icon-2048x2048-czn3g8x8.png" />
                 Continue With Google
               </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="subtitle1">
+                Already have an account? <Link onClick={() => navigate('/customer/auth/signin')}>Click here</Link> to sign in
+              </Typography>
             </Grid>
           </ContainerGridStyled>
       )}

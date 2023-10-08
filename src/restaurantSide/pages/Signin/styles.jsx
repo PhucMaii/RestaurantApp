@@ -3,12 +3,6 @@ import styled from 'styled-components';
 
 const GridStyled = styled(Grid)`
   width: 100vw;
-
-  // @media only screen and (min-width: 701px) {
-  //   padding: 10%;
-  //   align-items: center;
-  //   justify-content: center;
-  // }
 `;
 const TitleStyled = styled(Typography)`
   margin-bottom: 50px;
@@ -23,7 +17,6 @@ const LogoStyled = styled.img`
   margin-right: 20px;
 `;
 const TopicImageStyled = styled.img`
-  border-radius: 20px;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   width: 100%;
   height: 100vh;
@@ -33,9 +26,6 @@ const TopicImageGrid = styled(Grid)`
     display: none;
   }
 `;
-const InputGrid = styled(Grid)`
-  // height: 100vh;
-`;
 
 export {
   GridStyled,
@@ -44,5 +34,4 @@ export {
   LogoStyled,
   TopicImageStyled,
   TopicImageGrid,
-  InputGrid,
 };

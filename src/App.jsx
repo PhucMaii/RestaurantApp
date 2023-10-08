@@ -13,10 +13,11 @@ import UnprotectedRoutes from './restaurantSide/Routes/UnprotectedRoute';
 import FeedbackPage from "./restaurantSide/pages/Feedback/FeedbackPage";
 import { ThemeContext } from './restaurantSide/Provider/ThemeContext';
 import AccountPage from './restaurantSide/pages/Account/AccountPage';
-import CustomerSignup from './customerSide/pages/AuthPages/Signup/CustomerSignUp';
+import CustomerRegister from './customerSide/pages/AuthPages/Signup/CustomerRegister';
 import CustomerInfo from './customerSide/pages/AuthPages/Signup/CustomerInfo'
 import CustomerProtectedRoutes from './customerSide/Routes/CustomerProtectedRoutes';
 import CustomerUnprotectedRoutes from './customerSide/Routes/CustomerUnProtectedRoutes';
+import CustomerSigninPage from './customerSide/pages/AuthPages/Signin/CustomerSigninPage';
 
 function App() {
   const { isDarkTheme } = useContext(ThemeContext);
@@ -46,7 +47,8 @@ function App() {
               <Route path="/customer/auth/signup/address" element={<CustomerInfo />} />
             </Route>
             <Route element={<CustomerUnprotectedRoutes />}>
-              <Route path="/customer/auth/signup" element={<CustomerSignup />} />
+              <Route path="/customer/auth/signup" element={<CustomerRegister />} />
+              <Route path="/customer/auth/signin" element={<CustomerSigninPage />} />
             </Route>
           </Routes>
         </BrowserRouter>
