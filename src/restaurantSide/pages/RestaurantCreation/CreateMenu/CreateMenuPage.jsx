@@ -20,7 +20,7 @@ import {
 import { db } from '../../../../../firebase.config';
 import useUploadFile from '../../../../hooks/useUploadFile';
 import useLocalStorage from '../../../../hooks/useLocalStorage';
-import { ThemeContext } from '../../../Provider/ThemeContext';
+import { ThemeContext } from '../../../../Provider/ThemeContext';
 
 export default function CreateMenuPage() {
   const [sections, setSections] = useState([]);

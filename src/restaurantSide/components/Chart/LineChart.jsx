@@ -7,7 +7,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { ThemeContext } from '../../Provider/ThemeContext';
+import { ThemeContext } from '../../../Provider/ThemeContext';
 import { blue, blueGrey, grey } from '@mui/material/colors';
 
 export default function LineChart({

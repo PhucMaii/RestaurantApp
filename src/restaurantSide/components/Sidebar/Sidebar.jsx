@@ -17,6 +17,9 @@ import {
   FormGroup,
   FormControlLabel,
   Grid,
+  Select,
+  FormControl,
+  MenuItem,
 } from "@mui/material";
 import PropTypes from "prop-types";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -35,28 +38,34 @@ import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/fire
 import { db } from '../../../../firebase.config';
 import { renderSkeleton } from '../../utils/renderUtils';
 import useLocalStorage from '../../../hooks/useLocalStorage';
-import { ThemeContext } from '../../Provider/ThemeContext';
+import { ThemeContext } from '../../../Provider/ThemeContext';
 import { useTheme } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 import TogggleThemeSwitch from '../ToggleThemeSwitch';
+import { LocaleContext } from '../../../Provider/LocaleContextAPI';
 
 const drawerWidth = 250;
 
 function ResponsiveDrawer({window, tab}) {
+  const [busySwitch, setBusySwitch] = useState(false);
   const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [openSwitch, setOpenSwitch] = useState(false);
-  const [busySwitch, setBusySwitch] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [notification, setNotification] = useState({});
+  const [openSwitch, setOpenSwitch] = useState(false);
+  // const [locale, setLocale] = useLocalStorage('language', 'en');
+  const value = useContext(LocaleContext);
+  console.log(value);
   const {isDarkTheme, toggleDarkTheme, toggleDarkThemeOnLocal} = useContext(ThemeContext);
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
+  const { t } = useTranslation();
   const docId = currUser.docId;
   const userCollection = collection(db, 'users');
   const userRef = query(userCollection, where('docId', '==', docId));
-  
+
   const iconList = [
     {
       text: 'Current Order',
@@ -84,7 +93,7 @@ function ResponsiveDrawer({window, tab}) {
       path: '/account',
     },
     {
-      text: 'Sign out',
+      text: 'Sign Out',
       icon: <LogoutIcon />,
       path: '/',
     },
@@ -92,14 +101,14 @@ function ResponsiveDrawer({window, tab}) {
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
-  };
+  };  
 
   const handleSignout = () => {
     toggleDarkTheme(false);
     toggleDarkThemeOnLocal(false);
     localStorage.clear();
-  };
-
+  };    
+  
   const fetchSwitch = async () => {
     setIsLoading(true)
     try {
@@ -225,7 +234,7 @@ function ResponsiveDrawer({window, tab}) {
                 >
                   <ListItemButton>
                     <ListItemIcon>{iconObj.icon}</ListItemIcon>
-                    <ListItemText primary={iconObj.text} />
+                    <ListItemText primary={t(iconObj.text)} />
                   </ListItemButton>
                 </TabStyled>
               </React.Fragment>
@@ -272,6 +281,14 @@ function ResponsiveDrawer({window, tab}) {
               <ListItemTextStyled primary={notification.message} />
             </ListItem>
           )}
+          <FormControl>
+            <Select value={value.locale} onChange={value.handleChangeLanguage}>
+              <MenuItem value="en">English</MenuItem>
+              <MenuItem value="fr">French</MenuItem>
+              <MenuItem value="vie">Vietnamese</MenuItem>
+            </Select>
+
+          </FormControl>
           <FormControlLabel
             control={
               <TogggleThemeSwitch checked={isDarkTheme} onChange={toggleThemeMode} />

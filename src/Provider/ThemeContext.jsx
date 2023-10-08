@@ -1,6 +1,6 @@
 import React, { useState, createContext } from 'react';
 import PropTypes from 'prop-types';
-import useLocalStorage from '../../hooks/useLocalStorage';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 const ThemeContext = createContext();
 
@@ -13,8 +13,6 @@ function ThemeContextAPI({ children }) {
     const toggleDarkThemeOnLocal = (value) => {
         setIsLocalDarkTheme(value);
     }
-    console.log(isDarkTheme)
-
     return (
         <ThemeContext.Provider value={{isDarkTheme, toggleDarkTheme, toggleDarkThemeOnLocal}}>
             {children}

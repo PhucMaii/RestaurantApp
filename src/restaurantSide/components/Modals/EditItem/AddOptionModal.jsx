@@ -3,7 +3,7 @@ import React, { memo, useContext, useState } from "react";
 import PropTypes from 'prop-types';
 import { nonNumericCharacter } from '../../../utils/constant';
 import { GridModal } from '../style';
-import { ThemeContext } from '../../../Provider/ThemeContext';
+import { ThemeContext } from '../../../../Provider/ThemeContext';
 
 function AddOptionModal({ handleClose, open, addOption }) {
     const [option, setOption] = useState({

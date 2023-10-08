@@ -27,7 +27,7 @@ import { grey } from "@mui/material/colors";
 import AddItemModal from "../../components/Modals/AddItemModal";
 import { renderSkeleton } from "../../utils/renderUtils";
 import useLocalStorage from "../../../hooks/useLocalStorage";
-import { ThemeContext } from "../../Provider/ThemeContext";
+import { ThemeContext } from "../../../Provider/ThemeContext";
 
 export default function MenuPage() {
   const [currUser, _setCurrUser] = useLocalStorage('current-user', {});

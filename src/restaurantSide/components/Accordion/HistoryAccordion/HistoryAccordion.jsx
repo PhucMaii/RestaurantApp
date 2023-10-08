@@ -22,7 +22,7 @@ import { formatToTwoDecimalPlace } from "../../../utils/number";
 import { reduceNameLength } from "../../../utils/string";
 import UserInfoModal from "../../Modals/UserInfoModal";
 import { yellow } from "@mui/material/colors";
-import { ThemeContext } from "../../../Provider/ThemeContext";
+import { ThemeContext } from "../../../../Provider/ThemeContext";
 
 function HistoryAccordion({
   customerName,

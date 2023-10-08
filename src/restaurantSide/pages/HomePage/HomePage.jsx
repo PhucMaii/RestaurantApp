@@ -31,7 +31,7 @@ import { orderStatusEnum } from '../../utils/constant';
 import OnHoldOrderModal from '../../components/Modals/OnHoldOrderModal';
 import { formatTime } from '../../utils/time';
 import useLocalStorage from '../../../hooks/useLocalStorage';
-import { ThemeContext } from '../../Provider/ThemeContext';
+import { ThemeContext } from '../../../Provider/ThemeContext';
 
 export default function HomePage() {
   const [currUser, _setCurrUser] = useLocalStorage('current-user', {});

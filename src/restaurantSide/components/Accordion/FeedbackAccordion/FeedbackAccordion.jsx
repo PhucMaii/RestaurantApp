@@ -21,7 +21,7 @@ import { reduceNameLength } from '../../../utils/string';
 import { yellow } from '@mui/material/colors';
 import { db } from '../../../../../firebase.config';
 import { doc, updateDoc } from 'firebase/firestore';
-import { ThemeContext } from '../../../Provider/ThemeContext';
+import { ThemeContext } from '../../../../Provider/ThemeContext';
 
 function FeedbackAccordion({
   customerName,

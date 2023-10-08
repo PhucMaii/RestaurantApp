@@ -13,7 +13,7 @@ import {
 import { db } from '../../../../firebase.config';
 import { convertToDay } from '../../utils/time';
 import useLocalStorage from '../../../hooks/useLocalStorage';
-import { ThemeContext } from '../../Provider/ThemeContext';
+import { ThemeContext } from '../../../Provider/ThemeContext';
 
 export default function FeedbackPage() {
   const [feedbackByDay, setFeedbackByDay] = useState({});

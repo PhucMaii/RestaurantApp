@@ -9,7 +9,7 @@ import CreateMenuPage from './CreateMenu/CreateMenuPage';
 import CreateRestaurantPage from './CreateRestaurant/CreateRestaurantPage';
 import CreateSectionPage from './CreateMenu/CreateSectionPage';
 import { useNavigate } from 'react-router-dom';
-import { ThemeContext } from '../../Provider/ThemeContext';
+import { ThemeContext } from '../../../Provider/ThemeContext';
 
 const steps = [
   'Restaurant Details',

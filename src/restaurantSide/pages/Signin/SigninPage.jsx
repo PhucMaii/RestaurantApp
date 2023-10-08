@@ -33,8 +33,7 @@ import {
 } from './styles';
 import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import useLocalStorage from '../../../hooks/useLocalStorage';
-import { ThemeContext } from '../../Provider/ThemeContext';
-// import { isLargeScreen } from '../../utils/responsive';
+import { ThemeContext } from '../../../Provider/ThemeContext';
 
 export default function SigninPage() {
   const [email, setEmail] = useState('');
@@ -47,7 +46,6 @@ export default function SigninPage() {
   const navigate = useNavigate();
   const userCollection = collection(db, 'users');
   const isLargeScreen = useMediaQuery("(min-width: 1500px)");
-  console.log(isLargeScreen)
 
   // Reset the theme
   useEffect(() => {

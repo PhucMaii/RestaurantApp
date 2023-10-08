@@ -5,7 +5,7 @@ import { formatToTwoDecimalPlace } from '../../utils/number';
 import EditItemModal from '../Modals/EditItem/EditItemModal';
 import PropTypes from 'prop-types';
 import {ButtonStyled, GridStyled} from './style'
-import { ThemeContext } from '../../Provider/ThemeContext';
+import { ThemeContext } from '../../../Provider/ThemeContext';
 
 function ItemCard({ deleteItem, item, saveChanges, setItem }) {
   const [isAvailable, setIsAvailable] = useState(item.availability);
