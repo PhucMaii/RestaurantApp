@@ -2,6 +2,12 @@ import styled from 'styled-components';
 import { ListItem, ListItemText } from '@mui/material';
 import { grey } from '@mui/material/colors';
 
+const FlagIconImg = styled.img`
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 10px;
+`
 const ListItemTextStyled = styled(ListItemText)`
     color: white;
 `
@@ -30,4 +36,4 @@ const TabStyled = styled(ListItem)`
   border-radius: 10px;
 `;
 
-export { ListItemTextStyled, TabStyled };
+export { FlagIconImg, ListItemTextStyled, TabStyled };

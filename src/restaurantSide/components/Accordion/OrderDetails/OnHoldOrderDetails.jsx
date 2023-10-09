@@ -1,4 +1,5 @@
 import React, { useState, useEffect, memo, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import {
   AccordionSummary,
@@ -45,6 +46,7 @@ function OnHoldOrderDetailsAccordion({
   const [isExpanded, setIsExpanded] = useState(true);
   const [openCustomerInfoModal, setOpenCustomerInfoModal] = useState(false);
   const [status, _setStatus] = useState(orderStatus);
+  const { t } = useTranslation();
   const {isDarkTheme} = useContext(ThemeContext);
   const orderRef = doc(db, 'orders', docId);
 
@@ -100,9 +102,9 @@ function OnHoldOrderDetailsAccordion({
               {reduceNameLength(customerName)}
             </ButtonStyled>
             {hasUtensils ? (
-              <GreenText variant="subtitle1">Need Utensils</GreenText>
+              <GreenText variant="subtitle1">{t("Need Utensils")}</GreenText>
             ) : (
-              <RedText variant="subtitle1">No Utensils</RedText>
+              <RedText variant="subtitle1">{t("No Utensils")}</RedText>
             )}
             <ButtonStyled
               disabled={status === orderStatusEnum.onHoldOrders}

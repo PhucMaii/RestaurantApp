@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   AppBar,
   Box,
@@ -31,8 +32,8 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 import TimerIcon from "@mui/icons-material/Timer";
-import { green, red, yellow } from "@mui/material/colors";
-import { ListItemTextStyled, TabStyled } from "./style";
+import { green, grey, red, yellow } from "@mui/material/colors";
+import { FlagIconImg, ListItemTextStyled, TabStyled } from "./style";
 import { useNavigate, useLocation } from "react-router-dom";
 import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../../../firebase.config';
@@ -40,7 +41,6 @@ import { renderSkeleton } from '../../utils/renderUtils';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { ThemeContext } from '../../../Provider/ThemeContext';
 import { useTheme } from '@mui/material/styles';
-import { useTranslation } from 'react-i18next';
 import TogggleThemeSwitch from '../ToggleThemeSwitch';
 import { LocaleContext } from '../../../Provider/LocaleContextAPI';
 
@@ -54,9 +54,7 @@ function ResponsiveDrawer({window, tab}) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notification, setNotification] = useState({});
   const [openSwitch, setOpenSwitch] = useState(false);
-  // const [locale, setLocale] = useLocalStorage('language', 'en');
-  const value = useContext(LocaleContext);
-  console.log(value);
+  const { locale, handleChangeLanguage } = useContext(LocaleContext);
   const {isDarkTheme, toggleDarkTheme, toggleDarkThemeOnLocal} = useContext(ThemeContext);
   const navigate = useNavigate();
   const location = useLocation();
@@ -208,13 +206,13 @@ function ResponsiveDrawer({window, tab}) {
                 control={
                   <Switch checked={openSwitch} onChange={toggleOpenSwitch} />
                 }
-                label="Open"
+                label={t("Open")}
               />
               <FormControlLabel
                 control={
                   <Switch checked={busySwitch} onChange={toggleBusySwitch} />
                 }
-                label="Busy"
+                label={t("Busy")}
               />
             </FormGroup>
           </Toolbar>
@@ -227,7 +225,7 @@ function ResponsiveDrawer({window, tab}) {
                   $isDarkTheme={isDarkTheme}
                   onClick={() => {
                     navigate(iconObj.path);
-                    if (iconObj.text === 'Sign out') {
+                    if (t(iconObj.text) === t('Sign Out')) {
                       handleSignout();
                     }
                   }}
@@ -278,18 +276,19 @@ function ResponsiveDrawer({window, tab}) {
           ) : (
             <ListItem>
               <ListItemIcon>{notification.icon}</ListItemIcon>
-              <ListItemTextStyled primary={notification.message} />
+              <ListItemTextStyled primary={t(notification.message)} />
             </ListItem>
           )}
           <FormControl>
-            <Select value={value.locale} onChange={value.handleChangeLanguage}>
-              <MenuItem value="en">English</MenuItem>
-              <MenuItem value="fr">French</MenuItem>
-              <MenuItem value="vie">Vietnamese</MenuItem>
+            <Select style={{backgroundColor: grey[200], height: '40px', maxWidth: '100px', minWidth: '50px'}} value={locale} onChange={handleChangeLanguage}>
+              <MenuItem value="en">
+                <FlagIconImg src="https://www.canada.ca/content/dam/pch/images/services/flag-canada/stanley-design-13-point-leaf.jpg"/> English
+              </MenuItem>
+              <MenuItem value="fr"><FlagIconImg src="https://www.countryflags.com/wp-content/uploads/france-flag-png-xl.png"/>French</MenuItem>
+              <MenuItem value="vie"><FlagIconImg src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/2000px-Flag_of_Vietnam.svg.png"/> Vietnamese</MenuItem>
             </Select>
-
           </FormControl>
-          <FormControlLabel
+          <FormControlLabel style={{marginLeft: '20px'}}
             control={
               <TogggleThemeSwitch checked={isDarkTheme} onChange={toggleThemeMode} />
             }
