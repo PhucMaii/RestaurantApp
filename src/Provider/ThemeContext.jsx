@@ -5,8 +5,8 @@ import useLocalStorage from '../hooks/useLocalStorage';
 const ThemeContext = createContext();
 
 function ThemeContextAPI({ children }) {
-    const [isDarkTheme, setIsDarkTheme] = useState(true);
-    const [_isLocalDarkTheme, setIsLocalDarkTheme] = useLocalStorage("isDarkTheme", false);
+    const [isLocalDarkTheme, setIsLocalDarkTheme] = useLocalStorage("isDarkTheme", false);
+    const [isDarkTheme, setIsDarkTheme] = useState(isLocalDarkTheme);
     const toggleDarkTheme = (value) => {
         setIsDarkTheme(value);
     }

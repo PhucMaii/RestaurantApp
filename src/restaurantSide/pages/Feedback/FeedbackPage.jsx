@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useTranslation } from "react-i18next";
 import { Divider, Grid, Typography } from '@mui/material';
 import ResponsiveDrawer from '../../components/Sidebar/Sidebar';
 import FeedbackAccordion from '../../components/Accordion/FeedbackAccordion/FeedbackAccordion';
@@ -18,6 +19,7 @@ import { ThemeContext } from '../../../Provider/ThemeContext';
 export default function FeedbackPage() {
   const [feedbackByDay, setFeedbackByDay] = useState({});
   const {isDarkTheme} = useContext(ThemeContext);
+  const { t } = useTranslation();
   const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
   const feedbackCollection = collection(db, 'feedback');
   const userId = currUser.docId;
@@ -70,7 +72,7 @@ export default function FeedbackPage() {
           <Grid container rowGap={3} key={objKey}>
             <Grid item xs={12} key={objKey}>
               <Divider textAlign="left">
-                <Typography color={isDarkTheme ? "secondary" : ""} variant="h4">{objKey}</Typography>
+                <Typography color={isDarkTheme ? "secondary" : ""} variant="h4">{t(objKey)}</Typography>
               </Divider>
             </Grid>
             <Grid container rowGap={3}>
@@ -98,7 +100,7 @@ export default function FeedbackPage() {
               ) : (
                 <Grid item xs={12} textAlign="center">
                   <Typography color={isDarkTheme ? "secondary" : ""} fontWeight="bold" variant="h6">
-                    No Review So Far
+                    {t("No Review So Far")}
                   </Typography>
                 </Grid>
               )}
