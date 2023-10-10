@@ -1,5 +1,6 @@
 import { Button, TextField, Modal, Grid } from '@mui/material';
 import React, { memo, useContext, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { nonNumericCharacter } from '../../../utils/constant';
 import { GridModal } from '../style';
@@ -12,6 +13,7 @@ function AddOptionModal({ handleClose, open, addOption }) {
         price: 0
     })
     const {isDarkTheme} = useContext(ThemeContext);
+    const { t } = useTranslation();
     const resetField = () => {
       setOption({
         availability: true,
@@ -33,8 +35,8 @@ function AddOptionModal({ handleClose, open, addOption }) {
         <Grid item xs={12}>
             <TextField
                 fullWidth 
-                label="Enter New Option Name"
-                placeholder="Enter Option Name..."
+                label={`${t("Enter")} ${t("Option Name")}`}
+                placeholder="eg: Less Spicy"
                 onChange={(e) => setOption({...option, name: e.target.value})}
                 value={option.name}
                 variant="filled"
@@ -43,8 +45,7 @@ function AddOptionModal({ handleClose, open, addOption }) {
         <Grid item xs={12}>
             <TextField 
                 fullWidth 
-                label="Enter New Option Price"
-                placeholder="Enter Option Price..."
+                label={`${t("Enter")} ${t("Option Price")}`}
                 onChange={(e) => setOption({...option, price: +e.target.value.replace(nonNumericCharacter, "")})}
                 value={option.price}
                 variant="filled"
@@ -52,14 +53,14 @@ function AddOptionModal({ handleClose, open, addOption }) {
         </Grid>
         <Grid columnSpacing={2} container justifyContent="right">
             <Grid item>
-                <Button color="error" onClick={handleClose} variant="contained">Cancel</Button>
+                <Button color="error" onClick={handleClose} variant="contained">{t("Cancel")}</Button>
             </Grid>
             <Grid item>
                 <Button color="primary" onClick={() => {
                     addOption(option);
                     resetField();
                     handleClose();
-                }} variant="contained">Add</Button>
+                }} variant="contained">{t("Add")}</Button>
             </Grid>
         </Grid>
       </GridModal>

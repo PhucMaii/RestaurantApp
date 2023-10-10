@@ -1,3 +1,5 @@
+import React, { memo, useContext, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Button,
   Divider,
@@ -10,7 +12,6 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import React, { memo, useContext, useState } from "react";
 import PropTypes from 'prop-types';
 import EditItemNameModal from "./EditItemNameModal";
 import EditOptionModal from "./EditOptionModal";
@@ -34,6 +35,7 @@ function EditItemModal({
   const [openEditOptionModal, setOpenEditOptionModal] = useState(false);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(null);
   const { isDarkTheme } = useContext(ThemeContext);
+  const { t } = useTranslation();
 
   const {
     allowUploadImage,
@@ -151,7 +153,7 @@ function EditItemModal({
                   }}
                   color="error"
                 >
-                  Delete This Item
+                  {t("Delete This Item")}
                 </Button>
               </Grid>
               <Grid item>
@@ -162,7 +164,7 @@ function EditItemModal({
                     saveChanges();
                   }}
                 >
-                  Save Changes
+                  {t("Save Changes")}
                 </Button>
               </Grid>
             </Grid>
@@ -172,11 +174,11 @@ function EditItemModal({
           </Grid>
           <Grid container>
             <Grid item xs={6}>
-              <Typography variant="h6">Price</Typography>
+              <Typography variant="h6">{t("Price")}</Typography>
             </Grid>
             <Grid item xs={6} textAlign="left">
               <TextField
-                label="Price"
+                label={t("Price")}
                 onChange={handlePriceChange}
                 value={`$${item.itemPrice}`}
                 variant={isDarkTheme ? "outlined" : "standard"}
@@ -205,7 +207,7 @@ function EditItemModal({
                         }}
                         checked={option.availability}
                       />
-                      Availability
+                      {t("Availability")}
                     </Typography>
                   </Grid>
                   <Grid item>
@@ -248,7 +250,7 @@ function EditItemModal({
           ))}
           <Grid item xs={12} textAlign="right">
             <Typography variant="subtitle1">
-              Add option{" "}
+              {t("Add")} {t("option")}
               <Fab onClick={handleOpenAddOptionModal} size="small">
                 +
               </Fab>
@@ -257,7 +259,7 @@ function EditItemModal({
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Item's Description"
+              label={t("Item's Description")}
               multiline
               value={item.itemDescription}
               onChange={(e) => {
@@ -269,14 +271,14 @@ function EditItemModal({
           </Grid>
           <Grid item xs={12}>
             <Typography fontWeight="bold" variant="h6">
-              Edit Item Image URL
+              {t("Edit")} {t("Item Image URL")}
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <TextField
               disabled={!allowUploadImageURL}
               fullWidth
-              label="Item's Image URL"
+              label={t("Item Image URL")}
               value={item.itemImageURL}
               onChange={(e) => {
                 setItem(item, "itemImageURL", e.target.value, true);
@@ -286,7 +288,7 @@ function EditItemModal({
             />
           </Grid>
           <Grid item xs={12}>
-            <Divider>Or</Divider>
+            <Divider>{t("Or")}</Divider>
           </Grid>
           <Grid item xs={12}>
             <input
@@ -304,7 +306,7 @@ function EditItemModal({
                 variant="outlined"
                 component="span"
               >
-                Upload
+                {t("Upload")}
               </Button>
             </label>
           </Grid>

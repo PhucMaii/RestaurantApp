@@ -1,11 +1,13 @@
-import { Button, Grid, Modal, TextField } from '@mui/material'
+import { Button, Grid, Modal, TextField } from '@mui/material';
 import React, { memo, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { GridModal } from '../style';
 import { ThemeContext } from '../../../../Provider/ThemeContext';
 
 function EditItemNameModal({ item, handleClose, open, setItem }) {
   const {isDarkTheme} = useContext(ThemeContext);
+  const { t } = useTranslation();
   
   const handleChangeName = (e) => {
     setItem(item, "itemName", e.target.value, true);
@@ -24,8 +26,8 @@ function EditItemNameModal({ item, handleClose, open, setItem }) {
         <Grid item xs={8}>
           <TextField
             fullWidth
-            label="Enter New Item's Name"
-            placeholder="Enter Name..."
+            label={`${t("Enter")} ${t("New Item's Name")}`}
+            placeholder={`${t("Enter")} ${t("Name")}...`}
             onChange={handleChangeName}
             value={item.name}
             variant="filled"
@@ -33,7 +35,7 @@ function EditItemNameModal({ item, handleClose, open, setItem }) {
         </Grid>
         <Grid item xs={4}>
           <Button onClick={handleClose} variant="contained">
-            Save
+            {t("Save")}
           </Button>
         </Grid>
       </GridModal>
