@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 import {
     Modal,
     Button
@@ -13,7 +14,11 @@ function OrderStatusModal({
   handleStatusButtonClick,
   status,
 }) {
-
+  const { t } = useTranslation();
+  const preparingStatus = t("Preparing");
+  const readyStatus = t("Ready");
+  const pickedupStatus = t("Picked Up");
+ 
   return (
     <Modal open={open} onClose={handleClose}>
       <ButtonGroupModal
@@ -26,23 +31,26 @@ function OrderStatusModal({
             <Button
               color="inherit"
               key={orderStatusEnum.preparing}
+              value={orderStatusEnum.preparing}
               onClick={handleStatusButtonClick}
             >
-              Preparing
+              {preparingStatus}
             </Button>
             <Button
               color="warning"
               key={orderStatusEnum.ready}
+              value={orderStatusEnum.ready}
               onClick={handleStatusButtonClick}
             >
-              Ready
+              {readyStatus}
             </Button>
             <Button
               color="success"
               key={orderStatusEnum.pickedUp}
+              value={orderStatusEnum.pickedUp}
               onClick={handleStatusButtonClick}
             >
-              Picked Up
+              {pickedupStatus}
             </Button>
           </>
         )}
@@ -51,16 +59,18 @@ function OrderStatusModal({
             <Button
               color="warning"
               key={orderStatusEnum.ready}
+              value={orderStatusEnum.ready}
               onClick={handleStatusButtonClick}
             >
-              Ready
+              {readyStatus}
             </Button>
             <Button
               color="success"
               key={orderStatusEnum.pickedUp}
+              value={orderStatusEnum.pickedUp}
               onClick={handleStatusButtonClick}
             >
-              Picked Up
+              {pickedupStatus}
             </Button>
           </>
         )}
@@ -68,9 +78,10 @@ function OrderStatusModal({
           <Button
             color="success"
             key={orderStatusEnum.pickedUp}
+            value={orderStatusEnum.pickedUp}
             onClick={handleStatusButtonClick}
           >
-            Picked Up
+            {pickedupStatus}
           </Button>
         )}
       </ButtonGroupModal>
