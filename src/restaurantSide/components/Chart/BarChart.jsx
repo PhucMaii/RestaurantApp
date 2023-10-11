@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { Grid, TextField } from '@mui/material';
 import ReactApexChart from 'react-apexcharts';
@@ -6,6 +7,7 @@ import ReactApexChart from 'react-apexcharts';
 export default function BarChart({todayOrders}) {
     const [foodFrequencyData, setFoodFrequencyData] = useState([]);
     const [numberOfItems, setNumberOfItems] = useState(5);
+    const { t } = useTranslation();
 
     useEffect(() => {
         setFoodFrequencyData(calculateQuantity(todayOrders));
@@ -54,7 +56,7 @@ export default function BarChart({todayOrders}) {
         enabled: false
       },
       title: {
-        text: 'Most Popular Items'
+        text: t('Most Popular Items')
       },
       xaxis: {
         categories: [...Object.keys(renderChartBar(foodFrequencyData, numberOfItems))],
@@ -66,7 +68,7 @@ export default function BarChart({todayOrders}) {
             <Grid item xs={12} sm={3} >
             <TextField 
                 fullWidth
-                label="Number of Most Popular Items"
+                label={t("Number of Most Popular Items")}
                 onChange={(e) => setNumberOfItems(e.target.value)}
                 type="number"
                 value={numberOfItems}
