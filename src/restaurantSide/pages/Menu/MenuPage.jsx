@@ -7,6 +7,7 @@ import {
   Skeleton,
 } from "@mui/material";
 import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import ItemCard from "../../components/ItemCard/ItemCard";
 import AddSectionModal from "../../components/Modals/AddSectionModal";
 import ResponsiveDrawer from "../../components/Sidebar/Sidebar";
@@ -27,7 +28,7 @@ import { grey } from "@mui/material/colors";
 import AddItemModal from "../../components/Modals/AddItemModal";
 import { renderSkeleton } from "../../utils/renderUtils";
 import useLocalStorage from "../../../hooks/useLocalStorage";
-import { ThemeContext } from "../../Provider/ThemeContext";
+import { ThemeContext } from "../../../Provider/ThemeContext";
 
 export default function MenuPage() {
   const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
@@ -47,6 +48,7 @@ export default function MenuPage() {
   const [openCreateMenuForm, setOpenCreateMenuForm] = useState(false);
   const [sections, setSections] = useState([]);
   const {isDarkTheme} = useContext(ThemeContext);
+  const { t } = useTranslation();
   // Get Menu Doc Ref
   const menuCollection = collection(db, "menu");
   const restaurantRef = currUser.docId;
@@ -284,7 +286,7 @@ export default function MenuPage() {
                   columnSpacing={2}
                 >
                   <Grid item>
-                    <Typography color={isDarkTheme ? 'secondary' : ''}>Add Section</Typography>
+                    <Typography color={isDarkTheme ? 'secondary' : ''}>{t("Add")} {t("section")}</Typography>
                   </Grid>
                   <Grid item>
                     <Fab

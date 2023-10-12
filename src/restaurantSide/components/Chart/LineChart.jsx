@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import ReactApexChart from 'react-apexcharts';
 import { convertToDay } from '../../utils/time';
@@ -7,7 +8,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { ThemeContext } from '../../Provider/ThemeContext';
+import { ThemeContext } from '../../../Provider/ThemeContext';
 import { blue, blueGrey, grey } from '@mui/material/colors';
 
 export default function LineChart({
@@ -17,6 +18,7 @@ export default function LineChart({
     todayOrders,
 }) {
     const {isDarkTheme} = useContext(ThemeContext);
+    const { t } = useTranslation();
     const getCategories = () => {
         const categories = [];
         for (let i = 1; i <= 24; i++) {
@@ -85,7 +87,7 @@ export default function LineChart({
             curve: 'smooth'
         },
         title: {
-            text: 'Today Sales vs Last Week Sales',
+            text: t('Today Sales vs Last Week Sales'),
             align: 'left',
         },
         grid: {
@@ -101,12 +103,12 @@ export default function LineChart({
         xaxis: {
             categories: [...getCategories()],
             title: {
-                text: 'Month'
+                text: t('Month')
             }
         },
         yaxis: {
             title: {
-                text: 'Total Sales'
+                text: t('Total Sales')
             },
         },
         legend: {
@@ -120,7 +122,7 @@ export default function LineChart({
 
     const series = [
         {
-            name: "Today",
+            name: t("Today"),
             data: renderChart(calculateTotalSalesPerHour(todayOrders))
         },
         {
@@ -136,7 +138,7 @@ export default function LineChart({
                     <DemoContainer components={['DatePicker']} >
                         <DatePicker
                             disableFuture={true}
-                            label="Compared Date"
+                            label={t("Compared Date")}
                             value={comparedDate}
                             onChange={handleDateChange}
                         />

@@ -1,4 +1,5 @@
 import React, { useState, memo, useContext } from "react";
+import { useTranslation } from "react-i18next";
 import PropTypes from 'prop-types';
 import {
   AccordionSummary,
@@ -22,7 +23,7 @@ import { formatToTwoDecimalPlace } from "../../../utils/number";
 import { reduceNameLength } from "../../../utils/string";
 import UserInfoModal from "../../Modals/UserInfoModal";
 import { yellow } from "@mui/material/colors";
-import { ThemeContext } from "../../../Provider/ThemeContext";
+import { ThemeContext } from "../../../../Provider/ThemeContext";
 
 function HistoryAccordion({
   customerName,
@@ -38,6 +39,7 @@ function HistoryAccordion({
 }) {
   const [openCustomerInfoModal, setOpenCustomerInfoModal] = useState(false);
   const {isDarkTheme} = useContext(ThemeContext);
+  const { t } = useTranslation();
 
   const handleOpenCustomerInfoModal = (e) => {
     e.stopPropagation();
@@ -95,18 +97,18 @@ function HistoryAccordion({
             </ButtonStyled>
             <Box>
               <TypographyStyled fontWeight="bold" variant="subtitle1">
-                Pick up {itemsQuantity} items
+                {t("Pick up")} {itemsQuantity} {t("items")}
               </TypographyStyled>
               <Typography fontWeight="bold" variant="subtitle1">
-                Total: ${formatToTwoDecimalPlace(subTotal * 1.12)}
+                {t("Total")}: ${formatToTwoDecimalPlace(subTotal * 1.12)}
               </Typography>
             </Box>
             <ButtonStyled disabled variant="contained" color="inherit">
-              Picked up
+              {t("Picked Up")}
             </ButtonStyled>
             <Box display="flex" alignItems="center" gap={2}>
               <Box>
-                <Typography variant="h5">Review:</Typography>
+                <Typography variant="h5">{t("Review")}:</Typography>
               </Box>
               <Box>
                 {renderStarIcon()}
@@ -118,7 +120,7 @@ function HistoryAccordion({
           <Grid container>
             <Grid item xs={12} sm={6} textAlign="center">
               <Typography fontWeight="bold" variant="h4">
-                Order
+                {t("Order")}
               </Typography>
               {items.length > 0 && items.map((item, index) => {
                 return (
@@ -165,7 +167,7 @@ function HistoryAccordion({
                     <Grid container rowGap={2}>
                       <Grid textAlign="center" item xs={2}></Grid>
                       <Grid item xs={7} textAlign="left">
-                        <Typography fontWeight="bold">Total</Typography>
+                        <Typography fontWeight="bold">{t("Total")}</Typography>
                       </Grid>
                       <Grid item xs={3} textAlign="right">
                         <Typography fontWeight="bold">
@@ -187,7 +189,7 @@ function HistoryAccordion({
               <Grid container justifyContent="center">
                 <Grid item mt={2} xs={12}>
                   <Typography fontWeight="bolder" variant="h4">
-                    Review
+                    {t("Review")}
                   </Typography>
                 </Grid>
                 <Grid item textAlign="center" p={3}>
@@ -197,13 +199,13 @@ function HistoryAccordion({
               <Grid container justifyContent="center" rowGap={3} mt={3}>
                 <Grid item>
                   <Typography fontWeight="bolder" variant="h4">
-                    Total Price
+                    {t("Total Price")}
                   </Typography>
                 </Grid>
                 <Grid container p={2} rowGap={3}>
                   <Grid textAlign="left" item xs={6}>
                     <Typography fontWeight="bolder" variant="subtitle1">
-                      Subtotal
+                      {t("Subtotal")}
                     </Typography>
                   </Grid>
                   <Grid textAlign="right" item xs={6}>
@@ -216,7 +218,7 @@ function HistoryAccordion({
                   </Grid>
                   <Grid textAlign="left" item xs={6}>
                     <Typography fontWeight="bolder" variant="subtitle1">
-                      Tax
+                      {t("Tax")}
                     </Typography>
                   </Grid>
                   <Grid textAlign="right" item xs={6}>
@@ -229,7 +231,7 @@ function HistoryAccordion({
                   </Grid>
                   <Grid textAlign="left" item xs={6}>
                     <Typography fontWeight="bolder" variant="subtitle1">
-                      Total
+                      {t("Total")}
                     </Typography>
                   </Grid>
                   <Grid textAlign="right" item xs={6}>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import ResponsiveDrawer from '../../components/Sidebar/Sidebar';
 import { and, collection, getDocs, or, query, where } from 'firebase/firestore';
@@ -20,6 +21,7 @@ export default function AccountPage() {
     const [isFetching, setIsFetching] = useState(false);
     const [todayOrders, setTodayOrders] = useState([]);
     const [comparedDayOrders, setComparedDayOrders] = useState([]);
+    const { t } = useTranslation();
     const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
     const restaurantId = currUser.docId;
     // Get query date => today and same day last week
@@ -107,7 +109,7 @@ export default function AccountPage() {
                 ) : (
                     <Grid container rowGap={3}>
                         <Grid item xs={12}>
-                            <Divider textAlign="left"><Typography variant="h4" fontWeight="bold">Analytics</Typography></Divider>
+                            <Divider textAlign="left"><Typography variant="h4" fontWeight="bold">{t("Analytics")}</Typography></Divider>
                         </Grid>
                         <Grid item xs={12}>
                             <LineChart 

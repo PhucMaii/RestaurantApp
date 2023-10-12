@@ -1,4 +1,5 @@
 import React, { useState, memo, useContext } from 'react';
+import { useTranslation } from "react-i18next";
 import PropTypes from 'prop-types';
 import {
   AccordionSummary,
@@ -21,7 +22,7 @@ import { reduceNameLength } from '../../../utils/string';
 import { yellow } from '@mui/material/colors';
 import { db } from '../../../../../firebase.config';
 import { doc, updateDoc } from 'firebase/firestore';
-import { ThemeContext } from '../../../Provider/ThemeContext';
+import { ThemeContext } from '../../../../Provider/ThemeContext';
 
 function FeedbackAccordion({
   customerName,
@@ -36,6 +37,7 @@ function FeedbackAccordion({
   const [isExpanded, setIsExpanded] = useState(false);
   const [responseMsg, setResponseMsg] = useState('');
   const {isDarkTheme} = useContext(ThemeContext);
+  const { t } = useTranslation();
   const docRef = doc(db, 'feedback', docId);
 
   const handleAccordionChange = () => {
@@ -128,7 +130,7 @@ function FeedbackAccordion({
             {!isExpanded ? (
               <Box display="flex" alignItems="center" gap={2}>
                 <Box>
-                  <Typography variant="h6">Review:</Typography>
+                  <Typography variant="h6">{t("Review")}:</Typography>
                 </Box>
                 <Box>
                   {reviewMsg.length >= 60
@@ -149,7 +151,7 @@ function FeedbackAccordion({
               <Grid container justifyContent="center" rowGap={2}>
                 <Grid item xs={12}>
                   <Typography fontWeight="bold" variant="h4">
-                    Review
+                    {t("Review")}
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
@@ -166,7 +168,7 @@ function FeedbackAccordion({
                     onChange={(e) => {
                       setResponseMsg(e.target.value);
                     }}
-                    placeholder="Reply..."
+                    placeholder={`${t("Reply")}...`}
                     rows={5}
                     value={responseMsg}
                     variant="filled"
@@ -176,7 +178,7 @@ function FeedbackAccordion({
                   <Grid container justifyContent="right" columnSpacing={2}>
                     <Grid item>
                       <Button onClick={handleSkipButton} variant="contained">
-                        Skip
+                        {t("Skip")}
                       </Button>
                     </Grid>
                     <Grid item>
@@ -185,7 +187,7 @@ function FeedbackAccordion({
                         color="success"
                         variant="contained"
                       >
-                        Submit
+                        {t("Submit")}
                       </Button>
                     </Grid>
                   </Grid>

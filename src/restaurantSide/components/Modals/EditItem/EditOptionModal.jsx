@@ -1,12 +1,14 @@
 import { Button, TextField, Modal, Grid } from '@mui/material';
 import React, { memo, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { nonNumericCharacter } from '../../../utils/constant';
 import { GridModal } from '../style';
-import { ThemeContext } from '../../../Provider/ThemeContext';
+import { ThemeContext } from '../../../../Provider/ThemeContext';
 
 function EditOptionModal({ handleClose, open, option, setOption }) {
   const {isDarkTheme} = useContext(ThemeContext);
+  const { t } = useTranslation();
   
   const handlePriceChange = (e) => {
     // Remove non-numeric character
@@ -26,8 +28,8 @@ function EditOptionModal({ handleClose, open, option, setOption }) {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            label="Update Option Name"
-            placeholder="Enter Option Name..."
+            label={t("Update Option Name")}
+            placeholder={`${t("Enter")} ${t("Option Name")}...`}
             onChange={(e) => setOption(option, "name", e.target.value)}
             value={option.name}
             variant="filled"
@@ -36,8 +38,7 @@ function EditOptionModal({ handleClose, open, option, setOption }) {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            label="Update Option Price"
-            placeholder="Enter Option Price..."
+            label={t("Update Option Price")}
             onChange={handlePriceChange}
             value={option.price}
             variant="filled"
@@ -46,7 +47,7 @@ function EditOptionModal({ handleClose, open, option, setOption }) {
         <Grid container justifyContent="right">
           <Grid item>
             <Button onClick={handleClose} color="primary" variant="contained">
-              Save
+              {t("Save")}
             </Button>
           </Grid>
         </Grid>

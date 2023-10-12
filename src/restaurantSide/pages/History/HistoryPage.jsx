@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Grid, Divider, Typography } from '@mui/material';
 import HistoryAccordion from '../../components/Accordion/HistoryAccordion/HistoryAccordion';
 import ResponsiveDrawer from '../../components/Sidebar/Sidebar';
@@ -14,13 +15,14 @@ import { db } from '../../../../firebase.config';
 import { renderSkeleton } from '../../utils/renderUtils';
 import { convertToDay } from '../../utils/time';
 import useLocalStorage from '../../../hooks/useLocalStorage';
-import { ThemeContext } from '../../Provider/ThemeContext';
+import { ThemeContext } from '../../../Provider/ThemeContext';
 
 export default function HistoryPage() {
   const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
   const [orderHistoryByDay, setOrderHistoryByDay] = useState({});
   const [isFetching, setIsFetching] = useState(false);
   const {isDarkTheme} = useContext(ThemeContext);
+  const { t } = useTranslation();
   const historyCollection = collection(db, 'history');
   const feedbackCollection = collection(db, 'feedback');
   const userId = currUser.docId;
@@ -54,7 +56,7 @@ export default function HistoryPage() {
             Object.keys(review).length !== 0
               ? { ...review }
               : {
-                  customerReview: 'No Review For This Order Yet',
+                  customerReview: t('No Review For This Order Yet'),
                   reviewStars: 5,
                 },
         };
@@ -110,7 +112,7 @@ export default function HistoryPage() {
           <Grid container justifyContent="center" key={index} rowGap={3}>
             <Grid item xs={12} key={`grid-${index}`}>
               <Divider textAlign="left">
-                <Typography color={isDarkTheme ? "secondary" : ""} variant="h4">{objKey}</Typography>
+                <Typography color={isDarkTheme ? "secondary" : ""} variant="h4">{t(objKey)}</Typography>
               </Divider>
             </Grid>
             <Grid container rowGap={3}>
@@ -160,7 +162,7 @@ export default function HistoryPage() {
               ) : (
                 <Grid item xs={12} textAlign="center">
                   <Typography color={isDarkTheme ? "secondary" : ""} fontWeight="bold" variant="h6">
-                    No Review So Far
+                    {t("No Review So Far")}
                   </Typography>
                 </Grid>
               )}

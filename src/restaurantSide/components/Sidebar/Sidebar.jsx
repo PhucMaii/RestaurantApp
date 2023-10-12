@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   AppBar,
   Box,
@@ -17,6 +18,9 @@ import {
   FormGroup,
   FormControlLabel,
   Grid,
+  Select,
+  FormControl,
+  MenuItem,
 } from "@mui/material";
 import PropTypes from "prop-types";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -28,35 +32,38 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
 import TimerIcon from "@mui/icons-material/Timer";
-import { green, red, yellow } from "@mui/material/colors";
-import { ListItemTextStyled, TabStyled } from "./style";
+import { green, grey, red, yellow } from "@mui/material/colors";
+import { FlagIconImg, ListItemTextStyled, TabStyled } from "./style";
 import { useNavigate, useLocation } from "react-router-dom";
 import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../../../firebase.config';
 import { renderSkeleton } from '../../utils/renderUtils';
 import useLocalStorage from '../../../hooks/useLocalStorage';
-import { ThemeContext } from '../../Provider/ThemeContext';
+import { ThemeContext } from '../../../Provider/ThemeContext';
 import { useTheme } from '@mui/material/styles';
 import TogggleThemeSwitch from '../ToggleThemeSwitch';
+import { LocaleContext } from '../../../Provider/LocaleContextAPI';
 
 const drawerWidth = 250;
 
 function ResponsiveDrawer({window, tab}) {
+  const [busySwitch, setBusySwitch] = useState(false);
   const [currUser, _setCurrUser] = useLocalStorage('current-user', {});
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [openSwitch, setOpenSwitch] = useState(false);
-  const [busySwitch, setBusySwitch] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [notification, setNotification] = useState({});
+  const [openSwitch, setOpenSwitch] = useState(false);
+  const { locale, handleChangeLanguage } = useContext(LocaleContext);
   const {isDarkTheme, toggleDarkTheme, toggleDarkThemeOnLocal} = useContext(ThemeContext);
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
+  const { t } = useTranslation();
   const docId = currUser.docId;
   const userCollection = collection(db, 'users');
   const userRef = query(userCollection, where('docId', '==', docId));
-  
+
   const iconList = [
     {
       text: 'Current Order',
@@ -84,7 +91,7 @@ function ResponsiveDrawer({window, tab}) {
       path: '/account',
     },
     {
-      text: 'Sign out',
+      text: 'Sign Out',
       icon: <LogoutIcon />,
       path: '/',
     },
@@ -92,14 +99,14 @@ function ResponsiveDrawer({window, tab}) {
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
-  };
+  };  
 
   const handleSignout = () => {
     toggleDarkTheme(false);
     toggleDarkThemeOnLocal(false);
     localStorage.clear();
-  };
-
+  };    
+  
   const fetchSwitch = async () => {
     setIsLoading(true)
     try {
@@ -199,13 +206,13 @@ function ResponsiveDrawer({window, tab}) {
                 control={
                   <Switch checked={openSwitch} onChange={toggleOpenSwitch} />
                 }
-                label="Open"
+                label={t("Open")}
               />
               <FormControlLabel
                 control={
                   <Switch checked={busySwitch} onChange={toggleBusySwitch} />
                 }
-                label="Busy"
+                label={t("Busy")}
               />
             </FormGroup>
           </Toolbar>
@@ -218,14 +225,14 @@ function ResponsiveDrawer({window, tab}) {
                   $isDarkTheme={isDarkTheme}
                   onClick={() => {
                     navigate(iconObj.path);
-                    if (iconObj.text === 'Sign out') {
+                    if (t(iconObj.text) === t('Sign Out')) {
                       handleSignout();
                     }
                   }}
                 >
                   <ListItemButton>
                     <ListItemIcon>{iconObj.icon}</ListItemIcon>
-                    <ListItemText primary={iconObj.text} />
+                    <ListItemText primary={t(iconObj.text)} />
                   </ListItemButton>
                 </TabStyled>
               </React.Fragment>
@@ -269,10 +276,19 @@ function ResponsiveDrawer({window, tab}) {
           ) : (
             <ListItem>
               <ListItemIcon>{notification.icon}</ListItemIcon>
-              <ListItemTextStyled primary={notification.message} />
+              <ListItemTextStyled primary={t(notification.message)} />
             </ListItem>
           )}
-          <FormControlLabel
+          <FormControl>
+            <Select style={{backgroundColor: grey[200], height: '40px', maxWidth: '100px', minWidth: '50px'}} value={locale} onChange={handleChangeLanguage}>
+              <MenuItem value="en">
+                <FlagIconImg src="https://www.canada.ca/content/dam/pch/images/services/flag-canada/stanley-design-13-point-leaf.jpg"/> English
+              </MenuItem>
+              <MenuItem value="fr"><FlagIconImg src="https://www.countryflags.com/wp-content/uploads/france-flag-png-xl.png"/>French</MenuItem>
+              <MenuItem value="vie"><FlagIconImg src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Flag_of_Vietnam.svg/2000px-Flag_of_Vietnam.svg.png"/> Vietnamese</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControlLabel style={{marginLeft: '20px'}}
             control={
               <TogggleThemeSwitch checked={isDarkTheme} onChange={toggleThemeMode} />
             }

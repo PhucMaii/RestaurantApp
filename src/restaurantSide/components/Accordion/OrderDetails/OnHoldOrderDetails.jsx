@@ -1,4 +1,5 @@
 import React, { useState, useEffect, memo, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import {
   AccordionSummary,
@@ -25,7 +26,7 @@ import { calculateETA, convertTimestampToDate } from '../../../utils/time';
 import { formatToTwoDecimalPlace } from '../../../utils/number';
 import { reduceNameLength } from '../../../utils/string';
 import { orderStatusEnum } from '../../../utils/constant';
-import { ThemeContext } from '../../../Provider/ThemeContext';
+import { ThemeContext } from '../../../../Provider/ThemeContext';
 
 function OnHoldOrderDetailsAccordion({
   customerEmail,
@@ -45,6 +46,7 @@ function OnHoldOrderDetailsAccordion({
   const [isExpanded, setIsExpanded] = useState(true);
   const [openCustomerInfoModal, setOpenCustomerInfoModal] = useState(false);
   const [status, _setStatus] = useState(orderStatus);
+  const { t } = useTranslation();
   const {isDarkTheme} = useContext(ThemeContext);
   const orderRef = doc(db, 'orders', docId);
 
@@ -100,9 +102,9 @@ function OnHoldOrderDetailsAccordion({
               {reduceNameLength(customerName)}
             </ButtonStyled>
             {hasUtensils ? (
-              <GreenText variant="subtitle1">Need Utensils</GreenText>
+              <GreenText variant="subtitle1">{t("Need Utensils")}</GreenText>
             ) : (
-              <RedText variant="subtitle1">No Utensils</RedText>
+              <RedText variant="subtitle1">{t("No Utensils")}</RedText>
             )}
             <ButtonStyled
               disabled={status === orderStatusEnum.onHoldOrders}
@@ -115,7 +117,7 @@ function OnHoldOrderDetailsAccordion({
                   : 'success'
               }
             >
-              {status}
+              {t(status)}
             </ButtonStyled>
             {status !== orderStatusEnum.pickedUp && (
               <TimerFlexBox>
@@ -126,10 +128,10 @@ function OnHoldOrderDetailsAccordion({
             )}
             <Box direction="column">
               <TypographyStyled fontWeight="bold" variant="subtitle1">
-                Pick up {itemsQuantity} items
+                {t("Pick up")} {itemsQuantity} {t("items")}
               </TypographyStyled>
               <Typography fontWeight="bold" variant="subtitle1">
-                Total: ${formatToTwoDecimalPlace(subTotal * 1.12)}
+                {t("Total")}: ${formatToTwoDecimalPlace(subTotal * 1.12)}
               </Typography>
             </Box>
           </AccordionSummaryFlexBox>
@@ -138,7 +140,7 @@ function OnHoldOrderDetailsAccordion({
           <Grid container>
             <Grid item xs={12} sm={6} textAlign="center">
               <Typography fontWeight="bold" variant="h4">
-                Order
+                {t("Order")}
               </Typography>
               {items.length > 0 && items.map((item, index) => {
                 return (
@@ -161,7 +163,7 @@ function OnHoldOrderDetailsAccordion({
                         <Divider />
                       </Grid>
                     </Grid>
-                    {items.options.length > 0 && item.options.map((option, index) => {
+                    {item.options && item.options.map((option, index) => {
                       return (
                         <Grid key={index} container rowGap={2}>
                           <Grid textAlign="center" item xs={2}>
@@ -184,7 +186,7 @@ function OnHoldOrderDetailsAccordion({
                     <Grid container rowGap={2}>
                       <Grid textAlign="center" item xs={2}></Grid>
                       <Grid item xs={7} textAlign="left">
-                        <Typography fontWeight="bold">Total</Typography>
+                        <Typography fontWeight="bold">{t("Total")}</Typography>
                       </Grid>
                       <Grid item xs={3} textAlign="right">
                         <Typography fontWeight="bold">
@@ -206,7 +208,7 @@ function OnHoldOrderDetailsAccordion({
               <Grid container justifyContent="center">
                 <Grid item xs={12} mt={2}>
                   <Typography fontWeight="bolder" variant="h4">
-                    Note
+                    {t("Note")}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} textAlign="center" p={3}>
@@ -216,13 +218,13 @@ function OnHoldOrderDetailsAccordion({
               <Grid container justifyContent="center" rowGap={3} mt={3}>
                 <Grid item>
                   <Typography fontWeight="bolder" variant="h4">
-                    Total Price
+                    (t{"Total Price"})
                   </Typography>
                 </Grid>
                 <Grid container p={2} rowGap={3}>
                   <Grid textAlign="left" item xs={6}>
                     <Typography fontWeight="bolder" variant="subtitle1">
-                      Subtotal
+                      {t("Subtotal")}
                     </Typography>
                   </Grid>
                   <Grid textAlign="right" item xs={6}>
@@ -235,7 +237,7 @@ function OnHoldOrderDetailsAccordion({
                   </Grid>
                   <Grid textAlign="left" item xs={6}>
                     <Typography fontWeight="bolder" variant="subtitle1">
-                      Tax
+                      {t("Tax")}
                     </Typography>
                   </Grid>
                   <Grid textAlign="right" item xs={6}>
@@ -248,7 +250,7 @@ function OnHoldOrderDetailsAccordion({
                   </Grid>
                   <Grid textAlign="left" item xs={6}>
                     <Typography fontWeight="bolder" variant="subtitle1">
-                      Total
+                      {t("Total")}
                     </Typography>
                   </Grid>
                   <Grid textAlign="right" item xs={6}>

@@ -1,16 +1,17 @@
-import { Divider, Grid, Typography } from '@mui/material'
-import React, { memo, useCallback, useContext } from 'react'
-import { useState, useEffect } from 'react';
+import { Divider, Grid, Typography } from '@mui/material';
+import React, { useState, useEffect, memo, useCallback, useContext } from 'react';
+import { useTranslation } from "react-i18next";
 import { formatToTwoDecimalPlace } from '../../utils/number';
 import EditItemModal from '../Modals/EditItem/EditItemModal';
 import PropTypes from 'prop-types';
-import {ButtonStyled, GridStyled} from './style'
-import { ThemeContext } from '../../Provider/ThemeContext';
+import { ButtonStyled, GridStyled } from './style'
+import { ThemeContext } from '../../../Provider/ThemeContext';
 
 function ItemCard({ deleteItem, item, saveChanges, setItem }) {
   const [isAvailable, setIsAvailable] = useState(item.availability);
   const [open, handleOpen] = useState(false);
   const { isDarkTheme } = useContext(ThemeContext);
+  const { t } = useTranslation();
   const toggleItemAvailability = () => {
     setItem(item, "availability", isAvailable, false)
   }
@@ -47,7 +48,7 @@ function ItemCard({ deleteItem, item, saveChanges, setItem }) {
         <Grid container>
           <Grid item xs={6}>
             <ButtonStyled onClick={() => handleOpen(true)} variant="contained">
-              Edit
+              {t("Edit")}
             </ButtonStyled>
           </Grid>
           <Grid item xs={6} textAlign="right">
@@ -56,7 +57,7 @@ function ItemCard({ deleteItem, item, saveChanges, setItem }) {
               onClick={() => setIsAvailable((prevAvailable) => !prevAvailable)}
               variant="contained"
             >
-              {isAvailable ? "Available" : "Sold out"}
+              {isAvailable ? t("Available") : t("Sold out")}
             </ButtonStyled>
           </Grid>
         </Grid>
