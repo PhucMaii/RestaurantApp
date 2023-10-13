@@ -11,6 +11,9 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
+      workbox: {
+        globPatterns: ['**/*'], // cache all imports
+      },
       manifest: {
         name: 'restaurantapp',
         short_name: 'restaurantapp',
