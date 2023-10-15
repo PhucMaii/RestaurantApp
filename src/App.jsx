@@ -19,6 +19,7 @@ import CustomerProtectedRoutes from './customerSide/Routes/CustomerProtectedRout
 import CustomerUnprotectedRoutes from './customerSide/Routes/CustomerUnProtectedRoutes';
 import CustomerSigninPage from './customerSide/pages/AuthPages/Signin/CustomerSigninPage';
 import './i18n.js';
+import './App.css';
 import CustomerHomePage from './customerSide/pages/Home/CustomerHomePage';
 
 function App() {

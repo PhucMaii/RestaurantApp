@@ -1,10 +1,11 @@
-import { IconButton, InputBase, Paper } from '@mui/material';
+import React from 'react';
+import { IconButton, InputBase } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import React from 'react'
+import { SearchBarContainer } from './styles';
 
 export default function SearchBar() {
   return (
-    <Paper
+    <SearchBarContainer
         component="form"
         sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '100%' }}
     >
@@ -15,6 +16,6 @@ export default function SearchBar() {
         <IconButton type="button" aria-label="search">
           <SearchIcon />
         </IconButton>
-  </Paper>
+  </SearchBarContainer>
   )
 }

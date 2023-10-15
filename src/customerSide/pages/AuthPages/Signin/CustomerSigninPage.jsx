@@ -105,12 +105,7 @@ export default function CustomerSigninPage() {
           userId = doc.id;
         });
         setCurrCustomer({ email, userId });
-        // navigate to home page
-        setNotification({
-          on: true,
-          type: 'success',
-          message: 'Log in successfully',
-        });
+        navigate('customer/home');
       }
       setIsLoading(false);
     } catch (error) {

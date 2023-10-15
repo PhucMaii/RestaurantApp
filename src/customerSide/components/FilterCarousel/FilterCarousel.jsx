@@ -5,28 +5,23 @@ export default function FilterCarousel() {
   const data = [
     {
       src: '../../../../image/foodIcon/chinese.png',
-      title: 'Night view',
-      description: '4.21M views',
+      title: 'Indian',
     },
     {
       src: '../../../../image/foodIcon/fastfood.png',
       title: 'Fast Food',
-      description: '4.74M views',
     },
     {
       src: '../../../../image/foodIcon/pho.png',
       title: 'Pho',
-      description: '3.98M views',
     },
     {
       src: '../../../../image/foodIcon/ramen.png',
       title: 'Ramen',
-      description: '3.98M views',
     },
     {
       src: '../../../../image/foodIcon/vegetable.png',
       title: 'Vegetarian',
-      description: '3.98M views',
     },
   ];
 
@@ -41,11 +36,11 @@ export default function FilterCarousel() {
         padding: '10px',
       }}
     >
-      {data.map((item) => {
+      {data.map((item, index) => {
         return (
           <Grid
             container
-            key={item.name}
+            key={index}
             justifyContent="center"
             alignItems="center"
           >
