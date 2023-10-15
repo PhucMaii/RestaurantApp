@@ -76,12 +76,7 @@ export default function CustomerSigninPage() {
 
       }
       setCurrCustomer({ email, password, userId });
-      // navigate to home page
-      setNotification({
-        on: true,
-        type: 'success',
-        message: 'Log in successfully',
-      });
+      navigate('/customer/home');
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);

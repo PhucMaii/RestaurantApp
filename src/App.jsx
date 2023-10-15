@@ -19,6 +19,7 @@ import CustomerProtectedRoutes from './customerSide/Routes/CustomerProtectedRout
 import CustomerUnprotectedRoutes from './customerSide/Routes/CustomerUnProtectedRoutes';
 import CustomerSigninPage from './customerSide/pages/AuthPages/Signin/CustomerSigninPage';
 import './i18n.js';
+import CustomerHomePage from './customerSide/pages/Home/CustomerHomePage';
 
 function App() {
   const { isDarkTheme } = useContext(ThemeContext);
@@ -46,6 +47,7 @@ function App() {
               </Route>
               <Route element={<CustomerProtectedRoutes />}>
                 <Route path="/customer/auth/signup/address" element={<CustomerInfo />} />
+                <Route path="/customer/home" element={<CustomerHomePage />} />
               </Route>
               <Route element={<CustomerUnprotectedRoutes />}>
                 <Route path="/customer/auth/signup" element={<CustomerRegister />} />
