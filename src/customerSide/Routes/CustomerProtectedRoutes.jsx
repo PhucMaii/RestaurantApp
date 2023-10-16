@@ -11,5 +11,5 @@ export default function CustomerProtectedRoutes() {
   useEffect(() => {
     toggleDarkTheme(false);
   }, [])
-  return isAuth ? <Outlet /> : <Navigate to="/customer/auth/signup" />;
+  return isAuth ? <Outlet /> : <Navigate to="/customer/auth/signin" />;
 }
