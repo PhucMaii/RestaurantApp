@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { IconButton, InputBase } from '@mui/material';
+import { Grid, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { SearchBarContainer } from './styles';
+import { SearchTextField } from './styles';
 
 export default function SearchBar({ setSearchKeywords}) {
   const handleChangeKeywords = (e) => {
@@ -10,19 +10,26 @@ export default function SearchBar({ setSearchKeywords}) {
   }
  
   return (
-    <SearchBarContainer
+    <Grid
         component="form"
         sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '100%' }}
     >
-        <InputBase
-          sx={{ ml: 1, flex: 1 }}
+        <SearchTextField
+          fullWidth
           placeholder="Fast food, Chinese Food, etc"
+          variant="standard"
+          InputProps={{
+            disableUnderline: true,
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          style={{borderRadius: '20px !important', backgroundColor: ''}}
           onChange={handleChangeKeywords}
         />
-        <IconButton type="button" aria-label="search">
-          <SearchIcon />
-        </IconButton>
-  </SearchBarContainer>
+  </Grid>
   )
 }
 

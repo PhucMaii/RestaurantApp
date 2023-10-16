@@ -57,10 +57,12 @@ export default function CustomerSigninPage() {
       message: "You are being directed to Home Page"
     });
     try {
-      let userId;
+      let userId, userName;
       const querySnapshot = await getDocs(userQuery);
       querySnapshot.forEach((doc) => {
+        const data = doc.data();
         userId = doc.id;
+        userName = data.name;
       });
       const userCredentials = await signInWithEmailAndPassword(auth, email, password);
       if(!userCredentials.user.emailVerified) {
@@ -75,7 +77,7 @@ export default function CustomerSigninPage() {
         return;
 
       }
-      setCurrCustomer({ email, password, userId });
+      setCurrCustomer({ email, password, userId, userName });
       navigate('/customer/home');
       setIsLoading(false);
     } catch (error) {
@@ -94,7 +96,7 @@ export default function CustomerSigninPage() {
       message: "You are being directed to Home Page"
     });
     try {
-      let userId;
+      let userId, userName;
       const userCredential = await signInWithPopup(auth, googleProvider);
       const googleQuery = query(userCollection, where('email', '==', userCredential.user.email));
       if (getAdditionalUserInfo(userCredential).isNewUser) {
@@ -102,9 +104,11 @@ export default function CustomerSigninPage() {
       } else {
         const querySnapshot = await getDocs(googleQuery);
         querySnapshot.forEach((doc) => {
+          const data = doc.data();
           userId = doc.id;
+          userName = data.name;
         });
-        setCurrCustomer({ email: userCredential.user.email, userId });
+        setCurrCustomer({ email: userCredential.user.email, userId, userName });
         navigate('/customer/home');
       }
       setIsLoading(false);

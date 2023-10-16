@@ -16,6 +16,12 @@ const RatingContainer = styled(Grid)`
 const RestaurantImage = styled.img`
     border-radius: 20px;
     width: 100%;
+    @media only screen and (max-width: 1500px) {
+        height: 250px;
+    }
+    @media only screen and (min-width: 1500px) {
+        height: 170px;
+    }
 `
     
 export { MainContainer, RatingContainer, RestaurantImage }

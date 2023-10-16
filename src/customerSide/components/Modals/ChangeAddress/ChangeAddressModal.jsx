@@ -10,12 +10,14 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
+import { useMediaQuery } from '@mui/material';
 import EditLocationAltIcon from '@mui/icons-material/EditLocationAlt';
 import EditAddress from './EditAddress';
 
 export default function ChangeAddressModal({address, changeAddress}) {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
+  const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down('sm'));
 
   const handleOpenEditModal = () => {
     setOpenEditModal(true);
@@ -39,7 +41,7 @@ export default function ChangeAddressModal({address, changeAddress}) {
           changeAddress={changeAddress}
         />
         <Button onClick={toggleDrawer}>{address.split(',')[0]}</Button>
-        <Drawer anchor="bottom" open={openDrawer} onClose={toggleDrawer}>
+        <Drawer anchor={isSmallScreen ? "bottom" : "top"} open={openDrawer} onClose={toggleDrawer}>
           <Box role="presentation" onClick={toggleDrawer}>
             <List>
               <ListItem disablePadding>

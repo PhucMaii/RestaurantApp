@@ -24,7 +24,7 @@ import StarIcon from '@mui/icons-material/Star';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import LogoutIcon from '@mui/icons-material/Logout';
 
-export default function Sidebar({filterByPopular, filterByRating}) {
+export default function Sidebar({customerName, filterByPopular, filterByRating}) {
     const [openDrawer, setOpenDrawer] = useState(false);
     const [filterChoice, setFilterChoice] = useState('');
 
@@ -77,7 +77,7 @@ export default function Sidebar({filterByPopular, filterByRating}) {
               <ListItemIcon>
                 <AccountBoxIcon />
               </ListItemIcon>
-              <ListItemText primary="Phuc Mai" />
+              <ListItemText primary={customerName} />
             </ListItemButton>
           </ListItem>
         </List>
@@ -133,6 +133,7 @@ export default function Sidebar({filterByPopular, filterByRating}) {
 }
 
 Sidebar.propTypes = {
+  customerName: PropTypes.string.isRequired,
   filterByPopular: PropTypes.func,
   filterByRating: PropTypes.func
 }

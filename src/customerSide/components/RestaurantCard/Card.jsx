@@ -10,7 +10,7 @@ export default function Card({
     rating
 }) {
   return (
-    <MainContainer container>
+    <MainContainer item xs={12} md={3} xl={2}>
         <Grid item>
             <RestaurantImage src={image} alt="img" />
         </Grid>

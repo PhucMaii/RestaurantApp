@@ -179,9 +179,10 @@ export default function CustomerHomePage() {
         </Grid>
       ) : (
         <>
-          <Grid container mt={1} alignItems="center">
+          <Grid container mt={1} alignItems="center" mr={2}>
             <Grid item xs={2}>
               <Sidebar
+                customerName={currCustomer.userName}
                 filterByRating={filterRestaurantByRating}
                 filterByPopular={filterRestaurantByPopular}
               />
@@ -191,7 +192,7 @@ export default function CustomerHomePage() {
                 Grab & Go
               </Typography>
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={2} textAlign="right">
               <CartButton variant="contained" color="inherit">
                 <ShoppingCartIcon /> 0
               </CartButton>
@@ -214,7 +215,7 @@ export default function CustomerHomePage() {
           </Grid>
           <Grid container>
             <Grid item xs={12}>
-              <FilterCarousel filterByType={filterRestaurantByType} />
+              <FilterCarousel filterByType={filterRestaurantByType} resetFilter={fetchRestaurants} />
             </Grid>
           </Grid>
           <Grid container>
@@ -222,7 +223,7 @@ export default function CustomerHomePage() {
               <ThickDivider />
             </Grid>
           </Grid>
-          <Grid container>
+          <Grid container columnSpacing={3} pl={3} pr={3}>
             {restaurantList.map((restaurant) => {
               return (
                 restaurant.isOpen && (
@@ -231,7 +232,7 @@ export default function CustomerHomePage() {
                     image={restaurant.imageLink}
                     name={restaurant.restaurantName}
                     prepTime={restaurant.preparingTime}
-                    rating={restaurant.rating}
+                    rating={restaurant.rating || 5}
                   />
                 )
               );
