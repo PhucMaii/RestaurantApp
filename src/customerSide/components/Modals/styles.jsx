@@ -5,7 +5,7 @@ const GridModal = styled(Grid)`
   position: absolute;
   top: 50%;
   left: 50%;
-    transform: translate(-50%, 50%);
+  transform: translate(-50%, -50%);
   max-width: ${(props) => props.maxWidth};
   background-color: white;
   border-radius: 10px;

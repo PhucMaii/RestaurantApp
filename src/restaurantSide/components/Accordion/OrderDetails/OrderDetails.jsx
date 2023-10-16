@@ -23,10 +23,10 @@ import OrderStatusModal from "../../Modals/OrderStatusModal";
 import UserInfoModal from "../../Modals/UserInfoModal";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../../../../firebase.config";
-import { calculateETA, convertTimestampToDate } from '../../../utils/time';
-import { formatToTwoDecimalPlace } from '../../../utils/number';
-import { reduceNameLength } from '../../../utils/string';
-import { orderStatusEnum } from '../../../utils/constant';
+import { calculateETA, convertTimestampToDate } from '../../../../utils/time';
+import { formatToTwoDecimalPlace } from '../../../../utils/number';
+import { reduceNameLength } from '../../../../utils/string';
+import { orderStatusEnum } from '../../../../utils/constant';
 import { ThemeContext } from '../../../../Provider/ThemeContext';
 
 function OrderDetailsAccordion({

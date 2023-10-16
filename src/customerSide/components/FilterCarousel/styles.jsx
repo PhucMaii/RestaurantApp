@@ -2,11 +2,14 @@ import styled from 'styled-components';
 
 const CarouselContainer = styled.div`
     display: flex;
-    flexDirection: row;
-    flexWrap: nowrap;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
     gap: 50px;
     padding: 10px;
-    overflowX: auto;
+`
+const Icon = styled.img`
+    width: 50px;
 `
 
-export { CarouselContainer }
+export { CarouselContainer, Icon }

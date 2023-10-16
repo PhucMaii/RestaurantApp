@@ -44,7 +44,7 @@ export default function CustomerSigninPage() {
     'current-customer',
     {},
   );
-  const userCollection = collection(db, 'users');
+  const userCollection = collection(db, 'customers');
   const userQuery = query(userCollection, where('email', '==', email));
 
   const handleClickShowPassword = () => {
@@ -105,7 +105,7 @@ export default function CustomerSigninPage() {
           userId = doc.id;
         });
         setCurrCustomer({ email, userId });
-        navigate('customer/home');
+        navigate('/customer/home');
       }
       setIsLoading(false);
     } catch (error) {

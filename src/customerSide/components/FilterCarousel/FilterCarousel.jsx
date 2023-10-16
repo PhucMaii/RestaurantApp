@@ -1,7 +1,9 @@
-import { Grid, Typography } from '@mui/material';
 import React from 'react';
+import PropTypes from 'prop-types';
+import { Grid, Typography } from '@mui/material';
+import { CarouselContainer, Icon } from './styles';
 
-export default function FilterCarousel() {
+export default function FilterCarousel({ filterByType }) {
   const data = [
     {
       src: '../../../../image/foodIcon/chinese.png',
@@ -13,7 +15,7 @@ export default function FilterCarousel() {
     },
     {
       src: '../../../../image/foodIcon/pho.png',
-      title: 'Pho',
+      title: 'Chinese',
     },
     {
       src: '../../../../image/foodIcon/ramen.png',
@@ -26,16 +28,7 @@ export default function FilterCarousel() {
   ];
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'nowrap',
-        overflowX: 'auto',
-        gap: '50px',
-        padding: '10px',
-      }}
-    >
+    <CarouselContainer>
       {data.map((item, index) => {
         return (
           <Grid
@@ -43,9 +36,10 @@ export default function FilterCarousel() {
             key={index}
             justifyContent="center"
             alignItems="center"
+            onClick={() => filterByType(item.title)}
           >
             <Grid item xs={12}>
-              <img style={{ width: '50px' }} src={item.src} />
+              <Icon src={item.src} />
             </Grid>
             <Grid item xs={12}>
               <Typography textAlign="center">{item.title}</Typography>
@@ -53,6 +47,10 @@ export default function FilterCarousel() {
           </Grid>
         );
       })}
-    </div>
+    </CarouselContainer>
   );
+}
+
+FilterCarousel.propTypes = {
+  filterByType: PropTypes.func.isRequired
 }

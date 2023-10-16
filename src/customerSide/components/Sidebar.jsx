@@ -89,7 +89,6 @@ export default function Sidebar() {
     
   return (
     <div>
-
       <React.Fragment>
         <Button color="inherit" onClick={toggleDrawer}><MenuIcon /></Button>
         <Drawer
