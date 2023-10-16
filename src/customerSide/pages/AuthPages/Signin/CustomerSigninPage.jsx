@@ -44,7 +44,7 @@ export default function CustomerSigninPage() {
     'current-customer',
     {},
   );
-  const userCollection = collection(db, 'users');
+  const userCollection = collection(db, 'customers');
   const userQuery = query(userCollection, where('email', '==', email));
 
   const handleClickShowPassword = () => {
@@ -76,12 +76,7 @@ export default function CustomerSigninPage() {
 
       }
       setCurrCustomer({ email, password, userId });
-      // navigate to home page
-      setNotification({
-        on: true,
-        type: 'success',
-        message: 'Log in successfully',
-      });
+      navigate('/customer/home');
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
@@ -101,21 +96,17 @@ export default function CustomerSigninPage() {
     try {
       let userId;
       const userCredential = await signInWithPopup(auth, googleProvider);
+      const googleQuery = query(userCollection, where('email', '==', userCredential.user.email));
       if (getAdditionalUserInfo(userCredential).isNewUser) {
-        // Add notification here
-        // Navigate to adding name and address
+        navigate('/customer/auth/signup/address');
       } else {
-        const querySnapshot = await getDocs(userQuery);
+        const querySnapshot = await getDocs(googleQuery);
+        console.log(querySnapshot);
         querySnapshot.forEach((doc) => {
           userId = doc.id;
         });
-        setCurrCustomer({ email, userId });
-        // navigate to home page
-        setNotification({
-          on: true,
-          type: 'success',
-          message: 'Log in successfully',
-        });
+        setCurrCustomer({ email: userCredential.user.email, userId });
+        navigate('/customer/home');
       }
       setIsLoading(false);
     } catch (error) {
