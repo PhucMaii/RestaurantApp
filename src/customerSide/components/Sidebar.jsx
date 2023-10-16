@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { 
     Box, 
     Button, 
     Divider, 
     Drawer, 
+    FormControl, 
+    FormControlLabel, 
+    FormLabel, 
     List, 
     ListItem, 
     ListItemButton, 
     ListItemIcon, 
-    ListItemText 
+    ListItemText, 
+    Radio, 
+    RadioGroup
 } from '@mui/material';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import HomeIcon from '@mui/icons-material/Home';
@@ -18,8 +24,18 @@ import StarIcon from '@mui/icons-material/Star';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import LogoutIcon from '@mui/icons-material/Logout';
 
-export default function Sidebar() {
+export default function Sidebar({filterByPopular, filterByRating}) {
     const [openDrawer, setOpenDrawer] = useState(false);
+    const [filterChoice, setFilterChoice] = useState('');
+
+    const handleChangeFilterChoice = (e) => {
+      setFilterChoice(e.target.value);
+      if(e.target.value === 'rating') {
+        filterByRating();
+      } else {
+        filterByPopular();
+      }
+    }
 
     const toggleDrawer = () => {
         setOpenDrawer(!openDrawer);
@@ -54,38 +70,51 @@ export default function Sidebar() {
     ];
 
     const list = () => (
-        <Box
-          sx={{ width: 250 }}
-          role="presentation"
-          onClick={toggleDrawer}
-        >
-            <List>
-                <ListItem disablePadding>
-                    <ListItemButton>
-                      <ListItemIcon>
-                        <AccountBoxIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Phuc Mai" />
-                    </ListItemButton>
-                </ListItem>
-            </List>
-            <Divider />
-          <List>
-            {
-                tabList.map((tab) => (
-                    <ListItem key={tab.text} disablePadding>
-                        <ListItemButton>
-                          <ListItemIcon>
-                            {tab.icon}
-                          </ListItemIcon>
-                          <ListItemText primary={tab.text} />
-                        </ListItemButton>
-                  </ListItem>
-                ))
-            }
-            </List>
-        </Box>
-      );
+      <Box sx={{ width: 250 }} role="presentation">
+        <List>
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <AccountBoxIcon />
+              </ListItemIcon>
+              <ListItemText primary="Phuc Mai" />
+            </ListItemButton>
+          </ListItem>
+        </List>
+        <Divider />
+        {
+          <>
+          <FormControl style={{marginLeft: '20px', marginTop: '10px'}}>
+            <FormLabel id="demo-radio-buttons-group-label">Filter</FormLabel>
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              name="radio-buttons-group"
+              value={filterChoice}
+              onChange={handleChangeFilterChoice}
+            >
+              <FormControlLabel
+                value="popular"
+                control={<Radio />}
+                label="Most Popular"
+              />
+              <FormControlLabel value="rating" control={<Radio />} label="Rating" />
+            </RadioGroup>
+          </FormControl>
+          <Divider />
+          </>
+        }
+        <List>
+          {tabList.map((tab) => (
+            <ListItem key={tab.text} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>{tab.icon}</ListItemIcon>
+                <ListItemText primary={tab.text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+    );
     
   return (
     <div>
@@ -101,4 +130,9 @@ export default function Sidebar() {
       </React.Fragment>
   </div>
   )
+}
+
+Sidebar.propTypes = {
+  filterByPopular: PropTypes.func,
+  filterByRating: PropTypes.func
 }

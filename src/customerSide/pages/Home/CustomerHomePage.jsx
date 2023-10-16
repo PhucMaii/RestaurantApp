@@ -7,7 +7,15 @@ import Card from '../../components/RestaurantCard/Card';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Sidebar from '../../components/Sidebar';
 import ChangeAddressModal from '../../components/Modals/ChangeAddress/ChangeAddressModal';
-import { collection, doc, getDoc, getDocs, query, updateDoc, where} from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import { db } from '../../../../firebase.config';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 
@@ -16,11 +24,15 @@ export default function CustomerHomePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [restaurantList, setRestaurantList] = useState([]);
   const [tempRestaurantList, setTempRestaurantList] = useState([]);
-  const [currCustomer, _setCurrCustomer] = useLocalStorage("current-customer", {});
+  const [currCustomer, _setCurrCustomer] = useLocalStorage(
+    'current-customer',
+    {},
+  );
   const [searchKeywords, setSearchKeywords] = useState('');
   const restaurantCollection = collection(db, 'users');
   const customerCollection = collection(db, 'customers');
   const feedbackCollection = collection(db, 'feedback');
+  const historyCollection = collection(db, 'history');
   const customerId = currCustomer.userId;
   const userRef = doc(customerCollection, customerId);
 
@@ -29,43 +41,38 @@ export default function CustomerHomePage() {
     fetchRestaurants();
   }, []);
 
-  // MUST DELETE
-  useEffect(() => {
-    console.log(restaurantList);
-  }, [restaurantList])
-
   useEffect(() => {
     setRestaurantList(() => {
-      return tempRestaurantList
-    })
+      return tempRestaurantList;
+    });
     const search = searchKeywords.toLowerCase();
     const filteredList = tempRestaurantList.filter((restaurant) => {
       const restaurantName = restaurant.restaurantName.toLowerCase();
       return restaurantName.includes(search);
-    })
+    });
     setRestaurantList(filteredList);
-  }, [searchKeywords])
+  }, [searchKeywords]);
 
   const changeAddress = async (newAddress) => {
-    try{
-      await updateDoc(userRef, {address: newAddress});
+    try {
+      await updateDoc(userRef, { address: newAddress });
       setCustomerAddress(newAddress);
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
-  }
+  };
 
   const fetchCustomerInfo = async () => {
     try {
       const userDoc = await getDoc(userRef);
-      if(userDoc.exists()) {
+      if (userDoc.exists()) {
         const data = userDoc.data();
         setCustomerAddress(data.address);
       }
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
-  }
+  };
 
   const fetchRestaurants = async () => {
     setIsLoading(true);
@@ -76,14 +83,17 @@ export default function CustomerHomePage() {
         let numberOfRating = 0;
         const data = doc.data();
         const id = doc.id;
-        const queryFeedback = query(feedbackCollection, where('restaurantId', '==', id));
+        const queryFeedback = query(
+          feedbackCollection,
+          where('restaurantId', '==', id),
+        );
         const querySnapshot = await getDocs(queryFeedback);
         querySnapshot.forEach((feedbackDoc) => {
           const feedbackData = feedbackDoc.data();
           rating += feedbackData.reviewStars;
           numberOfRating++;
-        })
-        return {...data, rating: Math.floor(rating / numberOfRating)};
+        });
+        return { ...data, rating: rating / numberOfRating || 5 };
       });
       const restaurantData = await Promise.all(restaurantPromise); // Wait for all asynchronous function ended
       setRestaurantList(restaurantData);
@@ -99,24 +109,67 @@ export default function CustomerHomePage() {
     setIsLoading(true);
     try {
       const filterList = [];
-      const restaurantQuery = query(restaurantCollection, where('restaurantType', '==', type));
+      const restaurantQuery = query(
+        restaurantCollection,
+        where('restaurantType', '==', type),
+      );
       const querySnapshot = await getDocs(restaurantQuery);
       querySnapshot.forEach((doc) => {
         const restaurantData = doc.data();
         filterList.push(restaurantData);
-      })
+      });
       setRestaurantList(filterList);
       setIsLoading(false);
-    } catch(error) {
+    } catch (error) {
       setIsLoading(false);
       console.log(error);
     }
-  }
+  };
+
+  const filterRestaurantByRating = () => {
+    const newRestaurantList = [...restaurantList];
+    newRestaurantList.sort((restaurantA, restaurantB) => {
+      return restaurantB.rating - restaurantA.rating;
+    });
+    setRestaurantList(newRestaurantList);
+  };
+
+  const filterRestaurantByPopular = async () => {
+    try {
+      const updatedRestaurantList = await Promise.all(
+        restaurantList.map(async (restaurant) => {
+          let numberOfOrders = 0;
+          const queryHistoryOrder = query(
+            historyCollection,
+            where('restaurantId', '==', restaurant.docId),
+          );
+          const querySnapshot = await getDocs(queryHistoryOrder);
+          querySnapshot.forEach(() => {
+            numberOfOrders++;
+          });
+          return { ...restaurant, popularity: numberOfOrders };
+        }),
+      );
+      const newRestaurantList = [...updatedRestaurantList];
+      newRestaurantList.sort((restaurantA, restaurantB) => {
+        return restaurantB.popularity - restaurantA.popularity;
+      });
+      setRestaurantList(newRestaurantList);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Grid container rowGap={3}>
       {isLoading ? (
-        <Grid container alignItems="center" justifyContent="center" rowGap={3} mt={10}>
+        <Grid
+          container
+          alignItems="center"
+          justifyContent="center"
+          rowGap={3}
+          mt={10}
+        >
           <Grid item xs={12} textAlign="center">
             <CircularProgress />
           </Grid>
@@ -128,7 +181,10 @@ export default function CustomerHomePage() {
         <>
           <Grid container mt={1} alignItems="center">
             <Grid item xs={2}>
-              <Sidebar />
+              <Sidebar
+                filterByRating={filterRestaurantByRating}
+                filterByPopular={filterRestaurantByPopular}
+              />
             </Grid>
             <Grid item xs={8} textAlign="center">
               <Typography variant="h5" fontWeight="bold">
@@ -143,7 +199,11 @@ export default function CustomerHomePage() {
           </Grid>
           <Grid container alignItems="center" mr={2}>
             <Grid item xs={6}>
-              <ChangeAddressModal isOpen={true} address={customerAddress} changeAddress={changeAddress} />
+              <ChangeAddressModal
+                isOpen={true}
+                address={customerAddress}
+                changeAddress={changeAddress}
+              />
             </Grid>
             <Grid item xs={6}>
               <Typography textAlign="right">Pick up</Typography>
@@ -165,13 +225,15 @@ export default function CustomerHomePage() {
           <Grid container>
             {restaurantList.map((restaurant) => {
               return (
-                <Card
-                  key={restaurant.docId}
-                  image={restaurant.imageLink}
-                  name={restaurant.restaurantName}
-                  prepTime={restaurant.preparingTime}
-                  rating={restaurant.rating || 5}
-                />
+                restaurant.isOpen && (
+                  <Card
+                    key={restaurant.docId}
+                    image={restaurant.imageLink}
+                    name={restaurant.restaurantName}
+                    prepTime={restaurant.preparingTime}
+                    rating={restaurant.rating}
+                  />
+                )
               );
             })}
           </Grid>
