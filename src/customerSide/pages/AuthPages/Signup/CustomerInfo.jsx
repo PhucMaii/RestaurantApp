@@ -54,7 +54,6 @@ export default function CustomerInfo() {
     try {
       await updateDoc(customerDocRef, customerData);
       setCurrentCustomer({...currentCustomer, ...customerData});
-      // Navigate to Sign in Page, instead of this notification
       navigate('/customer/auth/signin');
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setIsLoading(false);
