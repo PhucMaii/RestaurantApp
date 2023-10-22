@@ -57,12 +57,11 @@ export default function CustomerSigninPage() {
       message: "You are being directed to Home Page"
     });
     try {
-      let userId, userName;
+      let userData, userId;
       const querySnapshot = await getDocs(userQuery);
       querySnapshot.forEach((doc) => {
-        const data = doc.data();
+        userData = doc.data();
         userId = doc.id;
-        userName = data.name;
       });
       const userCredentials = await signInWithEmailAndPassword(auth, email, password);
       if(!userCredentials.user.emailVerified) {
@@ -75,9 +74,14 @@ export default function CustomerSigninPage() {
         setUser(userCredentials.user);
         setIsLoading(false);
         return;
-
       }
-      setCurrCustomer({ email, password, userId, userName });
+      setCurrCustomer({ 
+        email, 
+        password,
+        userId, 
+        userName: userData.name, 
+        address: userData.address 
+      });
       navigate('/customer/home');
       setIsLoading(false);
     } catch (error) {
@@ -96,7 +100,7 @@ export default function CustomerSigninPage() {
       message: "You are being directed to Home Page"
     });
     try {
-      let userId, userName;
+      let userData, userId;
       const userCredential = await signInWithPopup(auth, googleProvider);
       const googleQuery = query(userCollection, where('email', '==', userCredential.user.email));
       if (getAdditionalUserInfo(userCredential).isNewUser) {
@@ -104,11 +108,15 @@ export default function CustomerSigninPage() {
       } else {
         const querySnapshot = await getDocs(googleQuery);
         querySnapshot.forEach((doc) => {
-          const data = doc.data();
+          userData = doc.data();
           userId = doc.id;
-          userName = data.name;
         });
-        setCurrCustomer({ email: userCredential.user.email, userId, userName });
+        setCurrCustomer({ 
+          email: userCredential.user.email, 
+          userId, 
+          userName: userData.name, 
+          address: userData.address 
+        });
         navigate('/customer/home');
       }
       setIsLoading(false);

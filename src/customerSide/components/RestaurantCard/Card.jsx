@@ -19,7 +19,7 @@ export default function Card({
                 <Typography variant="h6" fontWeight="bold">{name}</Typography>
             </Grid>
             <RatingContainer item xs={2} textAlign='center'>
-                <Typography>{rating.toFixed(1)}</Typography>
+                <Typography>{rating ? rating.toFixed(1) : 'Unrated'}</Typography>
             </RatingContainer>
         </Grid>
         <Grid item>

@@ -22,7 +22,7 @@ export default function CustomerInfo() {
   const [receivedAddress, setReceivedAddress] = useState(null);
   const [currentCustomer, setCurrentCustomer] = useLocalStorage('current-customer', {});
   const navigate = useNavigate();
-  const customerDocRef = doc(db, 'customers', currentCustomer.id);
+  const customerDocRef = doc(db, 'customers', currentCustomer.userId);
 
   useEffect(() => {
     if(receivedAddress) {
@@ -53,9 +53,9 @@ export default function CustomerInfo() {
     }
     try {
       await updateDoc(customerDocRef, customerData);
-      setCurrentCustomer({...currentCustomer, ...customerData});
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       navigate('/customer/auth/signin');
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setCurrentCustomer({});
       setIsLoading(false);
     } catch(error) {
       setNotification({
@@ -94,7 +94,7 @@ export default function CustomerInfo() {
               <CircularProgress />
             </Grid>
             <Grid item textAlign="center" xs={12}>
-              <Typography variant="h4">You be directed to Login Page </Typography>
+              <Typography variant="h4">You be directed to Login Page</Typography>
             </Grid>
           </Grid>) : (
             <ContainerGridStyled 

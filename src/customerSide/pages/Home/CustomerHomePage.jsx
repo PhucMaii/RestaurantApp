@@ -5,12 +5,11 @@ import FilterCarousel from '../../components/FilterCarousel/FilterCarousel';
 import { CartButton, ThickDivider } from './style';
 import Card from '../../components/RestaurantCard/Card';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import Sidebar from '../../components/Sidebar';
+import Sidebar from '../../components/Sidebar/Sidebar';
 import ChangeAddressModal from '../../components/Modals/ChangeAddress/ChangeAddressModal';
 import {
   collection,
   doc,
-  getDoc,
   getDocs,
   query,
   updateDoc,
@@ -18,13 +17,13 @@ import {
 } from 'firebase/firestore';
 import { db } from '../../../../firebase.config';
 import useLocalStorage from '../../../hooks/useLocalStorage';
+import { calculatePopularity, filterByRating } from '../../../utils/filter';
 
 export default function CustomerHomePage() {
-  const [customerAddress, setCustomerAddress] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [restaurantList, setRestaurantList] = useState([]);
   const [tempRestaurantList, setTempRestaurantList] = useState([]);
-  const [currCustomer, _setCurrCustomer] = useLocalStorage(
+  const [currCustomer, setCurrCustomer] = useLocalStorage(
     'current-customer',
     {},
   );
@@ -37,14 +36,10 @@ export default function CustomerHomePage() {
   const userRef = doc(customerCollection, customerId);
 
   useEffect(() => {
-    fetchCustomerInfo();
     fetchRestaurants();
   }, []);
 
   useEffect(() => {
-    setRestaurantList(() => {
-      return tempRestaurantList;
-    });
     const search = searchKeywords.toLowerCase();
     const filteredList = tempRestaurantList.filter((restaurant) => {
       const restaurantName = restaurant.restaurantName.toLowerCase();
@@ -56,21 +51,11 @@ export default function CustomerHomePage() {
   const changeAddress = async (newAddress) => {
     try {
       await updateDoc(userRef, { address: newAddress });
-      setCustomerAddress(newAddress);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const fetchCustomerInfo = async () => {
-    try {
-      const userDoc = await getDoc(userRef);
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        setCustomerAddress(data.address);
-      }
-    } catch (e) {
-      console.log(e);
+      setCurrCustomer((prevData) => {
+        return {...prevData, address: newAddress}
+      })
+    } catch(error) {
+      console.log(error);
     }
   };
 
@@ -93,15 +78,15 @@ export default function CustomerHomePage() {
           rating += feedbackData.reviewStars;
           numberOfRating++;
         });
-        return { ...data, rating: rating / numberOfRating || 5 };
+        return { ...data, rating: rating / numberOfRating};
       });
       const restaurantData = await Promise.all(restaurantPromise); // Wait for all asynchronous function ended
       setRestaurantList(restaurantData);
       setTempRestaurantList(restaurantData);
       setIsLoading(false);
-    } catch (e) {
+    } catch(error) {
       setIsLoading(false);
-      console.log(e);
+      console.log(error);
     }
   };
 
@@ -126,35 +111,23 @@ export default function CustomerHomePage() {
     }
   };
 
-  const filterRestaurantByRating = () => {
-    const newRestaurantList = [...restaurantList];
-    newRestaurantList.sort((restaurantA, restaurantB) => {
-      return restaurantB.rating - restaurantA.rating;
-    });
-    setRestaurantList(newRestaurantList);
-  };
-
   const filterRestaurantByPopular = async () => {
     try {
       const updatedRestaurantList = await Promise.all(
         restaurantList.map(async (restaurant) => {
-          let numberOfOrders = 0;
           const queryHistoryOrder = query(
             historyCollection,
             where('restaurantId', '==', restaurant.docId),
           );
           const querySnapshot = await getDocs(queryHistoryOrder);
-          querySnapshot.forEach(() => {
-            numberOfOrders++;
-          });
+          const numberOfOrders = calculatePopularity(querySnapshot);
           return { ...restaurant, popularity: numberOfOrders };
         }),
       );
-      const newRestaurantList = [...updatedRestaurantList];
-      newRestaurantList.sort((restaurantA, restaurantB) => {
+      updatedRestaurantList.sort((restaurantA, restaurantB) => {
         return restaurantB.popularity - restaurantA.popularity;
       });
-      setRestaurantList(newRestaurantList);
+      setRestaurantList(updatedRestaurantList);
     } catch (error) {
       console.log(error);
     }
@@ -183,7 +156,7 @@ export default function CustomerHomePage() {
             <Grid item xs={2}>
               <Sidebar
                 customerName={currCustomer.userName}
-                filterByRating={filterRestaurantByRating}
+                filterByRating={() => filterByRating(restaurantList, setRestaurantList)}
                 filterByPopular={filterRestaurantByPopular}
               />
             </Grid>
@@ -202,7 +175,7 @@ export default function CustomerHomePage() {
             <Grid item xs={6}>
               <ChangeAddressModal
                 isOpen={true}
-                address={customerAddress}
+                address={currCustomer.address}
                 changeAddress={changeAddress}
               />
             </Grid>
@@ -232,7 +205,7 @@ export default function CustomerHomePage() {
                     image={restaurant.imageLink}
                     name={restaurant.restaurantName}
                     prepTime={restaurant.preparingTime}
-                    rating={restaurant.rating || 5}
+                    rating={restaurant.rating}
                   />
                 )
               );
