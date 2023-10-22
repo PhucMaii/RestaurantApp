@@ -118,7 +118,7 @@ function EditItemModal({
         open={openEditNameModal}
         setItem={setItem}
       />
-      <ModalStyled open={open} onClose={handleClose}>
+      <ModalStyled style={{overflowY: 'auto'}} open={open} onClose={handleClose}>
         <GridModal
           maxWidth="800px"
           alignItems="center"
@@ -126,6 +126,7 @@ function EditItemModal({
           padding={2}
           rowGap={2}
           $isDarkTheme={isDarkTheme}
+          style={{overflowY: 'auto'}}
         >
           <Grid item xs={6}>
             <Grid alignItems="center" container columnSpacing={2}>
