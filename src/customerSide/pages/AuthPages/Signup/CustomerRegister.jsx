@@ -84,7 +84,7 @@ export default function CustomerRegister() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, customerData.email, customerData.password);
       const user = userCredential.user;
-      await sendEmailVerification(user); // haven't handle this yet
+      await sendEmailVerification(user);
       const userData = {...customerData, provider: 'Email/Password Provider'};
       const userRef = await addDoc(customerCollection, userData);
       setCurrentCustomer({...userData, id: userRef._key.path.segments[1]})
@@ -119,7 +119,11 @@ export default function CustomerRegister() {
         setCurrentCustomer({ ...userData, id: docRef._key.path.segments[1] });
         navigate("/customer/auth/signup/address");
       } else {
-        navigate('/customer/auth/signin');
+        setNotification({
+          on: true,
+          type: 'error',
+          message: "Email Is Existed",
+        });
       }
       // Wait for 1 second to load the page
       await new Promise((resolve) => setTimeout(resolve, 1000));
