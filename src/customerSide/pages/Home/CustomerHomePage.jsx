@@ -202,10 +202,7 @@ export default function CustomerHomePage() {
                 restaurant.isOpen && (
                   <Card
                     key={restaurant.docId}
-                    image={restaurant.imageLink}
-                    name={restaurant.restaurantName}
-                    prepTime={restaurant.preparingTime}
-                    rating={restaurant.rating}
+                    restaurant={restaurant}
                   />
                 )
               );
