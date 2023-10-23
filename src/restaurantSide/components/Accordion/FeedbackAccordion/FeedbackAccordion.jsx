@@ -17,8 +17,8 @@ import {
 } from '../style';
 import StarIcon from '@mui/icons-material/Star';
 import StarOutlineOutlinedIcon from '@mui/icons-material/StarOutlineOutlined';
-import { convertTimestampToDate } from '../../../utils/time';
-import { reduceNameLength } from '../../../utils/string';
+import { convertTimestampToDate } from '../../../../utils/time';
+import { reduceNameLength } from '../../../../utils/string';
 import { yellow } from '@mui/material/colors';
 import { db } from '../../../../../firebase.config';
 import { doc, updateDoc } from 'firebase/firestore';
