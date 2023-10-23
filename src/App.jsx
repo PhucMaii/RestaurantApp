@@ -18,9 +18,10 @@ import CustomerInfo from './customerSide/pages/AuthPages/Signup/CustomerInfo'
 import CustomerProtectedRoutes from './customerSide/Routes/CustomerProtectedRoutes';
 import CustomerUnprotectedRoutes from './customerSide/Routes/CustomerUnProtectedRoutes';
 import CustomerSigninPage from './customerSide/pages/AuthPages/Signin/CustomerSigninPage';
-import './i18n.js';
-import './App.css';
 import CustomerHomePage from './customerSide/pages/Home/CustomerHomePage';
+import LandingPage from './LandingPage/LandingPage';
+import './App.css';
+import './i18n.js';
 
 function App() {
   const { isDarkTheme } = useContext(ThemeContext);
@@ -32,19 +33,20 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route element={<UnprotectedRoutes />}>
-                <Route path="/" element={<SigninPage />} />
-                <Route path="forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/restaurant/auth/signin" element={<SigninPage />} />
+                <Route path="/restaurant/auth/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/" element={<LandingPage />} />
               </Route>
               <Route element={<ProtectedRoutes />}>
-                <Route path="/home" element={<HomePage />} />
+                <Route path="/restaurant/home" element={<HomePage />} />
                 <Route
-                  path="/create-restaurant"
+                  path="/restaurant/create-restaurant"
                   element={<HorizontalLinearStepper />}
                 />
-                <Route path="/menu" element={<MenuPage />} />
-                <Route path="/history" element={<HistoryPage />} />
-                <Route path="/feedback" element={<FeedbackPage />} />
-                <Route path="/account" element={<AccountPage />} />
+                <Route path="/restaurant/menu" element={<MenuPage />} />
+                <Route path="/restaurant/history" element={<HistoryPage />} />
+                <Route path="/restaurant/feedback" element={<FeedbackPage />} />
+                <Route path="/restaurant/account" element={<AccountPage />} />
               </Route>
               <Route element={<CustomerProtectedRoutes />}>
                 <Route path="/customer/auth/signup/address" element={<CustomerInfo />} />

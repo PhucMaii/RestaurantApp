@@ -14,7 +14,7 @@ const ButtonGroupModal = styled(ButtonGroup)`
 `;
 const GridModal = styled(Grid)`
   position: absolute;
-  top: 50%;
+  top: 100%;
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: ${(props) => props.maxWidth};
@@ -33,7 +33,8 @@ const ListModal = styled(List)`
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
 `;
 const ModalStyled = styled(Modal)`
-  color: ${props => props.$isDarkTheme ? grey[200] : ""}
+  color: ${props => props.$isDarkTheme ? grey[200] : ""};
+  overflow-y: auto;
 `
 
 export { ButtonGroupModal, GridModal, ListModal, ModalStyled };

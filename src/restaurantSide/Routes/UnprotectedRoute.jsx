@@ -5,5 +5,5 @@ import { isAuthenticated } from '../../utils/auth';
 
 export default function UnprotectedRoutes() {
   const [isAuth, _setIsAuth] = useState(isAuthenticated());
-  return !isAuth ? <Outlet /> : <Navigate to="/home" />; 
+  return !isAuth ? <Outlet /> : <Navigate to="/restaurant/home" />; 
 }

@@ -68,32 +68,32 @@ function ResponsiveDrawer({window, tab}) {
     {
       text: 'Current Order',
       icon: <HomeIcon />,
-      path: '/home',
+      path: '/restaurant/home',
     },
     {
       text: 'Menu',
       icon: <MenuIcon />,
-      path: '/menu',
+      path: '/restaurant/menu',
     },
     {
       text: 'History',
       icon: <HistoryIcon />,
-      path: '/history',
+      path: '/restaurant/history',
     },
     {
       text: 'Feedback',
       icon: <StarIcon />,
-      path: '/feedback',
+      path: '/restaurant/feedback',
     },
     {
       text: 'Account',
       icon: <AccountCircleIcon />,
-      path: '/account',
+      path: '/restaurant/account',
     },
     {
       text: 'Sign Out',
       icon: <LogoutIcon />,
-      path: '/',
+      path: '/restaurant/auth/signin',
     },
   ];
 
