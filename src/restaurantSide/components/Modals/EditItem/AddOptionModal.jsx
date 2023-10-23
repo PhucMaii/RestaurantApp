@@ -2,7 +2,7 @@ import { Button, TextField, Modal, Grid } from '@mui/material';
 import React, { memo, useContext, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
-import { nonNumericCharacter } from '../../../utils/constant';
+import { nonNumericCharacter } from '../../../../utils/constant';
 import { GridModal } from '../style';
 import { ThemeContext } from '../../../../Provider/ThemeContext';
 

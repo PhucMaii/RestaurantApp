@@ -37,7 +37,7 @@ import { FlagIconImg, ListItemTextStyled, TabStyled } from "./style";
 import { useNavigate, useLocation } from "react-router-dom";
 import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../../../firebase.config';
-import { renderSkeleton } from '../../utils/renderUtils';
+import { renderSkeleton } from '../../../utils/renderUtils';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { ThemeContext } from '../../../Provider/ThemeContext';
 import { useTheme } from '@mui/material/styles';

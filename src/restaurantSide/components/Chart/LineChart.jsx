@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import ReactApexChart from 'react-apexcharts';
-import { convertToDay } from '../../utils/time';
+import { convertToDay } from '../../../utils/time';
 import { Grid } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
