@@ -4,7 +4,7 @@ module.exports = {
     es2021: true,
   },
   extends: ['eslint:recommended', 'plugin:react/recommended'],
-  ignorePatterns: ["workbox-5357ef54.js", "sw.js", "workbox-fa446783.js"],
+  ignorePatterns: ["workbox-5357ef54.js", "sw.js", "workbox-fa446783.js", "/dist/assets"],
   overrides: [
     {
       env: {

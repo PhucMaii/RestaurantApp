@@ -75,7 +75,7 @@ export default function SigninPage() {
       setCurrUser({ ...userData, hasRestaurant, docId: userID });
       // Wait for 1 second to load the page
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      navigate('/home');
+      navigate('/restaurant/home');
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
@@ -90,7 +90,7 @@ export default function SigninPage() {
         setCurrUser({ ...data, docId: docRef._key.path.segments[1] });
         // Wait for 1 second to load the page
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        navigate('/create-restaurant');
+        navigate('/restaurant/create-restaurant');
         setIsLoading(false);
       } else {
         setNotification({
@@ -115,7 +115,7 @@ export default function SigninPage() {
         };
         const docRef = await addDoc(userCollection, data);
         setCurrUser({ ...data, docId: docRef._key.path.segments[1] });
-        navigate('/create-restaurant');
+        navigate('/restaurant/create-restaurant');
       } else {
         let userID, hasRestaurant;
         const userSnapShot = query(
@@ -128,7 +128,7 @@ export default function SigninPage() {
           hasRestaurant = doc.data().hasRestaurant;
         });
         setCurrUser({ ...userData, hasRestaurant, docId: userID });
-        navigate('/home');
+        navigate('/restaurant/home');
       }
       // Wait for 1 second to load the page
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -223,7 +223,7 @@ export default function SigninPage() {
                   REGISTER
                 </Button>
                 <Typography variant="subtitle2">
-                  <Link onClick={() => navigate('/forgot-password')}>
+                  <Link onClick={() => navigate('/restaurant/auth/forgot-password')}>
                     Forgot Password ?
                   </Link>
                 </Typography>

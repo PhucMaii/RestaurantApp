@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 import { Divider, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from '@mui/material';
-import { formatToTwoDecimalPlace } from '../utils/number';
+import { formatToTwoDecimalPlace } from '../../utils/number';
 
 
 export default function DataTable({todayOrders}) {
