@@ -87,7 +87,7 @@ export default function CustomerRegister() {
       await sendEmailVerification(user);
       const userData = {...customerData, provider: 'Email/Password Provider'};
       const userRef = await addDoc(customerCollection, userData);
-      setCurrentCustomer({...userData, id: userRef._key.path.segments[1]})
+      setCurrentCustomer({...userData, userId: userRef._key.path.segments[1]})
       setNotification({
         on: true,
         type: 'success',
@@ -116,7 +116,7 @@ export default function CustomerRegister() {
       const userData = { email: user.email, provider: 'Google Provider' };
       if (getAdditionalUserInfo(userCredential).isNewUser) {
         const docRef = await addDoc(customerCollection, userData);
-        setCurrentCustomer({ ...userData, id: docRef._key.path.segments[1] });
+        setCurrentCustomer({ ...userData, userId: docRef._key.path.segments[1] });
         navigate("/customer/auth/signup/address");
       } else {
         setNotification({
