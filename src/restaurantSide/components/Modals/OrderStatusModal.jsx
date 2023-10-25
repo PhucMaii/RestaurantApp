@@ -6,7 +6,7 @@ import {
     Button
 } from '@mui/material';
 import { ButtonGroupModal } from './style';
-import { orderStatusEnum } from '../../utils/constant';
+import { orderStatusEnum } from '../../../utils/constant';
 
 function OrderStatusModal({
   handleClose,

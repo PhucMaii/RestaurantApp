@@ -44,7 +44,7 @@ export default function HorizontalLinearStepper() {
 
   useEffect(() => {
     if (activeStep === steps.length) {
-      navigate('/home');
+      navigate('/restaurant/home');
     }
   }, [activeStep]);
 

@@ -1,7 +1,7 @@
 import { Divider, Grid, Typography } from '@mui/material';
 import React, { useState, useEffect, memo, useCallback, useContext } from 'react';
 import { useTranslation } from "react-i18next";
-import { formatToTwoDecimalPlace } from '../../utils/number';
+import { formatToTwoDecimalPlace } from '../../../utils/number';
 import EditItemModal from '../Modals/EditItem/EditItemModal';
 import PropTypes from 'prop-types';
 import { ButtonStyled, GridStyled } from './style'
