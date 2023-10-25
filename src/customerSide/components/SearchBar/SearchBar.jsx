@@ -4,7 +4,7 @@ import { Grid, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { SearchTextField } from './styles';
 
-export default function SearchBar({ setSearchKeywords}) {
+export default function SearchBar({ handleSubmitSearchBar, placeholder, searchKeywords, setSearchKeywords }) {
   const handleChangeKeywords = (e) => {
     setSearchKeywords(e.target.value);
   }
@@ -16,8 +16,9 @@ export default function SearchBar({ setSearchKeywords}) {
     >
         <SearchTextField
           fullWidth
-          placeholder="Fast food, Chinese Food, etc"
+          placeholder={placeholder}
           variant="standard"
+          value={searchKeywords}
           InputProps={{
             disableUnderline: true,
             startAdornment: (
@@ -28,11 +29,15 @@ export default function SearchBar({ setSearchKeywords}) {
           }}
           style={{borderRadius: '20px !important', backgroundColor: ''}}
           onChange={handleChangeKeywords}
+          onKeyDown={handleSubmitSearchBar}
         />
   </Grid>
   )
 }
 
 SearchBar.propTypes = {
-  setSearchKeywords: PropTypes.func.isRequired
+  handleSubmitSearchBar:PropTypes.func,
+  placeholder: PropTypes.string,
+  searchKeywords: PropTypes.string.isRequired, 
+  setSearchKeywords: PropTypes.func.isRequired,
 }
