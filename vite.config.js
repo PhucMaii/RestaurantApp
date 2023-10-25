@@ -22,11 +22,26 @@ export default defineConfig({
         background_color: '#ffffff',
         lang: 'en',
         scope: '/',
+        form_factor: ['wide', 'fullscreen'],
         icons: [
           {
-            src: '/image/logo.png',
-            sizes: '64x64 32x32 24x24 16x16',
+            src: '/image/144Icon.png',
+            sizes: '144x144',
             type: 'image/png',
+            purpose: 'any',
+          },
+        ],
+        screenshots: [
+          {
+            src: '/image/512Icon.png',
+            sizes: '512x512',
+            type: 'image/gif',
+            form_factor: 'wide',
+          },
+          {
+            src: '/image/logo.png',
+            sizes: '512x512',
+            type: 'image/gif',
           },
         ],
       },
