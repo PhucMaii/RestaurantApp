@@ -31,6 +31,7 @@ function AddOptionModal({ handleClose, open, addOption }) {
         rowGap={2}
         maxWidth="500px"
         $isDarkTheme={isDarkTheme}
+        $topValue="50%"
       >
         <Grid item xs={12}>
             <TextField

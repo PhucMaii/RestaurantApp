@@ -22,16 +22,7 @@ function UserInfoModal({
 }) {
   return (
     <Modal open={open} onClose={handleClose}>
-      <ListModal
-        maxWidth="500px"
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          maxWidth: '500px',
-        }}
-      >
+      <ListModal maxWidth="500px">
         <ListItem sx={{ backgroundColor: 'white' }}>
           <ListItemAvatar>
             <Avatar>

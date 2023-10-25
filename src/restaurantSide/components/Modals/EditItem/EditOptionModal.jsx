@@ -24,6 +24,7 @@ function EditOptionModal({ handleClose, open, option, setOption }) {
         padding={2}
         rowGap={2}
         $isDarkTheme={isDarkTheme}
+        $topValue="50%"
       >
         <Grid item xs={12}>
           <TextField
