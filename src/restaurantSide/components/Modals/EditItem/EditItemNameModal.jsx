@@ -1,8 +1,8 @@
-import { Button, Grid, Modal, TextField } from '@mui/material';
+import { Button, Grid, TextField } from '@mui/material';
 import React, { memo, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
-import { GridModal } from '../style';
+import { GridModal, ModalStyled } from '../style';
 import { ThemeContext } from '../../../../Provider/ThemeContext';
 
 function EditItemNameModal({ item, handleClose, open, setItem }) {
@@ -14,7 +14,7 @@ function EditItemNameModal({ item, handleClose, open, setItem }) {
   };
 
   return (
-    <Modal open={open} onClose={handleClose}>
+    <ModalStyled open={open} onClose={handleClose}>
       <GridModal
         maxWidth="500px"
         alignItems="center"
@@ -22,6 +22,7 @@ function EditItemNameModal({ item, handleClose, open, setItem }) {
         container
         padding={3}
         $isDarkTheme={isDarkTheme}
+        $topValue="50%"
       >
         <Grid item xs={8}>
           <TextField
@@ -39,7 +40,7 @@ function EditItemNameModal({ item, handleClose, open, setItem }) {
           </Button>
         </Grid>
       </GridModal>
-    </Modal>
+    </ModalStyled>
   );
 }
 

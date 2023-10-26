@@ -20,7 +20,7 @@ const CoverImageGrid = styled(Grid)`
     }
     @media only screen and (min-width: 1300px) {
         height: 50vh;
-        padding: 0px 10vw;
+        padding: 0px 15vw;
     }
 `
 const FavoriteFab = styled(Fab)`
@@ -32,7 +32,7 @@ const GridContainer = styled(Grid)`
         padding: 0px 8vw;
     }
     @media only screen and (min-width: 1300px) {
-        padding: 0px 10vw;
+        padding: 0px 15vw;
     }
 `
 const SearchFab = styled(Fab)`
