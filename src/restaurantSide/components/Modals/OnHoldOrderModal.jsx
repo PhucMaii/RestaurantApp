@@ -43,6 +43,7 @@ function OnHoldOrderModal({
         container
         padding={2}
         rowGap={2}
+        $topValue="50%"
       >
         <Grid container justifyContent="center">
           <Grid item xs={12}>
