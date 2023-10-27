@@ -4,7 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [ 
+    plugins: [
         react(),
         VitePWA({
             registerType: 'autoUpdate',
@@ -46,6 +46,6 @@ export default defineConfig({
                 ],
             },
         }),
-    ], 
+    ],
     define: { 'process.env': process.env },
 });

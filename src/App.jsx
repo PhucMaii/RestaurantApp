@@ -22,6 +22,7 @@ import CustomerHomePage from './customerSide/pages/Home/CustomerHomePage';
 import LandingPage from './LandingPage/LandingPage';
 import './App.css';
 import './i18n.js';
+import ItemPage from './customerSide/pages/ItemPage/ItemPage';
 
 function App() {
   const { isDarkTheme } = useContext(ThemeContext);
@@ -51,6 +52,7 @@ function App() {
               <Route element={<CustomerProtectedRoutes />}>
                 <Route path="/customer/auth/signup/address" element={<CustomerInfo />} />
                 <Route path="/customer/home" element={<CustomerHomePage />} />
+                <Route path="/customer/restaurant/:id/:itemName" element={<ItemPage />} />
               </Route>
               <Route element={<CustomerUnprotectedRoutes />}>
                 <Route path="/customer/auth/signup" element={<CustomerRegister />} />
