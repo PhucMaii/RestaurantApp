@@ -28,11 +28,11 @@ import { useNavigate } from 'react-router-dom';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { useEffect } from 'react';
 
-export default function Sidebar({customerName, filterByPopular, filterByRating}) {
+export default function Sidebar({ filterByPopular, filterByRating}) {
   const [currentPath, setCurrentPath] = useState('');
   const [openDrawer, setOpenDrawer] = useState(false);
   const [filterChoice, setFilterChoice] = useState('');
-  const [_currCustomer, setCurrCustomer] = useLocalStorage('current-customer', {});
+  const [currCustomer, setCurrCustomer] = useLocalStorage('current-customer', {});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -93,7 +93,7 @@ export default function Sidebar({customerName, filterByPopular, filterByRating})
             <ListItemIcon>
               <AccountBoxIcon />
             </ListItemIcon>
-            <ListItemText primary={customerName} />
+            <ListItemText primary={currCustomer.userName} />
           </ListItemButton>
         </ListItem>
       </List>
@@ -158,7 +158,6 @@ export default function Sidebar({customerName, filterByPopular, filterByRating})
 }
 
 Sidebar.propTypes = {
-  customerName: PropTypes.string.isRequired,
   filterByPopular: PropTypes.func,
   filterByRating: PropTypes.func
 }
