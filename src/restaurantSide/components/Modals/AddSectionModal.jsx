@@ -20,6 +20,7 @@ function AddSectionModal({
         container
         padding={3}
         $isDarkTheme={isDarkTheme}
+        $topValue="50%"
       >
         <Grid item xs={8}>
           <TextField

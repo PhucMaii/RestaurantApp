@@ -1,33 +1,70 @@
 import React, { useState, useEffect } from 'react';
-import { CircularProgress, Grid, Typography } from '@mui/material'
+import { Alert, CircularProgress, Grid, Snackbar, Typography, useMediaQuery } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import StarIcon from '@mui/icons-material/Star';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import FastfoodIcon from '@mui/icons-material/Fastfood';
-import { ButtonContainer, CoverImage, CoverImageGrid, FavoriteFab, SearchFab } from './styles';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { ButtonContainer, CoverImage, CoverImageGrid, FavoriteFab, GridContainer, SearchFab } from './styles';
 import SectionDisplay from '../../components/SectionDisplay/SectionDisplay';
-import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../../../firebase.config';
 import { useParams } from 'react-router-dom';
+import Sidebar from '../../components/Sidebar/Sidebar';
+import { CartButton } from '../Home/style';
+import useLocalStorage from '../../../hooks/useLocalStorage';
+import SearchItemsModal from '../../components/Modals/SearchItemsModal/SearchItemsModal';
 
 export default function RestaurantPage() {
+    const [filteredItemsList, setFilteredItemList] = useState([]);
+    const [isFavorite, setIsFavorite] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isOpenSearchModal, setIsOpenSearchModal] = useState(false);
+    const [notification, setNotification] = useState({
+        on: false,
+        type: 'success',
+        msg: ''
+    });
     const [menuData, setMenuData] = useState({});
     const [ratingData, setRatingData] = useState({});
+    const [searchKeywords, setSearchKeywords] = useState('');
     const [restaurantData, setRestaurantData] = useState({});
+    const [currCustomer, _setCurrCustomer] = useLocalStorage('current-customer', {});
     const { id } = useParams();
     const feedbackCollection = collection(db, 'feedback');
     const menuCollection = collection(db, 'menu');
     const feedbackQuery = query(feedbackCollection, where('restaurantId', '==', id));
     const menuQuery = query(menuCollection, where('restaurantRef', '==', `/users/${id}`));
+    const customerDocRef = doc(db, 'customers', currCustomer.userId);
     const restaurantDocRef = doc(db, 'users', id);
+    const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down('sm'));
 
     useEffect(() => {
+        fetchCustomerInfo();
         fetchMenu();
         fetchRestaurant();
         fetchFeedback();
     }, [])
+
+    const addToFavorite = async () => {
+        try {
+            const querySnapshot = await getDoc(customerDocRef);
+            const data = querySnapshot.data(); 
+            const favorites = data.favorties || [];
+            favorites.push(id);
+            setIsFavorite(true);
+            await updateDoc(customerDocRef, {favorites});
+            setNotification({
+                on: true,
+                type: 'success',
+                msg: 'Added To Favorites'
+            })
+        } catch(error) {
+            console.log(error);  
+        }
+    }
 
     const fetchFeedback = async () => {
         setIsLoading(true);
@@ -85,7 +122,59 @@ export default function RestaurantPage() {
         }
     }
 
-    console.log(restaurantData)
+    const fetchCustomerInfo = async () => {
+        try {
+            const querySnapshot = await getDoc(customerDocRef);
+            const data = querySnapshot.data();
+            if(data.favorites.includes(id)) {
+                setIsFavorite(true);
+            } else{
+                setIsFavorite(false);
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    }
+
+    const handleCloseSnackbar = () => {
+        setNotification((prevNotification) => ({...prevNotification, on: false}))
+    }
+
+    const removeFromFavorite = async () => {
+        try {
+            const querySnapshot = await getDoc(customerDocRef);
+            const data = querySnapshot.data();
+            const favoriteArray = data.favorites || []; 
+            const indexToRemove = favoriteArray.indexOf(id);
+            favoriteArray.splice(indexToRemove, 1);
+            setIsFavorite(false);
+            await updateDoc(customerDocRef, {favorites: [...favoriteArray]});
+            setNotification({
+                on: true,
+                type: 'success',
+                msg: 'Removed From Favorites'
+            });
+        } catch(error) {
+            console.log(error);
+        }
+    }
+
+    const handleSubmitSearchBar = (e) => {
+        if(e.keyCode === 13) {
+            e.preventDefault();
+            const keywords = searchKeywords.toLowerCase();
+            const filteredList = menuData.sections.filter((section) => {
+                if(section.items && section.items.length > 0) {
+                    const items = section.items.filter((item) => {
+                        return item.itemName.toLowerCase().includes(keywords);
+                    })
+                    return items.length > 0;
+                }
+            })
+            setFilteredItemList(filteredList);
+        }
+    }
+
   return (
     <Grid container mt={2} rowGap={3}>
         {
@@ -100,25 +189,46 @@ export default function RestaurantPage() {
                 </Grid>
             ) : (
                 <>
-                    <Grid container justifyContent="center" alignItems="center">
+                    <GridContainer container justifyContent="center" alignItems="center">
+                        <Snackbar anchorOrigin={{vertical: 'top', horizontal: 'center'}} open={notification.on} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                            <Alert onClose={handleCloseSnackbar} severity={notification.type} sx={{ width: '100%' }}>
+                              {notification.msg}
+                            </Alert>
+                        </Snackbar>
+                        <SearchItemsModal 
+                            filteredList={filteredItemsList}
+                            handleSearch={handleSubmitSearchBar} 
+                            open={isOpenSearchModal} 
+                            onClose={() => setIsOpenSearchModal(false)} 
+                            searchKeywords={searchKeywords}
+                            setSearchKeywords={setSearchKeywords}
+                        />
                         <Grid item xs={2}>
-                            {/* Sidebar */}
+                            <Sidebar />
                         </Grid>
                         <Grid item xs={8} textAlign="center">
                             <Typography variant="h4" fontWeight="bold">Grab & Go</Typography>
                         </Grid>
-                        <Grid item xs={2}>
-                            {/* Cart */}
+                        <Grid item xs={2} textAlign="right">
+                            <CartButton variant="contained" color="inherit">
+                                <ShoppingCartIcon /> 0
+                            </CartButton>
                         </Grid>
-                    </Grid>
+                    </GridContainer>
                     <CoverImageGrid item xs={12}>
-                        <ButtonContainer display="flex" gap={1} marginTop={2}>
-                            <SearchFab size="small"><SearchIcon fontSize='small' /></SearchFab>
-                            <FavoriteFab size="small"><FavoriteBorderIcon fontSize="small" /></FavoriteFab>
+                        <ButtonContainer $isSmallScreen={isSmallScreen} display="flex" alignItems="center" gap={1} marginTop={2}>
+                            <SearchFab onClick={() => setIsOpenSearchModal(true)} size="medium"><SearchIcon fontSize="medium" /></SearchFab> 
+                            <FavoriteFab size="medium">
+                                {
+                                    isFavorite ? 
+                                        <FavoriteIcon onClick={removeFromFavorite} fontSize="medium" /> :
+                                        <FavoriteBorderIcon onClick={addToFavorite} fontSize="medium" />
+                                }
+                            </FavoriteFab>
                         </ButtonContainer>
-                        <CoverImage src={restaurantData.image} />
+                        <CoverImage $isSmallScreen={isSmallScreen} src={restaurantData.image} />
                     </CoverImageGrid>
-                    <Grid container pl={2}>
+                    <GridContainer container>
                         <Grid item xs={12}>
                             <Typography variant="h4" fontWeight="bold">{restaurantData.name}</Typography>
                         </Grid>
@@ -148,8 +258,8 @@ export default function RestaurantPage() {
                                 <Typography variant="subtitle1" fontWeight="bold">{restaurantData.address}</Typography>
                             </Grid>
                         </Grid>
-                    </Grid>
-                    <Grid container>
+                    </GridContainer>
+                    <GridContainer container>
                         {
                             menuData.sections && menuData.sections.map((section, index) => {
                                 return (
@@ -157,7 +267,7 @@ export default function RestaurantPage() {
                                 )
                             })
                         }
-                    </Grid>
+                    </GridContainer>
                 </>
             )
         }

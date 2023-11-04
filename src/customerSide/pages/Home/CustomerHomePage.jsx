@@ -155,7 +155,6 @@ export default function CustomerHomePage() {
           <Grid container mt={1} alignItems="center" mr={2}>
             <Grid item xs={2}>
               <Sidebar
-                customerName={currCustomer.userName}
                 filterByRating={() => filterByRating(restaurantList, setRestaurantList)}
                 filterByPopular={filterRestaurantByPopular}
               />
@@ -184,7 +183,7 @@ export default function CustomerHomePage() {
             </Grid>
           </Grid>
           <Grid container ml={2} mr={2}>
-            <SearchBar setSearchKeywords={setSearchKeywords} />
+            <SearchBar placeholder="Fast food, Chinese, etc" searchKeywords={searchKeywords} setSearchKeywords={setSearchKeywords} />
           </Grid>
           <Grid container>
             <Grid item xs={12}>

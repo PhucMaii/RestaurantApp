@@ -14,7 +14,7 @@ const ButtonGroupModal = styled(ButtonGroup)`
 `;
 const GridModal = styled(Grid)`
   position: absolute;
-  top: 100%;
+  top: ${(props) => props.$topValue};
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: ${(props) => props.maxWidth};

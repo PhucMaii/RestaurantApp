@@ -23,6 +23,7 @@ import CustomerHomePage from './customerSide/pages/Home/CustomerHomePage';
 import LandingPage from './LandingPage/LandingPage';
 import './App.css';
 import './i18n.js';
+import './App.css';
 
 function App() {
   const { isDarkTheme } = useContext(ThemeContext);

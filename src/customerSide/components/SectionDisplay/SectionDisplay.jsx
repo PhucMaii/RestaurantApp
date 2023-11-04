@@ -5,7 +5,7 @@ import ItemCard from '../ItemCard/ItemCard';
 
 export default function SectionDisplay({items, sectionName}) {
   return (
-    <Grid container p={2} rowGap={2}>
+    <Grid container pb={2} rowGap={2}>
         <Grid item xs={12}>
             <Typography variant="h5" fontWeight="bold">{sectionName}</Typography>
         </Grid>
@@ -13,9 +13,13 @@ export default function SectionDisplay({items, sectionName}) {
             {
                 items ? (items.map((item, index) => {
                     return (
-                        <Grid item key={index} xs={6}>
+                        item.availability && <Grid item key={index} xs={6} md={4} lg={3} xl={2}>
                             <ItemCard 
-                                image={item.itemImageURL ? item.itemImageURL : '../../image/imageDoesNotExist.png'} 
+                                image={
+                                    item.itemImageURL ? 
+                                        item.itemImageURL : 
+                                        '../../image/imageDoesNotExist.png'
+                                } 
                                 name={item.itemName}
                                 price={item.itemPrice}
                             />
@@ -33,6 +37,6 @@ export default function SectionDisplay({items, sectionName}) {
 }
 
 SectionDisplay.propTypes = {
-    items: PropTypes.array.isRequired,
+    items: PropTypes.array,
     sectionName: PropTypes.string.isRequired,
 }
