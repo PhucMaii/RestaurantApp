@@ -18,6 +18,7 @@ import CustomerInfo from './customerSide/pages/AuthPages/Signup/CustomerInfo'
 import CustomerProtectedRoutes from './customerSide/Routes/CustomerProtectedRoutes';
 import CustomerUnprotectedRoutes from './customerSide/Routes/CustomerUnProtectedRoutes';
 import CustomerSigninPage from './customerSide/pages/AuthPages/Signin/CustomerSigninPage';
+import RestaurantPage from './customerSide/pages/RestaurantPage/RestaurantPage';
 import CustomerHomePage from './customerSide/pages/Home/CustomerHomePage';
 import LandingPage from './LandingPage/LandingPage';
 import './App.css';
@@ -50,6 +51,7 @@ function App() {
               </Route>
               <Route element={<CustomerProtectedRoutes />}>
                 <Route path="/customer/auth/signup/address" element={<CustomerInfo />} />
+                <Route path="/customer/restaurant/:id" element={<RestaurantPage/>} />
                 <Route path="/customer/home" element={<CustomerHomePage />} />
               </Route>
               <Route element={<CustomerUnprotectedRoutes />}>
