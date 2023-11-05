@@ -54,7 +54,7 @@ function App() {
                 <Route path="/customer/auth/signup/address" element={<CustomerInfo />} />
                 <Route path="/customer/restaurant/:id" element={<RestaurantPage/>} />
                 <Route path="/customer/home" element={<CustomerHomePage />} />
-                <Route path="/customer/restaurant/:id/:itemName" element={<ItemPage />} />
+                <Route path="/customer/restaurant/:id/:sectionName/:itemName" element={<ItemPage />} />
               </Route>
               <Route element={<CustomerUnprotectedRoutes />}>
                 <Route path="/customer/auth/signup" element={<CustomerRegister />} />

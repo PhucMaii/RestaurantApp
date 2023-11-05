@@ -34,7 +34,7 @@ const DividerStyled = styled(Divider)`
 `
 const ImageStyled = styled.img`
     width: 100%;
-    height: ${(props) => props.$isSmallScreen ? '250px' : ''}
+    height: ${(props) => props.$isSmallScreen ? '250px' : '70vh'}
 `
 const LargeScreenAddButtonContainerStyled = styled(Grid)`
     @media only screen and (max-width: 600px) {
