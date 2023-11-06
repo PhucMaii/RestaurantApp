@@ -1,4 +1,4 @@
-import { reduce } from "lodash";
+import { reduce } from 'lodash';
 
 export const formatToTwoDecimalPlace = (num) => {
     if (typeof num === 'number') {
@@ -8,7 +8,11 @@ export const formatToTwoDecimalPlace = (num) => {
 };
 
 export const calculateTotalInObject = (array, field) => {
-    return reduce(array, function(sum, item) {
-        return sum + item[field];
-      }, 0);
-}
+    return reduce(
+        array,
+        function (sum, item) {
+            return sum + item[field];
+        },
+        0,
+    );
+};

@@ -18,7 +18,15 @@ import {
 } from './styles';
 import NumberTextField from '../../components/NumberTextField/NumberTextField';
 import { useNavigate, useParams } from 'react-router-dom';
-import { collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import { 
+    collection, 
+    doc, 
+    getDoc, 
+    getDocs, 
+    query, 
+    updateDoc, 
+    where 
+} from 'firebase/firestore';
 import { db } from '../../../../firebase.config';
 import { calculateTotalInObject, formatToTwoDecimalPlace } from '../../../utils/number';
 import useLocalStorage from '../../../hooks/useLocalStorage';
@@ -31,16 +39,20 @@ export default function ItemPage() {
     const [totalPrice, setTotalPrice] = useState(0);
     const [options, setOptions] = useState([]);
     const [quantity, setQuantity] = useState(1);
+    const [restaurantData, setRestaurantData] = useState({});
     const [curUser, _setCurUser] = useLocalStorage('current-customer', {});
-    const { id, itemName, sectionName } = useParams();
     const navigate = useNavigate();
+    const { id, itemName, sectionName } = useParams();
     const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down('sm'));
     const menuCollection = collection(db, 'menu');
-    const menuQuery = query(menuCollection, where('restaurantRef', '==', `/users/${id}`));
+    const restaurantCollection = collection(db, 'users');
     const userCollection = collection(db, 'customers');
+    const menuQuery = query(menuCollection, where('restaurantRef', '==', `/users/${id}`));
     const userRef = doc(userCollection, curUser.userId);
+    const restaurantRef = doc(restaurantCollection, id);
 
     useEffect(() => {
+        fetchRestaurant();
         fetchMenu();
     }, [])
 
@@ -49,50 +61,59 @@ export default function ItemPage() {
         try {
             const userDoc = await getDoc(userRef);
             const data = userDoc.data();
-            let cartData = data.cart;
-            const hasRestaurant = cartData.some((restaurant) => restaurant.restaurantId === id);
-            if(hasRestaurant) {
-                cartData = cartData.map((restaurant) => {
-                    if(restaurant.restaurantId === id) {
-                        const optionPrice = calculateTotalInObject(options, 'price');
-                        return {
-                            ...restaurant,
-                            totalPrice: restaurant.totalPrice + totalPrice,
-                            items: [
-                                ...restaurant.items,
-                                {
-                                    name: itemInfo.itemName,
-                                    price: itemInfo.itemPrice + optionPrice,
-                                    quantity,
-                                    totalPrice
-                                }
-                            ]
-                        }
-                    } else {
-                        return restaurant;
+            let cartData = data.cart || [];
+            const optionPrice = calculateTotalInObject(options, 'price');
+            const submitData = {
+                items: [
+                    {
+                        name: itemInfo.itemName,
+                        price: itemInfo.itemPrice + optionPrice,
+                        quantity,
+                        totalPrice,
+                        options
                     }
-                })
-            } else {
-                const optionPrice = calculateTotalInObject(options, 'price');
-                cartData.push({
-                    restaurantId: id,
-                    totalPrice,
-                    items: [
-                        {
-                            name: itemInfo.itemName,
-                            price: itemInfo.price + optionPrice,
-                            quantity,
-                            totalPrice
+                ],
+                totalPrice,
+                restaurantInfo: {
+                    restaurantName: restaurantData.restaurantName,
+                    restaurantId: id
+                },
+            }
+            if(cartData.length > 0) {
+                const hasRestaurant = cartData.some((restaurant) => restaurant.restaurantInfo.restaurantId === id);
+                if(hasRestaurant) {
+                    cartData = cartData.map((restaurant) => {
+                        if(restaurant.restaurantInfo.restaurantId === id) {
+                            return {
+                                ...restaurant,
+                                items: [
+                                    ...restaurant.items,
+                                    {
+                                        name: itemInfo.itemName,
+                                        price: itemInfo.itemPrice + optionPrice,
+                                        quantity,
+                                        totalPrice,
+                                        options
+                                    }
+                                ],
+                                totalPrice: restaurant.totalPrice + totalPrice,
+                            }
+                        } else {
+                            return restaurant;
                         }
-                    ]
-                })
+                    })
+                } else {
+                    cartData.push(submitData);
+                }
+            } else {
+                cartData.push(submitData);
             }
             await updateDoc(userRef, {cart: [...cartData]});
             setTotalPrice(itemInfo.itemPrice);
             setQuantity(1);
             setOptions([]);
-            setIsLoading(false);
             setIsCartModalOpen(true);
+            setIsLoading(false);
         } catch(error) {
             setIsLoading(false);
             console.log(error);
@@ -117,14 +138,11 @@ export default function ItemPage() {
     
     const decrementQuantity = () => {
         if(quantity > 1) {
-            setQuantity((prevQuantity) => prevQuantity - 1);
-            setTotalPrice((prevTotalPrice) => prevTotalPrice - itemInfo.itemPrice);
+            const newQuantity = quantity - 1;
+            setQuantity(newQuantity);
+            const optionPrice = calculateTotalInObject(options, 'price');
+            setTotalPrice((itemInfo.itemPrice + optionPrice) * newQuantity);
         }
-    }
-
-    const incrementQuantity = () => {
-        setQuantity((prevQuantity) => prevQuantity + 1);
-        setTotalPrice((prevTotalPrice) => prevTotalPrice + itemInfo.itemPrice);
     }
 
     const fetchMenu = async () => {
@@ -146,6 +164,26 @@ export default function ItemPage() {
         }
     }
 
+    const fetchRestaurant = async () => {
+        setIsLoading(true);
+        try {
+            const restaurantDoc = await getDoc(restaurantRef);
+            const data = restaurantDoc.data();
+            setRestaurantData(data);
+            setIsLoading(false);
+        } catch(error) {
+            setIsLoading(false);
+            console.log(error);
+        }
+    }
+
+    const incrementQuantity = () => {
+        const newQuantity = quantity + 1;
+        setQuantity(newQuantity);
+        const optionPrice = calculateTotalInObject(options, 'price');
+        setTotalPrice((itemInfo.itemPrice + optionPrice) * newQuantity);
+    }
+
     return (
         <>
             {
@@ -164,11 +202,12 @@ export default function ItemPage() {
                         container 
                         p={isSmallScreen ? 0 : 5}
                         pb={isSmallScreen && 12} 
-                        columnSpacing={!isSmallScreen && 5}    
+                        columnSpacing={!isSmallScreen ? 5 : 0}    
                     >
                         <ShowCartModal 
                             open={isCartModalOpen}
                             onClose={() => setIsCartModalOpen(false)}
+                            restaurant={restaurantData}
                         />
                         <CancelButtonContainerStyled 
                             item xs={12} 
@@ -186,7 +225,7 @@ export default function ItemPage() {
                         >
                             <ImageStyled 
                                 $isSmallScreen={isSmallScreen}
-                                src={itemInfo.itemImageURL || '/image/imageDoesNotExist.png'}
+                                src={itemInfo.itemImageURL ? itemInfo.itemImageURL : '/image/imageDoesNotExist.png'}
                             />
                         </Grid>
                         <Grid item xs={12} md={6}>
