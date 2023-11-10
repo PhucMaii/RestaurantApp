@@ -18,10 +18,11 @@ export default function SectionDisplay({items, sectionName}) {
                                 image={
                                     item.itemImageURL ? 
                                         item.itemImageURL : 
-                                        '../../image/imageDoesNotExist.png'
+                                        '/image/imageDoesNotExist.png'
                                 } 
                                 name={item.itemName}
                                 price={item.itemPrice}
+                                sectionName={sectionName}
                             />
                         </Grid>
                     )
