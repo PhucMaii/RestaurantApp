@@ -8,7 +8,7 @@ const AddButton = styled(Button)`
     border-radius: 10px !important;
 `
 const AddButtonContainerStyled = styled(Grid)`
-position: fixed;
+    position: fixed;
     bottom: 0;
     width: 100%;
     padding: 15px;

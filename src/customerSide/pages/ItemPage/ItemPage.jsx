@@ -198,7 +198,6 @@ export default function ItemPage() {
                     </Grid>
                 ) : (
                     <Grid 
-                        open={true} 
                         container 
                         p={isSmallScreen ? 0 : 5}
                         pb={isSmallScreen && 12} 

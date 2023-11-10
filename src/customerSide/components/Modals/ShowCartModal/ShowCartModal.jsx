@@ -19,6 +19,7 @@ import { grey } from '@mui/material/colors';
 import { GoBackButton, ToCheckoutButton } from './styles';
 import { useNavigate, useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
+import NumberTextField from '../../NumberTextField/NumberTextField';
 
 export default function ShowCartModal({ open, onClose }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -51,24 +52,24 @@ export default function ShowCartModal({ open, onClose }) {
     const handleDeleteItem = async (restaurantName, item) => {
         try {
             let restaurantHasItem = cart.find((restaurant) => restaurant.restaurantInfo.restaurantName === restaurantName); 
-            restaurantHasItem = restaurantHasItem.items.filter((itemDelete) => {
+            restaurantHasItem.items = restaurantHasItem.items.filter((itemDelete) => {
                 return itemDelete.name !== item.name ||
                         itemDelete.price !== item.price ||
                         !isEqual(itemDelete.options, item.options);
             })
             let newCart;
             // if there is no items in that restaurant after filter, then remove restaurant from cart
-            if(restaurantHasItem.length === 0) {
+            if(restaurantHasItem.items.length === 0) {
                 newCart = cart.filter((restaurant) => {
                     return restaurant.restaurantInfo.restaurantName !== restaurantName;
                 })
             } else {
-                const newTotalPrice = calculateTotalInObject(restaurantHasItem, 'price');
+                const newTotalPrice = calculateTotalInObject(restaurantHasItem.items, 'price');
                 newCart = cart.map((restaurant) => {
                     if(restaurant.restaurantInfo.restaurantName === restaurantName) {
                         return {
                             ...restaurant,
-                            items: restaurantHasItem,
+                            items: restaurantHasItem.items,
                             totalPrice: newTotalPrice
                         };
                     }
@@ -77,6 +78,52 @@ export default function ShowCartModal({ open, onClose }) {
                     }
                 })
             }
+            await updateDoc(customerDocRef, {cart: [...newCart]});
+            setCart(newCart);
+        } catch(error) {
+            console.log(error);
+        }
+    }
+
+    const handleManipulateQuantity = async (targetItem, restaurantName, operator) => {
+        try {
+            let restaurantHasItem = cart.find((restaurant) => restaurant.restaurantInfo.restaurantName === restaurantName); 
+            restaurantHasItem.items = restaurantHasItem.items.map((item) => {
+                if(targetItem.name === item.name &&
+                    targetItem.price === item.price &&
+                    isEqual(targetItem.options, item.options)) {
+                        let newQuantity = 1;
+                        if(operator === 'increment') {
+                            newQuantity = item.quantity + 1;
+                        } else {
+                            if(item.quantity > 1) {
+                                newQuantity = item.quantity - 1;
+                            }
+                        }
+                        return {
+                            ...item,
+                            quantity: newQuantity,
+                            totalPrice: item.price * newQuantity
+                        }
+                } else {
+                    return item;
+                }
+                
+            })
+            let newCart;
+            const newTotalPrice = calculateTotalInObject(restaurantHasItem.items, 'totalPrice');
+            newCart = cart.map((restaurant) => {
+                if(restaurant.restaurantInfo.restaurantName === restaurantName) {
+                    return {
+                        ...restaurant,
+                        items: restaurantHasItem.items,
+                        totalPrice: newTotalPrice
+                    };
+                }
+                else {
+                    return restaurant;
+                }
+            })
             await updateDoc(customerDocRef, {cart: [...newCart]});
             setCart(newCart);
         } catch(error) {
@@ -121,15 +168,25 @@ export default function ShowCartModal({ open, onClose }) {
                                         mt={2}
                                         mb={1}
                                     >
-                                        <Grid item xs={12}>
-                                            <Typography variant="h6" fontWeight="bold">{restaurant.restaurantInfo.restaurantName}</Typography>
+                                        <Grid item xs={12} mb={1}>
+                                            <Typography variant="h6" fontWeight="bold">
+                                                {restaurant.restaurantInfo.restaurantName}
+                                            </Typography>
                                         </Grid>
                                         {
                                             restaurant.items && restaurant.items.map((item, index) => {
                                                 return (
-                                                    <Grid key={index} container alignItems="center"mb={2}>
-                                                        <Grid item xs={6}>
-                                                            <Typography variant="body1" fontWeight="bold">x{item.quantity} {item.name}</Typography>
+                                                    <Grid key={index} container alignItems="center" mb={2} columnSpacing={2}>
+                                                        <Grid item xs={4}>
+                                                            <NumberTextField
+                                                                decrementQuantity={() => handleManipulateQuantity(item, restaurant.restaurantInfo.restaurantName, 'decrement')} 
+                                                                incrementQuantity={() => handleManipulateQuantity(item, restaurant.restaurantInfo.restaurantName, 'increment')}
+                                                                quantity={item.quantity} 
+                                                                quantitySize="body1" 
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={4}>
+                                                            <Typography variant="body1" fontWeight="bold">{item.name}</Typography>
                                                             {
                                                                 item.options.length > 0 && item.options.map((option, index) => {
                                                                     return <Typography 
@@ -142,7 +199,7 @@ export default function ShowCartModal({ open, onClose }) {
                                                                 })
                                                             }
                                                         </Grid>
-                                                        <Grid item xs={4} textAlign="right">
+                                                        <Grid item xs={2} textAlign="right">
                                                             <Typography 
                                                                 variant="body1" 
                                                                 fontWeight="bold"
@@ -191,7 +248,7 @@ export default function ShowCartModal({ open, onClose }) {
                                     variant="contained"
                                     onClick={() => navigate(`/customer/restaurant/${id}`)}
                                 >
-                                    Back to Restaurant
+                                    Add more items
                                 </GoBackButton>
                             </Grid>
                             <Grid item xs={12} md={6} textAlign="center">

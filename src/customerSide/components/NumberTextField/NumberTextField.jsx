@@ -6,7 +6,8 @@ import { ContainerStyled, FabStyled } from './styles';
 export default function NumberTextField({
     decrementQuantity,
     incrementQuantity,
-    quantity
+    quantity,
+    quantitySize
 }) {
     
     return (
@@ -20,7 +21,7 @@ export default function NumberTextField({
                 </FabStyled>
             </Grid>
             <Grid item xs={4} textAlign="center">
-                <Typography variant="h6" fontWeight="bold">{quantity}</Typography>
+                <Typography variant={quantitySize || "h6"} fontWeight="bold">{quantity}</Typography>
             </Grid>
             <Grid item xs={4} textAlign="right">
                 <FabStyled 
@@ -37,5 +38,6 @@ export default function NumberTextField({
 NumberTextField.propTypes = {
     decrementQuantity: PropTypes.func.isRequired,
     incrementQuantity: PropTypes.func.isRequired,
-    quantity: PropTypes.number.isRequired
+    quantity: PropTypes.number.isRequired,
+    quantitySize: PropTypes.string
 }
