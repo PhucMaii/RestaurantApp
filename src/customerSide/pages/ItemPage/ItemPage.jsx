@@ -31,6 +31,7 @@ import { db } from '../../../../firebase.config';
 import { calculateTotalInObject, formatToTwoDecimalPlace } from '../../../utils/number';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import ShowCartModal from '../../components/Modals/ShowCartModal/ShowCartModal';
+import { findIndex, isEqual } from 'lodash';
 
 export default function ItemPage() {
     const [isCartModalOpen, setIsCartModalOpen] = useState(false);
@@ -84,6 +85,25 @@ export default function ItemPage() {
                 if(hasRestaurant) {
                     cartData = cartData.map((restaurant) => {
                         if(restaurant.restaurantInfo.restaurantId === id) {
+                            // find if there is any same item exists already in cart
+                            const targetIndex = findIndex(restaurant.items, function(item) {
+                                return item.name === itemInfo.itemName &&
+                                        item.price === itemInfo.itemPrice &&
+                                        isEqual(item.options, options);
+                            })
+                            // if yes, just need to update quantity and totalPrice value of that item
+                            if(targetIndex > -1) {
+                                restaurant.items[targetIndex] = {
+                                    ...restaurant.items[targetIndex],
+                                    quantity: restaurant.items[targetIndex].quantity + 1,
+                                    totalPrice: restaurant.items[targetIndex].totalPrice + restaurant.items[targetIndex].price  
+                                }
+                                return {
+                                    ...restaurant,
+                                    totalPrice: restaurant.totalPrice + restaurant.items[targetIndex].price
+                                };
+                            }
+                            
                             return {
                                 ...restaurant,
                                 items: [
