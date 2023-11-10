@@ -201,7 +201,7 @@ export default function CustomerRegister() {
                   Password
                 </InputLabel>
                 <OutlinedInput
-                  id="outlined-adornemnt-password"
+                  id="outlined-adornment-password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password..."
                   endAdornment={
