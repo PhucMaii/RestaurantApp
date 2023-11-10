@@ -21,7 +21,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
 import NumberTextField from '../../NumberTextField/NumberTextField';
 
-export default function ShowCartModal({ open, onClose }) {
+export default function ShowCartModal({ 
+    disableButton, 
+    getLatestCart,
+    open, 
+    onClose 
+}) {
     const [isLoading, setIsLoading] = useState(true);
     const [cart, setCart] = useState([]);
     const [curUser, _setCurUser] = useLocalStorage('current-customer', {});
@@ -80,6 +85,7 @@ export default function ShowCartModal({ open, onClose }) {
             }
             await updateDoc(customerDocRef, {cart: [...newCart]});
             setCart(newCart);
+            getLatestCart();
         } catch(error) {
             console.log(error);
         }
@@ -126,13 +132,18 @@ export default function ShowCartModal({ open, onClose }) {
             })
             await updateDoc(customerDocRef, {cart: [...newCart]});
             setCart(newCart);
+            getLatestCart();
         } catch(error) {
             console.log(error);
         }
     }
 
   return (
-    <Modal open={open} onClose={onClose} style={{overflowY: 'auto'}}>
+    <Modal 
+        open={open} 
+        onClose={onClose} 
+        style={{overflowY: 'auto'}}
+    >
         {
             isLoading ? (
                 <Grid container justifyContent="center" alignItems="center" rowGap={3} mt={20}>
@@ -247,6 +258,7 @@ export default function ShowCartModal({ open, onClose }) {
                                 <GoBackButton 
                                     variant="contained"
                                     onClick={() => navigate(`/customer/restaurant/${id}`)}
+                                    $disabled={disableButton}
                                 >
                                     Add more items
                                 </GoBackButton>
@@ -269,6 +281,8 @@ export default function ShowCartModal({ open, onClose }) {
 }
 
 ShowCartModal.propTypes = {
+    disableButton: PropTypes.bool,
+    getLatestCart: PropTypes.func,
     open: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired
+    onClose: PropTypes.func.isRequired,
 }

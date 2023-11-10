@@ -6,16 +6,15 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import StarIcon from '@mui/icons-material/Star';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import FastfoodIcon from '@mui/icons-material/Fastfood';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { ButtonContainer, CoverImage, CoverImageGrid, FavoriteFab, GridContainer, SearchFab } from './styles';
 import SectionDisplay from '../../components/SectionDisplay/SectionDisplay';
 import { collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../../../firebase.config';
 import { useParams } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import { CartButton } from '../Home/style';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import SearchItemsModal from '../../components/Modals/SearchItemsModal/SearchItemsModal';
+import CartButton from '../../components/CartButton/CartButton';
 
 export default function RestaurantPage() {
     const [filteredItemsList, setFilteredItemList] = useState([]);
@@ -210,9 +209,7 @@ export default function RestaurantPage() {
                             <Typography variant="h4" fontWeight="bold">Grab & Go</Typography>
                         </Grid>
                         <Grid item xs={2} textAlign="right">
-                            <CartButton variant="contained" color="inherit">
-                                <ShoppingCartIcon /> 0
-                            </CartButton>
+                            <CartButton />
                         </Grid>
                     </GridContainer>
                     <CoverImageGrid item xs={12}>

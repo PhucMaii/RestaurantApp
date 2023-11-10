@@ -103,7 +103,7 @@ export default function ItemPage() {
                                     totalPrice: restaurant.totalPrice + restaurant.items[targetIndex].price
                                 };
                             }
-                            
+
                             return {
                                 ...restaurant,
                                 items: [
@@ -226,7 +226,6 @@ export default function ItemPage() {
                         <ShowCartModal 
                             open={isCartModalOpen}
                             onClose={() => setIsCartModalOpen(false)}
-                            restaurant={restaurantData}
                         />
                         <CancelButtonContainerStyled 
                             item xs={12} 
