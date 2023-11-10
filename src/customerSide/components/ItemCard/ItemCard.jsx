@@ -4,12 +4,12 @@ import { Grid, Typography } from '@mui/material';
 import { ItemImage } from './styles';
 import { useNavigate, useParams } from 'react-router-dom';
 
-export default function ItemCard({image, name, price}) {
+export default function ItemCard({image, name, price, sectionName}) {
     const { id } = useParams();
     const navigate = useNavigate();
 
     const navigateToItemPage = () => {
-        navigate(`/customer/restaurant/${id}/${name}`)
+        navigate(`/customer/restaurant/${id}/${sectionName}/${name}`)
     }
 
     return (
@@ -30,5 +30,6 @@ export default function ItemCard({image, name, price}) {
 ItemCard.propTypes = {
     image: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired
+    price: PropTypes.number.isRequired,
+    sectionName: PropTypes.string.isRequired
 }

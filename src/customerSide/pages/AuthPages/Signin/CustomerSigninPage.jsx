@@ -233,13 +233,6 @@ export default function CustomerSigninPage() {
                 Sign in
               </Button>
             </Grid>
-            <Grid item xs={12}>
-              <Typography variant="subtitle2" textAlign="right">
-                <Link>
-                  Forgot Password?
-                </Link>
-              </Typography>
-            </Grid>
           </Grid>
           <Grid item xs={12} textAlign="center">
             <Typography style={{ color: grey[500] }} variant="subtitl1">
