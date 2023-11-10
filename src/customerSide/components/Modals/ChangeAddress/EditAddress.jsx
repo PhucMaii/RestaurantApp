@@ -27,6 +27,7 @@ export default function EditAddress({ isOpen, onClose, changeAddress }) {
         columnSpacing={2}
         container
         padding={3}
+        style={{backgroundColor: 'white'}}
       >
         <Grid item xs={8}>
           <GoogleMaps onDataReceived={handleChangeAddress} />
