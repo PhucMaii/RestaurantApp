@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import { Box, Grid, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 
-export default function ItemCard({ item }) {
+export default function ItemCard({ item, section }) {
     const { id } = useParams();
     const navigate = useNavigate();
     
     const navigateToItemPage = () => {
-        navigate(`/customer/restaurant/${id}/${item.itemName}`)
+        navigate(`/customer/restaurant/${id}/${section.name}/${item.itemName}`)
     }
 
     return (
@@ -27,5 +27,6 @@ export default function ItemCard({ item }) {
 }
 
 ItemCard.propTypes = {
-    item: PropTypes.object.isRequired
+    item: PropTypes.object.isRequired,
+    section: PropTypes.object.isRequired
 }
