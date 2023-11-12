@@ -22,10 +22,11 @@ import RestaurantPage from './customerSide/pages/RestaurantPage/RestaurantPage';
 import CustomerHomePage from './customerSide/pages/Home/CustomerHomePage';
 import LandingPage from './LandingPage/LandingPage';
 import ItemPage from './customerSide/pages/ItemPage/ItemPage';
+import CheckoutPage from './customerSide/pages/CheckoutPages/CheckoutPage.jsx';
+import StripeContainer from './customerSide/components/PaymentForm/StripeContainer.jsx';
 import './App.css';
 import './i18n.js';
-import CheckoutPage from './customerSide/pages/CheckoutPage/CheckoutPage.jsx';
-import StripeContainer from './customerSide/components/PaymentForm/StripeContainer.jsx';
+import CheckoutSuccess from './customerSide/pages/CheckoutPages/CheckoutSuccess.jsx';
 
 function App() {
   const { isDarkTheme } = useContext(ThemeContext);
@@ -58,6 +59,7 @@ function App() {
                 <Route path="/customer/home" element={<CustomerHomePage />} />
                 <Route path="/customer/restaurant/:id/:sectionName/:itemName" element={<ItemPage />} />
                 <Route path="/customer/checkout" element={<CheckoutPage />} />
+                <Route path="/customer/checkout/success" element={<CheckoutSuccess />} />
                 <Route path="/customer/card" element={<StripeContainer />} />
               </Route>
               <Route element={<CustomerUnprotectedRoutes />}>

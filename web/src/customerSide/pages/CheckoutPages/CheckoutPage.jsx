@@ -10,7 +10,6 @@ import {
     useMediaQuery
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CreditCardIcon from '@mui/icons-material/CreditCard';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import OrderSummary from '../../components/OrderSummary/OrderSummary';
 import { BoxShadowBackground } from './styles';
@@ -20,6 +19,7 @@ import useLocalStorage from '../../../hooks/useLocalStorage';
 import Loading from '../../components/Loading/Loading';
 import EditAddress from '../../components/Modals/ChangeAddress/EditAddress';
 import { calculateTotalInObject, formatToTwoDecimalPlace } from '../../../utils/number';
+import axios from 'axios';
 
 export default function CheckoutPage() {
     const [isLoading, setIsLoading] = useState(true);
@@ -69,6 +69,25 @@ export default function CheckoutPage() {
             setIsLoading(false);
         }
     }   
+
+    const handleCheckout = async () => {
+        try {
+            const newCart = userData.cart.map((restaurant) => {
+                return restaurant.items.map((item) => {
+                    return {...item, restaurantId: restaurant.restaurantInfo.restaurantId}
+                })
+            })
+            const response = await axios.post('http://localhost:4000/create-checkout-session', {
+                cart: newCart.flat(),
+                userId: curUser.userId,
+            })
+            if(response.data.url) {
+                window.location.href = response.data.url;
+            }
+        } catch(error) {
+            console.log(error);
+        }
+    }
     
     const paymentComponent = (
         <>
@@ -84,7 +103,8 @@ export default function CheckoutPage() {
                 <Typography fontWeight="bold" variant="h6">Total</Typography>
                 <Typography fontWeight="bold" variant="h6">${formatToTwoDecimalPlace(userData.totalPrice)}</Typography>
             </Box>
-            <Divider />
+            {/* TODO: Find a way to store user card and use it automatically to pay for order */}
+            {/* <Divider />
             <Typography fontWeight="bold" variant="h6" mb={2} mt={2}>Payment</Typography>
             <Grid container mb={2}>
                 <Grid item xs={1}>
@@ -99,8 +119,14 @@ export default function CheckoutPage() {
                         Edit
                     </Button>
                 </Grid>
-            </Grid>
-            <Button fullWidth variant="contained">Place Order</Button>
+            </Grid> */}
+            <Button 
+                fullWidth
+                onClick={handleCheckout} 
+                variant="contained"
+            >
+                Place Order
+            </Button>
         </>
     )
 
