@@ -5,7 +5,6 @@ import {
     Divider, 
     Grid, 
     IconButton, 
-    TextField, 
     Typography, 
     useMediaQuery
 } from '@mui/material';
@@ -24,7 +23,7 @@ import axios from 'axios';
 export default function CheckoutPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isOpenAddressModal, setIsOpenAddressModal] = useState(false);
-    const [note, setNote] = useState('');
+    const [note, setNote] = useState({});
     const [userData, setUserData] = useState({});
     const [curUser, setCurUser] = useLocalStorage('current-customer', {});
     const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down('sm'));
@@ -70,14 +69,39 @@ export default function CheckoutPage() {
         }
     }   
 
+    const handleAddNote = (value, restaurantId) => {
+        setNote((prevNote) => {
+            return {
+                ...prevNote,
+                [restaurantId]: value
+            }
+        })
+    }
+
     const handleCheckout = async () => {
         try {
             const newCart = userData.cart.map((restaurant) => {
                 return restaurant.items.map((item) => {
-                    return {...item, restaurantId: restaurant.restaurantInfo.restaurantId}
+                    return {
+                        name: item.name ,
+                        options: item.options,
+                        price: item.price,
+                        quantity: item.quantity 
+                    }
                 })
             })
-            const response = await axios.post('http://localhost:4000/create-checkout-session', {
+            const updateCart = userData.cart.map((restaurant) => {
+                if(note[restaurant.restaurantInfo.restaurantId]) {
+                    return {
+                        ...restaurant,
+                        note: note[restaurant.restaurantInfo.restaurantId]
+                    }
+                } else {
+                    return restaurant;
+                }
+            })
+            await updateDoc(customerDocRef, {cart: [...updateCart]});
+            const response = await axios.post(`${import.meta.env.VITE_SERVER_LINK}/create-checkout-session`, {
                 cart: newCart.flat(),
                 userId: curUser.userId,
             })
@@ -205,30 +229,15 @@ export default function CheckoutPage() {
                                             <Typography variant="h6" fontWeight="bold" mb={2}>Order Summary</Typography>
                                             {
                                                 userData.cart && userData.cart.map((restaurant, index) => {
+                                                    const restaurantId = restaurant.restaurantInfo.restaurantId;
                                                     return <OrderSummary 
                                                                 key={index} 
+                                                                note={note[restaurantId]}
+                                                                setNote={(e) => handleAddNote(e.target.value, restaurantId)}
                                                                 restaurantCart={restaurant} 
                                                             />
                                                 })
                                             }
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <Typography 
-                                                fontWeight="bold" 
-                                                variant="h6" 
-                                                mb={2}
-                                                mt={2}
-                                            >
-                                                Add Note
-                                            </Typography>
-                                            <TextField
-                                                fullWidth
-                                                multiline
-                                                placeholder="Write your note..."    
-                                                rows={3}
-                                                value={note}
-                                                onChange={(e) => setNote(e.target.value)}
-                                            />
                                         </Grid>
                                     </BoxShadowBackground>
                                     { isSmallScreen && 

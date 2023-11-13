@@ -6,11 +6,9 @@ import { LocaleContextAPI }  from './Provider/LocaleContextAPI.jsx';
 import './i18n'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
     <ThemeContextAPI>
       <LocaleContextAPI>
         <App />
       </LocaleContextAPI>
     </ThemeContextAPI>
-  </React.StrictMode>,
 );

@@ -7,12 +7,13 @@ import {
     Box, 
     Divider, 
     Grid, 
+    TextField, 
     Typography 
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { calculateTotalInObject, formatToTwoDecimalPlace } from '../../../utils/number';
 
-export default function OrderSummary({ restaurantCart }) {
+export default function OrderSummary({ note, setNote, restaurantCart }) {
     const quantity = calculateTotalInObject(restaurantCart.items, 'quantity');
     
     return (
@@ -61,11 +62,22 @@ export default function OrderSummary({ restaurantCart }) {
                         )
                     }) 
                 }
+                <Typography fontWeight="bold" variant="h6">Add Note</Typography>
+                <TextField
+                    fullWidth
+                    multiline
+                    placeholder="Write your note..."    
+                    rows={3}
+                    value={note}
+                    onChange={setNote}
+                />
             </AccordionDetails>
         </Accordion>
   )
 }
 
 OrderSummary.propTypes = {
+    note: PropTypes.any,
+    setNote: PropTypes.func,
     restaurantCart: PropTypes.object.isRequired,
 }

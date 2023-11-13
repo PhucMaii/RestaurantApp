@@ -24,6 +24,7 @@ export default function CartButton() {
             const docSnapshot = await getDoc(customerDocRef);
             const data = docSnapshot.data();
             let newNumOfItems = 0;
+            console.log(data.cart);
             if(data.cart) {
                 for(let restaurant of data.cart) {
                     const totalQuantity = calculateTotalInObject(restaurant.items, 'quantity');

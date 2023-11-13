@@ -27,6 +27,7 @@ import StripeContainer from './customerSide/components/PaymentForm/StripeContain
 import './App.css';
 import './i18n.js';
 import CheckoutSuccess from './customerSide/pages/CheckoutPages/CheckoutSuccess.jsx';
+import CheckoutProtectedRoute from './customerSide/Routes/CheckoutProtectedRoute';
 
 function App() {
   const { isDarkTheme } = useContext(ThemeContext);
@@ -59,8 +60,10 @@ function App() {
                 <Route path="/customer/home" element={<CustomerHomePage />} />
                 <Route path="/customer/restaurant/:id/:sectionName/:itemName" element={<ItemPage />} />
                 <Route path="/customer/checkout" element={<CheckoutPage />} />
-                <Route path="/customer/checkout/success" element={<CheckoutSuccess />} />
                 <Route path="/customer/card" element={<StripeContainer />} />
+                <Route element={<CheckoutProtectedRoute />}>
+                  <Route path="customer/checkout/success" element={<CheckoutSuccess />} />
+                </Route>
               </Route>
               <Route element={<CustomerUnprotectedRoutes />}>
                 <Route path="/customer/auth/signup" element={<CustomerRegister />} />

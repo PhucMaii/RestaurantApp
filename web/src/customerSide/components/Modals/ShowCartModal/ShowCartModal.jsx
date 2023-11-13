@@ -132,7 +132,9 @@ export default function ShowCartModal({
             })
             await updateDoc(customerDocRef, {cart: [...newCart]});
             setCart(newCart);
-            getLatestCart();
+            if(typeof getLatestCart === 'function') {
+                getLatestCart();
+            } 
         } catch(error) {
             console.log(error);
         }
