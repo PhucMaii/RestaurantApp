@@ -9,46 +9,46 @@ import useLocalStorage from '../../../hooks/useLocalStorage';
 import { useNavigate } from 'react-router-dom';
 
 export default function CheckoutSuccess() {
-    const [curUser, _setCurUser] = useLocalStorage('current-customer', {});
-    const orderCollection = collection(db, 'orders');
-    const customerCollection = collection(db, 'customers');
-    const customerReference = doc(customerCollection, curUser.userId);
+    // const [curUser, _setCurUser] = useLocalStorage('current-customer', {});
+    // const orderCollection = collection(db, 'orders');
+    // const customerCollection = collection(db, 'customers');
+    // const customerReference = doc(customerCollection, curUser.userId);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        addOrderData();
-    }, [])
+    // useEffect(() => {
+    //     addOrderData();
+    // }, [])
 
-    const fetchCartData = async () => {
-        try {
-            const docSnapshot = await getDoc(customerReference);
-            const data = docSnapshot.data();
-            return data.cart;
-        } catch(error) {
-            console.log(error);
-        }
-    }
+    // const fetchCartData = async () => {
+    //     try {
+    //         const docSnapshot = await getDoc(customerReference);
+    //         const data = docSnapshot.data();
+    //         return data.cart;
+    //     } catch(error) {
+    //         console.log(error);
+    //     }
+    // }
     
-    const addOrderData = async () => {
-        try {
-            const cartData = await fetchCartData();
-            const promises = cartData.map(async (restaurant) => {
-                await addDoc(orderCollection, {
-                    items: [...restaurant.items],
-                    note: restaurant.note,
-                    orderTime: Timestamp.fromDate(new Date()),
-                    customerName: curUser.userName,
-                    customerEmail: curUser.email,
-                    customerPhoneNumber: '',
-                    restaurantId: restaurant.restaurantInfo.restaurantId,
-                    orderStatus: 'Preparing'
-                });
-            });
-            await Promise.all(promises);
-        } catch(error) {
-            console.log(error);
-        }
-    }
+    // const addOrderData = async () => {
+    //     try {
+    //         const cartData = await fetchCartData();
+    //         const promises = cartData.map(async (restaurant) => {
+    //             await addDoc(orderCollection, {
+    //                 items: [...restaurant.items],
+    //                 note: restaurant.note,
+    //                 orderTime: Timestamp.fromDate(new Date()),
+    //                 customerName: curUser.userName,
+    //                 customerEmail: curUser.email,
+    //                 customerPhoneNumber: '',
+    //                 restaurantId: restaurant.restaurantInfo.restaurantId,
+    //                 orderStatus: 'Preparing'
+    //             });
+    //         });
+    //         await Promise.all(promises);
+    //     } catch(error) {
+    //         console.log(error);
+    //     }
+    // }
 
     return (
         <Box 

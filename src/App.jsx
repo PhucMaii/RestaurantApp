@@ -62,8 +62,8 @@ function App() {
                 <Route path="/customer/checkout" element={<CheckoutPage />} />
                 <Route path="/customer/card" element={<StripeContainer />} />
                 <Route element={<CheckoutProtectedRoute />}>
-                  <Route path="customer/checkout/success" element={<CheckoutSuccess />} />
                 </Route>
+                  <Route path="customer/checkout/success" element={<CheckoutSuccess />} />
               </Route>
               <Route element={<CustomerUnprotectedRoutes />}>
                 <Route path="/customer/auth/signup" element={<CustomerRegister />} />

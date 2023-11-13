@@ -13,12 +13,12 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import OrderSummary from '../../components/OrderSummary/OrderSummary';
 import { BoxShadowBackground } from './styles';
 import { collection, doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../../../../firebase.config';
+import { db, functions } from '../../../../firebase.config';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import Loading from '../../components/Loading/Loading';
 import EditAddress from '../../components/Modals/ChangeAddress/EditAddress';
 import { calculateTotalInObject, formatToTwoDecimalPlace } from '../../../utils/number';
-import axios from 'axios';
+import { httpsCallable } from 'firebase/functions';
 
 export default function CheckoutPage() {
     const [isLoading, setIsLoading] = useState(true);
@@ -100,16 +100,52 @@ export default function CheckoutPage() {
                     return restaurant;
                 }
             })
-            await updateDoc(customerDocRef, {cart: [...updateCart]});
-            const response = await axios.post(`${import.meta.env.VITE_SERVER_LINK}/create-checkout-session`, {
-                cart: newCart.flat(),
-                userId: curUser.userId,
+            const lineItems = newCart.flat().map((item) => {
+                let description = '';
+                if(item.options) {
+                    for(let option of item.options) {
+                        description += `${option.name}, `
+                    }
+                }
+                return {
+                    price_data: {
+                        currency: "cad",
+                        product_data: {
+                            name: item.name,
+                        },
+                        unit_amount: item.price * 100
+                    },
+                    quantity: item.quantity
+                }
             })
-            if(response.data.url) {
-                window.location.href = response.data.url;
-            }
+            console.log({
+                mode: "payment",
+                lineItems,
+                successUrl: `http://localhost:5173/customer/checkout/success`,
+                cancelUrl: `http://localhost:5173/customer/checkout`,
+                uid: curUser.userId
+            })
+            await updateDoc(customerDocRef, {cart: [...updateCart]});
+            const createStripeCheckout = httpsCallable(functions, 'createStripeCheckout');
+            createStripeCheckout({
+                mode: "payment",
+                lineItems,
+                successUrl: `http://localhost:5173/customer/checkout/success`,
+                cancelUrl: `http://localhost:5173/customer/checkout`,
+                uid: curUser.userId
+            })
+                .then(result => {
+                    console.log(result);
+                    if (result.data.url) {
+                      console.log(result.data.id)
+                      window.location.assign(result.data.url)
+                    }
+                })
+                .catch(error => {
+                  console.error(error);
+                });
         } catch(error) {
-            console.log(error);
+            console.error(error)
         }
     }
     
