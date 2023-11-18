@@ -12,7 +12,7 @@ export default function SectionDisplay({ section }) {
         <Grid container mt={2}>
             {
                 section.items && section.items.map((item, index) => {
-                    return item.availability && <ItemCard key={index} item={item} />
+                    return item.availability && <ItemCard key={index} section={section} item={item} />
                 })
             }
         </Grid>

@@ -2,9 +2,8 @@ import { CircularProgress, Grid, Typography } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import FilterCarousel from '../../components/FilterCarousel/FilterCarousel';
-import { CartButton, ThickDivider } from './style';
+import { ThickDivider } from './style';
 import Card from '../../components/RestaurantCard/Card';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import ChangeAddressModal from '../../components/Modals/ChangeAddress/ChangeAddressModal';
 import {
@@ -18,6 +17,7 @@ import {
 import { db } from '../../../../firebase.config';
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import { calculatePopularity, filterByRating } from '../../../utils/filter';
+import CartButton from '../../components/CartButton/CartButton';
 
 export default function CustomerHomePage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -165,9 +165,7 @@ export default function CustomerHomePage() {
               </Typography>
             </Grid>
             <Grid item xs={2} textAlign="right">
-              <CartButton variant="contained" color="inherit">
-                <ShoppingCartIcon /> 0
-              </CartButton>
+              <CartButton />
             </Grid>
           </Grid>
           <Grid container alignItems="center" mr={2}>
