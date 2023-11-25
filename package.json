@@ -26,6 +26,7 @@
         "axios": "^1.6.1",
         "dayjs": "^1.11.10",
         "dotenv": "^16.3.1",
+        "esbuild": "^0.19.5",
         "firebase": "^10.6.0",
         "firebase-functions": "^4.5.0",
         "i18next": "^23.5.1",
