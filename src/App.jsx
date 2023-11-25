@@ -28,6 +28,7 @@ import './App.css';
 import './i18n.js';
 import CheckoutSuccess from './customerSide/pages/CheckoutPages/CheckoutSuccess.jsx';
 import CheckoutProtectedRoute from './customerSide/Routes/CheckoutProtectedRoute';
+import OrderStatusPage from './customerSide/pages/OrderStatusPage/OrderStatusPage.jsx';
 
 function App() {
   const { isDarkTheme } = useContext(ThemeContext);
@@ -61,6 +62,7 @@ function App() {
                 <Route path="/customer/restaurant/:id/:sectionName/:itemName" element={<ItemPage />} />
                 <Route path="/customer/checkout" element={<CheckoutPage />} />
                 <Route path="/customer/card" element={<StripeContainer />} />
+                <Route path="/customer/orders/onProcess/:id" element={<OrderStatusPage />} />
                 <Route element={<CheckoutProtectedRoute />}>
                 </Route>
                   <Route path="customer/checkout/success" element={<CheckoutSuccess />} />
