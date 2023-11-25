@@ -164,23 +164,6 @@ export default function CheckoutPage() {
                 <Typography fontWeight="bold" variant="h6">Total</Typography>
                 <Typography fontWeight="bold" variant="h6">${formatToTwoDecimalPlace(userData.totalPrice)}</Typography>
             </Box>
-            {/* TODO: Find a way to store user card and use it automatically to pay for order */}
-            {/* <Divider />
-            <Typography fontWeight="bold" variant="h6" mb={2} mt={2}>Payment</Typography>
-            <Grid container mb={2}>
-                <Grid item xs={1}>
-                    <CreditCardIcon />
-                </Grid>
-                <Grid item xs={8}>
-                    <Typography fontWeight="bold" variant="body1">Credit Card</Typography>
-                    <Typography fontWeight="bold" variant="body2">****6864</Typography>
-                </Grid>
-                <Grid item xs={3} textAlign="right" mb={3}>
-                    <Button color="inherit" variant="contained" size='small'>
-                        Edit
-                    </Button>
-                </Grid>
-            </Grid> */}
             <Button 
                 fullWidth
                 onClick={handleCheckout} 
